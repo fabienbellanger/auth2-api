@@ -1,6 +1,7 @@
 //! ID value object representation
 
-use auth2_api_shared::error::{ApiError, ApiResult};
+use crate::error::{Error, Result};
+use core::result;
 use std::fmt::{Display, Formatter};
 use uuid::Uuid;
 
@@ -18,7 +19,7 @@ impl Id {
     ///
     /// let id = Id::new().unwrap();
     /// ```
-    pub fn new() -> ApiResult<Self> {
+    pub fn new() -> Result<Self> {
         Ok(Self { value: Uuid::new_v4() })
     }
 
@@ -34,10 +35,10 @@ impl Display for Id {
     }
 }
 
-impl TryFrom<&str> for Id {
-    type Error = ApiError;
+impl<'a> TryFrom<&'a str> for Id {
+    type Error = Error<'a>;
 
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
+    fn try_from(value: &'a str) -> result::Result<Self, Self::Error> {
         Ok(Self {
             value: Uuid::parse_str(value)?,
         })

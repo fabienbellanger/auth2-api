@@ -1,14 +1,15 @@
 //! HTTP request validation
 
-use super::error::{ApiError, ApiErrorCode, ApiResult};
-use crate::api_error;
+use super::error::{ApiError, ApiResult};
 use serde_json::json;
 use validator::Validate;
 
-/// Validate the HTTP request parameters
-pub fn validate_request_data<T: Validate>(data: &T) -> ApiResult<()> {
+/// Validate the struct data
+pub fn validate_data<T: Validate>(data: &T) -> ApiResult<()> {
     match data.validate() {
         Ok(_) => Ok(()),
-        Err(errors) => Err(api_error!(ApiErrorCode::BadRequest, json!(errors).to_string())),
+        Err(errors) => Err(ApiError::BadRequest {
+            message: json!(errors).to_string(),
+        }),
     }
 }

@@ -87,6 +87,7 @@ dependencies = [
  "auth2-api-shared",
  "chrono",
  "fake",
+ "log",
  "pretty_assertions",
  "serde",
  "thiserror",

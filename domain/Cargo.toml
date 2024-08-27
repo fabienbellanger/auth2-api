@@ -19,6 +19,7 @@ uuid = { workspace = true }
 validator = { workspace = true }
 tracing = { workspace = true }
 tokio = { workspace = true }
+log = { workspace = true }
 
 [dev-dependencies]
 fake = { workspace = true }

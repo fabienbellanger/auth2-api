@@ -1,4 +1,4 @@
-pub mod auth;
+// pub mod auth;
 pub mod error;
 pub mod query_parameter;
 pub mod validation;

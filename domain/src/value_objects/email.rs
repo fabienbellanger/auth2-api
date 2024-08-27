@@ -1,7 +1,7 @@
 //! Email value object representation
 
 use auth2_api_shared::error::ApiResult;
-use auth2_api_shared::validation::validate_request_data;
+use auth2_api_shared::validation::validate_data;
 use std::fmt::{Display, Formatter};
 use validator::Validate;
 
@@ -35,7 +35,7 @@ impl Email {
             value: value.to_string(),
         };
 
-        validate_request_data(&email)?;
+        validate_data(&email)?;
 
         Ok(email)
     }

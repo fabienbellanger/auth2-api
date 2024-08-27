@@ -1,7 +1,7 @@
 //! Password value object representation
 
 use auth2_api_shared::error::ApiResult;
-use auth2_api_shared::validation::validate_request_data;
+use auth2_api_shared::validation::validate_data;
 use std::fmt::{Display, Formatter};
 use validator::Validate;
 
@@ -40,7 +40,7 @@ impl Password {
         };
 
         if !password.hashed {
-            validate_request_data(&password)?;
+            validate_data(&password)?;
         }
 
         Ok(password)
