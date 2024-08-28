@@ -12,15 +12,7 @@
 	build-no-audit \
 	sqlx-prepare \
 	doc \
-	doc-deps \
-	docker \
-	docker-pull \
-	docker-up \
-	docker-up-no-daemon \
-	docker-down \
-	docker-down-rm \
-	docker-cli-build \
-	docker-cli-register
+	doc-deps
 
 .DEFAULT_GOAL=help
 
@@ -30,7 +22,7 @@ CURRENT_PATH=$(shell pwd)
 DOCKER_COMPOSE=docker-compose
 DOCKER=docker
 CARGO=cargo
-CARGO_BIN_NAME="authé-api-infrastructure"
+CARGO_BIN_NAME="auth2-api"
 USER_LASTNAME="Admin"
 USER_FIRSTNAME="Test"
 USER_EMAIL="test2@testest.com"
@@ -45,11 +37,11 @@ help: Makefile
 
 ## serve: Start web server
 serve:
-	cd infrastructure && $(CARGO) run -- serve
+	$(CARGO) run -- serve
 
 ## watch: Start web server with hot reload
 watch:
-	cd infrastructure && $(CARGO) watch -x "run -- serve"
+	$(CARGO) watch -x "run -- serve"
 
 ## upgrade: Upgrade workspace packages and update the dependency versions recorded in the local lock file
 upgrade:
@@ -92,7 +84,7 @@ build-no-audit: lint test
 
 ## sqlx-prepare: Prepare for sqlx offline mode
 sqlx-prepare:
-	cd infrastructure && $(CARGO) sqlx prepare -- --bin $(CARGO_BIN_NAME)
+	$(CARGO) sqlx prepare -- --bin $(CARGO_BIN_NAME)
 
 ## doc: Open Rust documentation without dependencies
 doc:
@@ -101,35 +93,3 @@ doc:
 ## doc: Open Rust documentation with dependencies
 doc-deps:
 	$(CARGO) doc --open --document-private-items
-
-## docker: Stop running containers, build docker-compose.yml file and run containers
-docker: docker-down sqlx-prepare docker-up
-
-## docker-pull: Pull images
-docker-pull:
-	$(DOCKER_COMPOSE) pull
-
-## docker-up: Build docker-compose.yml file and run containers
-docker-up: docker-pull
-	$(DOCKER_COMPOSE) up --build --force-recreate -d
-
-## docker-up-no-daemon: Build docker-compose.yml file and run containers in non daemon mode
-docker-up-no-daemon: docker-pull
-	$(DOCKER_COMPOSE) up --build
-
-## docker-down: Stop running containers
-docker-down:
-	$(DOCKER_COMPOSE) down --remove-orphans
-
-## docker-down-rm: Stop running containers and remove linked volumes
-docker-down-rm:
-	$(DOCKER_COMPOSE) down --remove-orphans --volumes
-
-## docker-cli-build: Build project for CLI
-docker-cli-build: docker-pull
-	$(DOCKER) build -f Dockerfile -t rust-clean-architecture-infrastructure-cli .
-
-## docker-cli-register: Run CLI container to register an admin user
-docker-cli-register: docker-cli-build
-	$(DOCKER) run -i --rm --net rust_clean_archi_backend --link rust_clean_archi_mariadb rust-clean-architecture-infrastructure-cli \
-	register -l $(USER_LASTNAME) -f $(USER_FIRSTNAME) -e $(USER_EMAIL) -p $(USER_PASSWORD)
