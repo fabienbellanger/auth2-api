@@ -1,8 +1,6 @@
 # Authentication / Authorization API
 
-# Rust Clean Architecture
-
-[![Build status](https://github.com/fabienbellanger/backends-clean-architecture/actions/workflows/rust.yml/badge.svg?branch=main)](https://github.com/fabienbellanger/backends-clean-architecture/actions/workflows/rust.yml)
+[![Build status](https://github.com/fabienbellanger/auth2-api/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/fabienbellanger/auth2-api/actions/workflows/CI.yml)
 
 ## Install
 

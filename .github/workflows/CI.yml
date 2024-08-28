@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+  SQLX_OFFLINE: true
+
+jobs:
+  rust-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./rust
+    services:
+      mysql:
+        image: mariadb:latest
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: auth2_api
+        ports:
+          - 3306:3306
+      maildev:
+        image: djfarrelly/maildev
+        ports:
+          - 1081:80
+          - 1025:25
+    steps:
+      - uses: actions/checkout@v3
+      - name: Fmt
+        run: cargo fmt
+      - name: Clippy
+        run: cargo clippy
+      - name: Run tests
+        run: DATABASE_URL=mysql://root:root@127.0.0.1:3306/auth2_api cargo test --verbose
+      - name: Build
+        run: cargo build --verbose
