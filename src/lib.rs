@@ -1,3 +1,4 @@
+pub mod adapters;
 pub mod domain;
 
 #[macro_use]

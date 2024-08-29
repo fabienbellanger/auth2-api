@@ -2,4 +2,5 @@
 //! They are the objects that represent the business logic of the application.
 
 pub mod access_token;
+pub mod email;
 pub mod user;
