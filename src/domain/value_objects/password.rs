@@ -5,7 +5,7 @@ use std::fmt::{Display, Formatter};
 use thiserror::Error;
 use validator::Validate;
 
-#[derive(Debug, Clone, Error, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Error)]
 pub enum PasswordError {
     #[error("Invalid password")]
     Invalid(#[from] validator::ValidationErrors),

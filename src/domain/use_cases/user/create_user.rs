@@ -9,7 +9,7 @@ use crate::domain::value_objects::password::Password;
 use thiserror::Error;
 
 /// User creation errors
-#[derive(Debug, Clone, Error)]
+#[derive(Debug, Clone, PartialEq, Error)]
 pub enum UserCreationError {
     #[error("User already exists: {0}")]
     UserAlreadyExists(String),
@@ -99,7 +99,7 @@ mod tests {
         let response = use_case.call(request).await;
         assert!(response.is_err());
         if let Err(e) = response {
-            assert_eq!(e.to_string(), format!("User already exists: {}", INVALID_EMAIL));
+            assert_eq!(e, UserCreationError::UserAlreadyExists(INVALID_EMAIL.to_string()));
         }
     }
 }

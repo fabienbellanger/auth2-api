@@ -1,0 +1,79 @@
+openapi: '3.0.2'
+info:
+  title: Auth2 API
+  version: '1.0'
+  description: REST API using Rust Clean Architecture
+  contact:
+    name: Fabien Bellanger
+    email: valentil@gmail.com
+servers:
+  - url: http://localhost:{port}/api/v1
+    description: Local server
+    variables:
+      port:
+        enum:
+          - "8086"
+          - "8087"
+        default: "8087"
+  - url: https://localhost/api/v1
+    description: Production server
+paths:
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    Unauthorized:
+      description: Access token is missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    BadRequest:
+      description: Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+        text/plain:
+          schema:
+            type: string
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    MethodNotAllowed:
+      description: Method Not Allowed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    UnprocessableEntity:
+      description: Unprocessable Entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+  schemas:
+    ResponseError:
+      type: object
+      properties:
+        code:
+          type: integer
+          minimum: 100
+          maximum: 527
+        message:
+          type: string
+      required:
+        - code
+        - message

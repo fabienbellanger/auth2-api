@@ -5,7 +5,7 @@ use std::str::FromStr;
 use thiserror::Error;
 use uuid::Uuid;
 
-#[derive(Debug, Clone, Error)]
+#[derive(Debug, Clone, PartialEq, Error)]
 pub enum IdError {
     #[error("Invalid UUID id: {0}")]
     Invalid(String),

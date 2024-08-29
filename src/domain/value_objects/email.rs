@@ -4,7 +4,7 @@ use std::fmt::{Display, Formatter};
 use thiserror::Error;
 use validator::Validate;
 
-#[derive(Debug, Clone, Error)]
+#[derive(Debug, Clone, PartialEq, Error)]
 pub enum EmailError {
     #[error("Invalid email")]
     Invalid(#[from] validator::ValidationErrors),

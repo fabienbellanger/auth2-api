@@ -5,7 +5,7 @@ use std::fmt::{Display, Formatter};
 use thiserror::Error;
 
 /// Datetime possible errors
-#[derive(Debug, Clone, Error)]
+#[derive(Debug, Clone, PartialEq, Error)]
 pub enum DateTimeError {
     #[error("Invalid date time: {0}")]
     InvalidDateTime(String),
@@ -43,6 +43,11 @@ impl UtcDateTime {
         Ok(Self {
             value: dt.with_timezone(&Utc),
         })
+    }
+
+    /// Get timestamp value
+    pub fn timestamp(&self) -> i64 {
+        self.value.timestamp()
     }
 
     /// Get date time value

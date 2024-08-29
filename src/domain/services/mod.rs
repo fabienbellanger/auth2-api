@@ -2,6 +2,7 @@
 //! They are the business logic of the application.
 
 pub mod email;
+pub mod security;
 
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::UserUseCases;

@@ -1,4 +1,4 @@
-# Authentication / Authorization API
+# Authentication / Authorization API using the Clean architecture in Rust
 
 [![Build status](https://github.com/fabienbellanger/auth2-api/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/fabienbellanger/auth2-api/actions/workflows/CI.yml)
 
@@ -40,11 +40,6 @@ Revert migration:
 ```bash
 $ sqlx migrate revert
 ```
-
-> **ATTENTION**
->
-> For security reasons, auto migrations are disabled
-> because the project uses POS database (the code is commented)!
 
 ### Project
 
@@ -148,7 +143,7 @@ ExecStart=<absolute path to server.sh>
 WantedBy=multi-user.target
 ```
 
-#### Commands list
+#### Commands list with `systemctl`
 
 | Command                                    | Description        |
 |--------------------------------------------|--------------------|
