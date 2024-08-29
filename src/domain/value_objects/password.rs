@@ -1,4 +1,5 @@
 //! Password value object representation
+// TODO: Use bcrypt instead of sha512
 
 use sha2::{Digest, Sha512};
 use std::fmt::{Display, Formatter};

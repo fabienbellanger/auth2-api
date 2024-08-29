@@ -8,7 +8,7 @@ use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::UserUseCases;
 
 /// List of services
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Service<U>
 where
     U: UserRepository,

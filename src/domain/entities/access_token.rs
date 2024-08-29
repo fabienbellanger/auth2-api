@@ -2,6 +2,9 @@
 
 use crate::domain::value_objects::datetime::UtcDateTime;
 
+/// Access Token Value represents the value of the access token
+pub type AccessTokenValue = String;
+
 /// Access Token
 #[derive(Debug, Clone)]
 pub struct AccessToken {

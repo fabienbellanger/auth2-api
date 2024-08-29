@@ -15,7 +15,7 @@ pub enum UserCreationError {
     UserAlreadyExists(String),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct CreateUserUseCaseRequest {
     pub email: Email,
     pub password: Password,
@@ -23,7 +23,7 @@ pub struct CreateUserUseCaseRequest {
     pub firstname: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct CreateUserUseCaseResponse {
     pub id: UserId,
     pub email: Email,

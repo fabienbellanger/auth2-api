@@ -43,7 +43,7 @@ pub trait PayloadExtractor<H> {
 }
 
 /// Data included in the payload
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PayloadData {
     pub user_id: String,        // TODO: Custom type?
     pub application_id: String, // TODO: Custom type?

@@ -14,6 +14,7 @@ pub const INVALID_ID: &str = "1a811ea9-2c02-4acc-ae9f-c8f8522702f3";
 pub const INVALID_EMAIL: &str = "jane.doe@test.com";
 
 /// User repository mock
+#[derive(Debug, Clone)]
 pub struct UserRepositoryMock {}
 
 #[async_trait]
