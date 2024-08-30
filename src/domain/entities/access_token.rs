@@ -9,7 +9,7 @@ pub type AccessTokenValue = String;
 #[derive(Debug, Clone)]
 pub struct AccessToken {
     /// Token
-    pub token: String,
+    pub token: AccessTokenValue,
 
     /// Expiration time
     pub expired_at: UtcDateTime,

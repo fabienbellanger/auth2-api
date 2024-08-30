@@ -1,9 +1,6 @@
 //! User entity
 
-use crate::domain::value_objects::datetime::UtcDateTime;
-use crate::domain::value_objects::email::Email;
-use crate::domain::value_objects::id::Id;
-use crate::domain::value_objects::password::Password;
+use crate::domain::value_objects::{datetime::UtcDateTime, email::Email, id::Id, password::Password};
 
 pub type UserId = Id;
 
