@@ -1,5 +1,7 @@
 //! CLI error module
 
+#![allow(dead_code)]
+
 /// CLI error code
 #[derive(Debug, Clone, PartialEq)]
 pub enum CliErrorCode {
