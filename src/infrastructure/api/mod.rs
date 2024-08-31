@@ -1,3 +1,3 @@
 //! API module
 
-mod error;
+mod response;

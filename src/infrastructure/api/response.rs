@@ -1,4 +1,4 @@
-//! API error module
+//! API response module
 
 #![allow(dead_code)]
 
@@ -6,6 +6,25 @@ use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
 use serde::Serialize;
+
+/// API response success
+#[derive(Debug, Clone)]
+pub struct ApiSuccess<T: Serialize + PartialEq>(StatusCode, Json<ApiResponseBody<T>>);
+
+impl<T> PartialEq for ApiSuccess<T>
+where
+    T: Serialize + PartialEq,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.0 == other.0 && self.1 .0 == other.1 .0
+    }
+}
+
+impl<T: Serialize + PartialEq> ApiSuccess<T> {
+    fn new(status: StatusCode, data: T) -> Self {
+        ApiSuccess(status, Json(ApiResponseBody::new(status, data)))
+    }
+}
 
 /// The response data format for all error responses.
 #[derive(Debug, Clone, PartialEq, Serialize)]
