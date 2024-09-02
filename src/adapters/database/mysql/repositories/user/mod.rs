@@ -8,6 +8,7 @@ use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::id::Id;
 use async_trait::async_trait;
 use std::sync::Arc;
+use crate::err;
 
 /// User MySQL repository
 #[derive(Debug, Clone)]
@@ -45,7 +46,10 @@ impl UserRepository for UserMysqlRepository {
         )
         .execute(self.db.pool.clone().as_ref())
         .await
-        .map_err(|err| UserCreationError::DatabaseError(err.to_string()))?;
+        .map_err(|err| {
+            error!(error = %err, "Failed to create user");
+            UserCreationError::DatabaseError(err.to_string())
+        })?;
 
         Ok(CreateUserDtoResponse(CreateUserUseCaseResponse {
             id: user_id,
