@@ -11,8 +11,11 @@ use thiserror::Error;
 /// User creation errors
 #[derive(Debug, Clone, PartialEq, Error)]
 pub enum UserCreationError {
-    #[error("User already exists: {0}")]
-    UserAlreadyExists(String),
+    #[error("Invalid user ID: {0}")]
+    InvalidId(String),
+
+    #[error("User creation error: {0}")]
+    DatabaseError(String),
 }
 
 #[derive(Debug, Clone)]
@@ -99,7 +102,7 @@ mod tests {
         let response = use_case.call(request).await;
         assert!(response.is_err());
         if let Err(e) = response {
-            assert_eq!(e, UserCreationError::UserAlreadyExists(INVALID_EMAIL.to_string()));
+            assert_eq!(e, UserCreationError::DatabaseError(INVALID_EMAIL.to_string()));
         }
     }
 }

@@ -34,7 +34,7 @@ impl UserRepository for UserRepositoryMock {
                 updated_at: UtcDateTime::now(),
             }))
         } else {
-            Err(UserCreationError::UserAlreadyExists(req.0.email.value()))
+            Err(UserCreationError::DatabaseError(req.0.email.value()))
         }
     }
 }

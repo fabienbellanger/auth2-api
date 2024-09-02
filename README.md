@@ -195,18 +195,18 @@ drill --benchmark drill.yml --stats --quiet
 ## Generate JWT ES384 keys
 
 ```bash
-mkdir infrastructure/keys
+mkdir ./keys
 
 # Private key
-openssl ecparam -name secp384r1 -genkey -noout -out infrastructure/keys/private.ec.key
+openssl ecparam -name secp384r1 -genkey -noout -out ./keys/private.ec.key
 
 # Public key
-openssl ec -in infrastructure/keys/private.ec.key -pubout -out infrastructure/keys/public.ec.pem
+openssl ec -in ./keys/private.ec.key -pubout -out ./keys/public.ec.pem
 
 # Convert SEC1 private key to PKCS8
-openssl pkcs8 -topk8 -nocrypt -in infrastructure/keys/private.ec.key -out infrastructure/keys/private.ec.pem
+openssl pkcs8 -topk8 -nocrypt -in ./keys/private.ec.key -out ./keys/private.ec.pem
 
-rm infrastructure/keys/private.ec.key
+rm ./keys/private.ec.key
 ```
 
 ## TODO
