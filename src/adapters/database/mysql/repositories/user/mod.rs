@@ -29,6 +29,8 @@ impl UserRepository for UserMysqlRepository {
         let user_id = Id::new().map_err(|err| UserCreationError::InvalidId(err.to_string()))?;
         let now = UtcDateTime::now();
 
+        error!("Test in user repository");
+
         // Create user
         let _result = sqlx::query!(
             "
@@ -40,8 +42,8 @@ impl UserRepository for UserMysqlRepository {
             req.0.password.to_string(),
             req.0.lastname,
             req.0.firstname,
-            now.to_string(),
-            now.to_string()
+            now.value(),
+            now.value()
         )
         .execute(self.db.pool.clone().as_ref())
         .await

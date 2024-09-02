@@ -18,6 +18,35 @@ servers:
   - url: https://localhost/api/v1
     description: Production server
 paths:
+  /users:
+    post:
+      summary: Create a user
+      description: Create a user
+      tags:
+        - "Users"
+      #      security:
+      #        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUserResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 components:
   securitySchemes:
     bearerAuth:
@@ -77,3 +106,47 @@ components:
       required:
         - code
         - message
+    CreateUserRequest:
+      type: object
+      properties:
+        lastname:
+          type: string
+        firstname:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+      required:
+        - lastname
+        - firstname
+        - email
+        - password
+    CreateUserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        lastname:
+          type: string
+        firstname:
+          type: string
+        email:
+          type: string
+          format: email
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - lastname
+        - firstname
+        - email
+        - created_at
+        - updated_at

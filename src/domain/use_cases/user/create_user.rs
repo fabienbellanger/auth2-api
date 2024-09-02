@@ -14,6 +14,12 @@ pub enum UserCreationError {
     #[error("Invalid user ID: {0}")]
     InvalidId(String),
 
+    #[error("Invalid user email: {0}")]
+    InvalidEmail(String),
+
+    #[error("Invalid user password: {0}")]
+    InvalidPassword(String),
+
     #[error("User creation error: {0}")]
     DatabaseError(String),
 }

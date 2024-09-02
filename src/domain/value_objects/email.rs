@@ -6,7 +6,7 @@ use validator::Validate;
 
 #[derive(Debug, Clone, PartialEq, Error)]
 pub enum EmailError {
-    #[error("Invalid email")]
+    #[error("Invalid email: {0}")]
     Invalid(#[from] validator::ValidationErrors),
 }
 

@@ -9,7 +9,7 @@ use validator::Validate;
 
 #[derive(Debug, Clone, PartialEq, Error)]
 pub enum PasswordError {
-    #[error("Invalid password")]
+    #[error("Invalid password: {0}")]
     Invalid(#[from] validator::ValidationErrors),
 
     #[error("Password hash error: {0}")]

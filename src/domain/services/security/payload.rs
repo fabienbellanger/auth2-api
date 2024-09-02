@@ -7,6 +7,9 @@ use thiserror::Error;
 /// Payload errors
 #[derive(Debug, Clone, PartialEq, Error)]
 pub enum PayloadError {
+    #[error("Missing token")]
+    MissingToken,
+
     #[error("Invalid token: {0}")]
     ParseTokenError(String),
 
