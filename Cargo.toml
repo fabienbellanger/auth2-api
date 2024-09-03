@@ -7,6 +7,10 @@ authors = ["Fabien Bellanger <valentil@gmail.com>"]
 repository = "https://github.com/fabienbellanger/auth2-api"
 readme = "./README.md"
 
+[[bin]]
+name = "auth2-api"
+path = "src/bin/main.rs"
+
 [dependencies]
 
 # Serde
