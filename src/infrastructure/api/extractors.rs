@@ -49,31 +49,31 @@ impl PayloadExtractor<HeaderMap> for Payload {
     }
 }
 
-/// JWT extractor from HTTP headers
-pub struct ExtractJWT(pub Option<String>);
-
-#[async_trait]
-impl<S> FromRequestParts<S> for ExtractJWT
-where
-    S: Send + Sync,
-{
-    type Rejection = ();
-
-    async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
-        match parts.headers.get(header::AUTHORIZATION) {
-            Some(token) => {
-                let token = token
-                    .to_str()
-                    .unwrap_or_default()
-                    .to_string()
-                    .strip_prefix("Bearer ")
-                    .map(|s| s.to_string());
-                Ok(Self(token))
-            }
-            _ => Ok(Self(None)),
-        }
-    }
-}
+// /// JWT extractor from HTTP headers
+// pub struct ExtractJWT(pub Option<String>);
+//
+// #[async_trait]
+// impl<S> FromRequestParts<S> for ExtractJWT
+// where
+//     S: Send + Sync,
+// {
+//     type Rejection = ();
+//
+//     async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
+//         match parts.headers.get(header::AUTHORIZATION) {
+//             Some(token) => {
+//                 let token = token
+//                     .to_str()
+//                     .unwrap_or_default()
+//                     .to_string()
+//                     .strip_prefix("Bearer ")
+//                     .map(|s| s.to_string());
+//                 Ok(Self(token))
+//             }
+//             _ => Ok(Self(None)),
+//         }
+//     }
+// }
 
 // We define our own `Path` extractor that customizes the error from `axum::extract::Path`
 pub struct Path<T>(pub T);

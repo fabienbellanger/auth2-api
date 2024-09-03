@@ -12,10 +12,10 @@ use validator::Validate;
 impl From<UserCreationError> for ApiError {
     fn from(value: UserCreationError) -> Self {
         match value {
-            UserCreationError::InvalidId(err) => ApiError::InternalServerError(err.to_string()),
             UserCreationError::InvalidEmail(err) => ApiError::BadRequest(err.to_string()),
             UserCreationError::InvalidPassword(err) => ApiError::BadRequest(err.to_string()),
-            UserCreationError::DatabaseError(err) => ApiError::InternalServerError(err.to_string()),
+            UserCreationError::InvalidId() => ApiError::InternalServerError("User creation error".to_string()),
+            UserCreationError::DatabaseError() => ApiError::InternalServerError("User creation error".to_string()),
         }
     }
 }

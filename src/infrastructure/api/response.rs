@@ -38,25 +38,16 @@ pub struct ApiErrorData {
 
 /// Generic response structure shared by all API responses.
 #[derive(Debug, Clone, PartialEq, Serialize)]
-pub struct ApiResponseBody<T: Serialize + PartialEq> {
+pub struct ApiErrorResponseBody<T: Serialize + PartialEq> {
     code: u16,
-    data: T,
+    message: T,
 }
 
-impl<T: Serialize + PartialEq> ApiResponseBody<T> {
-    pub fn new(status_code: StatusCode, data: T) -> Self {
+impl<T: Serialize + PartialEq> ApiErrorResponseBody<T> {
+    pub fn new(status_code: StatusCode, message: T) -> Self {
         Self {
             code: status_code.as_u16(),
-            data,
-        }
-    }
-}
-
-impl ApiResponseBody<ApiErrorData> {
-    pub fn new_error(status_code: StatusCode, message: String) -> Self {
-        Self {
-            code: status_code.as_u16(),
-            data: ApiErrorData { message },
+            message,
         }
     }
 }
@@ -76,72 +67,71 @@ pub enum ApiError {
     PayloadTooLarge,
 }
 
+impl ApiError {
+    fn response(code: StatusCode, message: &str) -> impl IntoResponse + '_ {
+        match code {
+            StatusCode::REQUEST_TIMEOUT => (
+                StatusCode::REQUEST_TIMEOUT,
+                Json(ApiErrorResponseBody::new(StatusCode::REQUEST_TIMEOUT, message)),
+            ),
+            StatusCode::TOO_MANY_REQUESTS => (
+                StatusCode::TOO_MANY_REQUESTS,
+                Json(ApiErrorResponseBody::new(StatusCode::TOO_MANY_REQUESTS, message)),
+            ),
+            StatusCode::METHOD_NOT_ALLOWED => (
+                StatusCode::METHOD_NOT_ALLOWED,
+                Json(ApiErrorResponseBody::new(StatusCode::METHOD_NOT_ALLOWED, message)),
+            ),
+            StatusCode::PAYLOAD_TOO_LARGE => (
+                StatusCode::PAYLOAD_TOO_LARGE,
+                Json(ApiErrorResponseBody::new(StatusCode::PAYLOAD_TOO_LARGE, message)),
+            ),
+            StatusCode::BAD_REQUEST => (
+                StatusCode::BAD_REQUEST,
+                Json(ApiErrorResponseBody::new(StatusCode::BAD_REQUEST, message)),
+            ),
+            StatusCode::UNAUTHORIZED => (
+                StatusCode::UNAUTHORIZED,
+                Json(ApiErrorResponseBody::new(StatusCode::UNAUTHORIZED, message)),
+            ),
+            StatusCode::FORBIDDEN => (
+                StatusCode::FORBIDDEN,
+                Json(ApiErrorResponseBody::new(StatusCode::FORBIDDEN, message)),
+            ),
+            StatusCode::NOT_FOUND => (
+                StatusCode::NOT_FOUND,
+                Json(ApiErrorResponseBody::new(StatusCode::NOT_FOUND, message)),
+            ),
+            _ => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(ApiErrorResponseBody::new(StatusCode::INTERNAL_SERVER_ERROR, message)),
+            ),
+        }
+    }
+}
+
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
         match self {
-            ApiError::Timeout => (
-                StatusCode::REQUEST_TIMEOUT,
-                Json(ApiResponseBody::new_error(
-                    StatusCode::REQUEST_TIMEOUT,
-                    "Request timeout".to_string(),
-                )),
-            )
-                .into_response(),
-            ApiError::TooManyRequests => (
-                StatusCode::TOO_MANY_REQUESTS,
-                Json(ApiResponseBody::new_error(
-                    StatusCode::TOO_MANY_REQUESTS,
-                    "Too many requests".to_string(),
-                )),
-            )
-                .into_response(),
-            ApiError::MethodNotAllowed => (
-                StatusCode::METHOD_NOT_ALLOWED,
-                Json(ApiResponseBody::new_error(
-                    StatusCode::METHOD_NOT_ALLOWED,
-                    "Method not allowed".to_string(),
-                )),
-            )
-                .into_response(),
-            ApiError::PayloadTooLarge => (
-                StatusCode::PAYLOAD_TOO_LARGE,
-                Json(ApiResponseBody::new_error(
-                    StatusCode::PAYLOAD_TOO_LARGE,
-                    "Payload too large".to_string(),
-                )),
-            )
-                .into_response(),
-            ApiError::BadRequest(message) => (
-                StatusCode::BAD_REQUEST,
-                Json(ApiResponseBody::new_error(StatusCode::BAD_REQUEST, message)),
-            )
-                .into_response(),
-            ApiError::Unauthorized(message) => (
-                StatusCode::UNAUTHORIZED,
-                Json(ApiResponseBody::new_error(StatusCode::UNAUTHORIZED, message)),
-            )
-                .into_response(),
-            ApiError::Forbidden(message) => (
-                StatusCode::FORBIDDEN,
-                Json(ApiResponseBody::new_error(StatusCode::FORBIDDEN, message)),
-            )
-                .into_response(),
-            ApiError::NotFound(message) => (
-                StatusCode::NOT_FOUND,
-                Json(ApiResponseBody::new_error(StatusCode::NOT_FOUND, message)),
-            )
-                .into_response(),
-            ApiError::UnprocessableEntity(message) => (
-                StatusCode::UNPROCESSABLE_ENTITY,
-                Json(ApiResponseBody::new_error(StatusCode::UNPROCESSABLE_ENTITY, message)),
-            )
-                .into_response(),
+            ApiError::Timeout => Self::response(StatusCode::REQUEST_TIMEOUT, "Request timeout").into_response(),
+            ApiError::TooManyRequests => {
+                Self::response(StatusCode::TOO_MANY_REQUESTS, "Too many requests").into_response()
+            }
+            ApiError::MethodNotAllowed => {
+                Self::response(StatusCode::METHOD_NOT_ALLOWED, "Method not allowed").into_response()
+            }
+            ApiError::PayloadTooLarge => {
+                Self::response(StatusCode::PAYLOAD_TOO_LARGE, "Payload too large").into_response()
+            }
+            ApiError::BadRequest(message) => Self::response(StatusCode::BAD_REQUEST, &message).into_response(),
+            ApiError::Unauthorized(message) => Self::response(StatusCode::UNAUTHORIZED, &message).into_response(),
+            ApiError::Forbidden(message) => Self::response(StatusCode::FORBIDDEN, &message).into_response(),
+            ApiError::NotFound(message) => Self::response(StatusCode::NOT_FOUND, &message).into_response(),
+            ApiError::UnprocessableEntity(message) => {
+                Self::response(StatusCode::UNPROCESSABLE_ENTITY, &message).into_response()
+            }
             ApiError::InternalServerError(message) => {
-                // Log the error
-                error!("{}", message);
-
-                // Return the response
-                (StatusCode::INTERNAL_SERVER_ERROR, Json(ApiErrorData { message })).into_response()
+                Self::response(StatusCode::INTERNAL_SERVER_ERROR, &message).into_response()
             }
         }
     }

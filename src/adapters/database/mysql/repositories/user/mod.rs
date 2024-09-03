@@ -8,7 +8,6 @@ use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::id::Id;
 use async_trait::async_trait;
 use std::sync::Arc;
-use crate::err;
 
 /// User MySQL repository
 #[derive(Debug, Clone)]
@@ -27,7 +26,10 @@ impl UserMysqlRepository {
 impl UserRepository for UserMysqlRepository {
     #[instrument(skip(self), name = "user_repository_create")]
     async fn create_user(&self, req: CreateUserDtoRequest) -> Result<CreateUserDtoResponse, UserCreationError> {
-        let user_id = Id::new().map_err(|err| UserCreationError::InvalidId(err.to_string()))?;
+        let user_id = Id::new().map_err(|err| {
+            error!(error = %err, "Failed to create user ID");
+            UserCreationError::InvalidId()
+        })?;
         let now = UtcDateTime::now();
 
         // Create user
@@ -48,7 +50,7 @@ impl UserRepository for UserMysqlRepository {
         .await
         .map_err(|err| {
             error!(error = %err, "Failed to create user");
-            UserCreationError::DatabaseError(err.to_string())
+            UserCreationError::DatabaseError()
         })?;
 
         Ok(CreateUserDtoResponse(CreateUserUseCaseResponse {
