@@ -4,6 +4,7 @@ use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
 use serde::Serialize;
+use thiserror::Error;
 
 /// API response success
 #[derive(Debug, Clone)]
@@ -47,17 +48,36 @@ impl<T: Serialize + PartialEq> ApiErrorResponse<T> {
 }
 
 /// API error
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Error)]
 pub enum ApiError {
+    #[error("Bad request: {0}")]
     BadRequest(String),
+
+    #[error("Unauthorized: {0}")]
     Unauthorized(String),
+
+    #[error("Forbidden: {0}")]
     Forbidden(String),
+
+    #[error("Not found: {0}")]
     NotFound(String),
+
+    #[error("Unprocessable entity: {0}")]
     UnprocessableEntity(String),
+
+    #[error("Internal server error: {0}")]
     InternalServerError(String),
+
+    #[error("Timeout")]
     Timeout,
+
+    #[error("Too many requests")]
     TooManyRequests,
+
+    #[error("Method not allowed")]
     MethodNotAllowed,
+
+    #[error("Payload too large")]
     PayloadTooLarge,
 }
 

@@ -53,8 +53,8 @@ paths:
       description: Create a user
       tags:
         - "Users"
-      #      security:
-      #        - bearerAuth: []
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:

@@ -4,8 +4,10 @@ use crate::config::Config;
 use crate::infrastructure::api::handlers;
 use crate::infrastructure::api::layers::basic_auth::BasicAuthLayer;
 use crate::infrastructure::api::layers::state::SharedState;
+use crate::infrastructure::api::layers::auth::JwtLayer;
 use axum::routing::{get, post};
 use axum::Router;
+use crate::auth;
 
 /// Return web routes list
 pub fn web(settings: &Config) -> Router<SharedState> {
@@ -36,8 +38,8 @@ pub fn api(state: SharedState) -> Router<SharedState> {
 }
 
 /// Protected API routes
-fn api_protected(_state: SharedState) -> Router<SharedState> {
-    Router::new().nest("/users", api_users())
+fn api_protected(state: SharedState) -> Router<SharedState> {
+    Router::new().nest("/users", api_users().layer(auth!(state)))
 }
 
 /// Users API routes

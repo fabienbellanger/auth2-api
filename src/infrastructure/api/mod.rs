@@ -5,7 +5,7 @@ mod extractors;
 mod handlers;
 mod layers;
 mod logger;
-mod response;
+pub mod response;
 mod routes;
 pub mod server;
 mod user_cases;

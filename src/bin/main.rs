@@ -1,9 +1,7 @@
-use auth2_api::infrastructure::api::server::start_server;
-use std::error::Error;
+use auth2_api::infrastructure::cli;
+use auth2_api::infrastructure::cli::error::CliError;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
-    start_server().await.unwrap();
-
-    Ok(())
+async fn main() -> Result<(), CliError> {
+    cli::start().await
 }
