@@ -30,20 +30,14 @@ impl<T: Serialize + PartialEq> IntoResponse for ApiSuccess<T> {
     }
 }
 
-/// The response data format for all error responses.
-#[derive(Debug, Clone, PartialEq, Serialize)]
-pub struct ApiErrorData {
-    pub message: String,
-}
-
 /// Generic response structure shared by all API responses.
 #[derive(Debug, Clone, PartialEq, Serialize)]
-pub struct ApiErrorResponseBody<T: Serialize + PartialEq> {
+pub struct ApiErrorResponse<T: Serialize + PartialEq> {
     code: u16,
     message: T,
 }
 
-impl<T: Serialize + PartialEq> ApiErrorResponseBody<T> {
+impl<T: Serialize + PartialEq> ApiErrorResponse<T> {
     pub fn new(status_code: StatusCode, message: T) -> Self {
         Self {
             code: status_code.as_u16(),
@@ -72,39 +66,39 @@ impl ApiError {
         match code {
             StatusCode::REQUEST_TIMEOUT => (
                 StatusCode::REQUEST_TIMEOUT,
-                Json(ApiErrorResponseBody::new(StatusCode::REQUEST_TIMEOUT, message)),
+                Json(ApiErrorResponse::new(StatusCode::REQUEST_TIMEOUT, message)),
             ),
             StatusCode::TOO_MANY_REQUESTS => (
                 StatusCode::TOO_MANY_REQUESTS,
-                Json(ApiErrorResponseBody::new(StatusCode::TOO_MANY_REQUESTS, message)),
+                Json(ApiErrorResponse::new(StatusCode::TOO_MANY_REQUESTS, message)),
             ),
             StatusCode::METHOD_NOT_ALLOWED => (
                 StatusCode::METHOD_NOT_ALLOWED,
-                Json(ApiErrorResponseBody::new(StatusCode::METHOD_NOT_ALLOWED, message)),
+                Json(ApiErrorResponse::new(StatusCode::METHOD_NOT_ALLOWED, message)),
             ),
             StatusCode::PAYLOAD_TOO_LARGE => (
                 StatusCode::PAYLOAD_TOO_LARGE,
-                Json(ApiErrorResponseBody::new(StatusCode::PAYLOAD_TOO_LARGE, message)),
+                Json(ApiErrorResponse::new(StatusCode::PAYLOAD_TOO_LARGE, message)),
             ),
             StatusCode::BAD_REQUEST => (
                 StatusCode::BAD_REQUEST,
-                Json(ApiErrorResponseBody::new(StatusCode::BAD_REQUEST, message)),
+                Json(ApiErrorResponse::new(StatusCode::BAD_REQUEST, message)),
             ),
             StatusCode::UNAUTHORIZED => (
                 StatusCode::UNAUTHORIZED,
-                Json(ApiErrorResponseBody::new(StatusCode::UNAUTHORIZED, message)),
+                Json(ApiErrorResponse::new(StatusCode::UNAUTHORIZED, message)),
             ),
             StatusCode::FORBIDDEN => (
                 StatusCode::FORBIDDEN,
-                Json(ApiErrorResponseBody::new(StatusCode::FORBIDDEN, message)),
+                Json(ApiErrorResponse::new(StatusCode::FORBIDDEN, message)),
             ),
             StatusCode::NOT_FOUND => (
                 StatusCode::NOT_FOUND,
-                Json(ApiErrorResponseBody::new(StatusCode::NOT_FOUND, message)),
+                Json(ApiErrorResponse::new(StatusCode::NOT_FOUND, message)),
             ),
             _ => (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                Json(ApiErrorResponseBody::new(StatusCode::INTERNAL_SERVER_ERROR, message)),
+                Json(ApiErrorResponse::new(StatusCode::INTERNAL_SERVER_ERROR, message)),
             ),
         }
     }

@@ -1,26 +1,26 @@
 concurrency: 256
-base: "http://localhost:8087"
-iterations: 10000
+base: "http://localhost:8085"
+iterations: 1000
 rampup: 0
 
 plan:
   - name: Health Check
     request:
-      url: /health-check
+      url: /health
 
-  - name: Login
+  - name: Get access token
     assign: login # To use token => {{login.body.access_token}} (Ex.: Authorization: 'Bearer {{login.body.access_token}}')
     request:
-      url: /api/v1/login
+      url: /api/v1/token
       method: POST
-      body: '{"email": "test@testest.com", "password": "11111111"}'
+      body: '{"email": "user@example.com", "password": "AAAAAAAA"}'
       headers:
         Content-Type: "application/json"
 
-  - name: Get all users
-    request:
-      url: /api/v1/users
-      method: GET
-      headers:
-        Content-Type: "application/json"
-        Authorization: 'Bearer {{login.body.access_token}}'
+#  - name: Get all users
+#    request:
+#      url: /api/v1/users
+#      method: GET
+#      headers:
+#        Content-Type: "application/json"
+#        Authorization: 'Bearer {{login.body.access_token}}'

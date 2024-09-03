@@ -18,9 +18,6 @@ pub struct Config {
     /// Environment: `development` or `production`
     pub environment: String,
 
-    /// Rust logs
-    pub rust_log: String,
-
     /// Path of log files
     pub logs_path: String,
     /// Log file name

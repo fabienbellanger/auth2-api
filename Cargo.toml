@@ -44,7 +44,7 @@ sqlx = { version = "0.8.1", features = ["runtime-tokio-native-tls", "chrono", "m
 lettre = "0.11.7"
 mime = "0.3.17"
 
-async-trait = "0.1.81"
+async-trait = "0.1.82"
 dotenvy = "0.15.7"
 chrono = { version = "0.4.38", features = ["clock", "std", "serde"], default-features = false }
 jsonwebtoken = "9.3.0"

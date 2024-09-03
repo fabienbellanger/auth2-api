@@ -8,7 +8,7 @@ use std::{fs::read_to_string, sync::Arc};
 /// SharedState
 pub type SharedState = Arc<State>;
 
-// #[derive(Default, Debug)]
+#[derive(Debug)]
 pub struct State {
     pub config: ConfigState,
     pub jwt: Jwt,
@@ -42,6 +42,7 @@ impl State {
     }
 }
 
+#[derive(Debug)]
 pub struct ConfigState {
     /// Body limit in MB
     pub request_body_max_size: usize,

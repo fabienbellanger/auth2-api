@@ -7,7 +7,7 @@ pub mod state;
 
 use crate::config::Config;
 use crate::infrastructure::api::layers::state::SharedState;
-use crate::infrastructure::api::response::{ApiError, ApiErrorResponseBody};
+use crate::infrastructure::api::response::{ApiError, ApiErrorResponse};
 use axum::body::Body;
 use axum::extract::State;
 use axum::http::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE, ORIGIN};
@@ -43,7 +43,7 @@ pub fn body_from_parts(
     }
 
     // Body
-    let msg = serde_json::json!(ApiErrorResponseBody::new(status_code, message));
+    let msg = serde_json::json!(ApiErrorResponse::new(status_code, message));
 
     Bytes::from(msg.to_string())
 }

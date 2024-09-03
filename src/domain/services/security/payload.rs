@@ -53,6 +53,17 @@ pub struct PayloadData {
     pub client_id: String,      // TODO: Custom type?
 }
 
+impl PayloadData {
+    /// Create a new payload data
+    pub fn new(user_id: String, application_id: String, client_id: String) -> Self {
+        Self {
+            user_id,
+            application_id,
+            client_id,
+        }
+    }
+}
+
 impl From<Payload> for PayloadData {
     fn from(payload: Payload) -> Self {
         Self {

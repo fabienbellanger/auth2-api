@@ -3,28 +3,14 @@
 use crate::domain::use_cases::user::create_user::{
     CreateUserUseCaseRequest, CreateUserUseCaseResponse, UserCreationError,
 };
+use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCaseResponse;
 use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::password::Password;
-use crate::infrastructure::api::response::ApiError;
 use serde::{Deserialize, Serialize};
-use validator::Validate;
 
-impl From<UserCreationError> for ApiError {
-    fn from(value: UserCreationError) -> Self {
-        match value {
-            UserCreationError::InvalidEmail(err) => ApiError::BadRequest(err.to_string()),
-            UserCreationError::InvalidPassword(err) => ApiError::BadRequest(err.to_string()),
-            UserCreationError::InvalidId() => ApiError::InternalServerError("User creation error".to_string()),
-            UserCreationError::DatabaseError() => ApiError::InternalServerError("User creation error".to_string()),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Deserialize, Validate)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct CreateUserRequest {
-    #[validate(email)]
     pub email: String,
-    #[validate(length(min = 8))]
     pub password: String,
     pub lastname: String,
     pub firstname: String,
@@ -66,6 +52,27 @@ impl From<CreateUserUseCaseResponse> for CreateUserResponse {
             email: value.email.value(),
             created_at: value.created_at.to_string(),
             updated_at: value.updated_at.to_string(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct GetAccessTokenRequest {
+    pub email: String,
+    pub password: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct GetAccessTokenResponse {
+    pub access_token: String,
+    pub access_token_expired_at: String,
+}
+
+impl From<GetAccessTokenUseCaseResponse> for GetAccessTokenResponse {
+    fn from(value: GetAccessTokenUseCaseResponse) -> Self {
+        Self {
+            access_token: value.access_token,
+            access_token_expired_at: value.access_token_expired_at.to_string(),
         }
     }
 }

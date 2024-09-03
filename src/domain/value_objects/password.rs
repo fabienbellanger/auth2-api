@@ -1,8 +1,10 @@
 //! Password value object representation
+//!
+//! Attention: argon2 is slow!
 
 use argon2::password_hash::rand_core::OsRng;
 use argon2::password_hash::SaltString;
-use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
+use argon2::{Algorithm, Argon2, Params, PasswordHash, PasswordHasher, PasswordVerifier, Version};
 use std::fmt::{Display, Formatter};
 use thiserror::Error;
 use validator::Validate;
@@ -20,6 +22,7 @@ pub enum PasswordError {
 pub struct Password {
     #[validate(length(min = 8))]
     value: String,
+    original: Option<String>,
 }
 
 impl Password {
@@ -45,13 +48,20 @@ impl Password {
     pub fn new(value: &str, hashed: bool) -> Result<Self, PasswordError> {
         let mut password = Self {
             value: value.to_string(),
+            original: None,
         };
 
         if !hashed {
             password.validate()?;
 
+            password.original = Some(value.to_string());
+
             // Hash password
-            let argon2 = Argon2::default();
+            let argon2 = Argon2::new(
+                Algorithm::Argon2id,
+                Version::default(),
+                Params::new(512, 2, 1, None).map_err(|err| PasswordError::HashError(err.to_string()))?,
+            );
             let salt = SaltString::generate(&mut OsRng);
 
             password.value = argon2
@@ -68,6 +78,11 @@ impl Password {
         self.value.clone()
     }
 
+    /// Get original password
+    pub fn original(&self) -> Option<String> {
+        self.original.clone()
+    }
+
     /// Verify password
     ///
     /// # Example
@@ -76,14 +91,17 @@ impl Password {
     ///
     /// // Valid password
     /// let hashed_password = Password::new("1234567890", false).unwrap();
-    /// dbg!(&hashed_password);
     /// assert!(hashed_password.verify("1234567890").is_ok());
     ///
     /// // Invalid password
     /// assert!(hashed_password.verify("1234567").is_err());
     /// ```
     pub fn verify(&self, password: &str) -> Result<(), PasswordError> {
-        let argon2 = Argon2::default();
+        let argon2 = Argon2::new(
+            Algorithm::Argon2id,
+            Version::default(),
+            Params::new(512, 2, 1, None).map_err(|err| PasswordError::HashError(err.to_string()))?,
+        );
         let parsed_hash = PasswordHash::new(&self.value).map_err(|err| PasswordError::HashError(err.to_string()))?;
 
         argon2

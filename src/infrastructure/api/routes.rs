@@ -10,7 +10,7 @@ use axum::Router;
 /// Return web routes list
 pub fn web(settings: &Config) -> Router<SharedState> {
     Router::new()
-        .route("/health-check", get(handlers::web::health))
+        .route("/health", get(handlers::web::health))
         // API documentation
         .nest(
             "/doc",
@@ -27,7 +27,7 @@ pub fn web(settings: &Config) -> Router<SharedState> {
 pub fn api(state: SharedState) -> Router<SharedState> {
     Router::new()
         // Public routes
-        // .route("/login", post(Users::login))
+        .route("/token", post(handlers::user::get_access_token))
         // .route("/forgotten-password/:email", post(Users::forgotten_password))
         // .route("/update-password/:token", patch(Users::update_password))
         // .route("/refresh-token/:token", post(Users::refresh_token))

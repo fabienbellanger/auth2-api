@@ -1,12 +1,18 @@
 //! User MySQL repository
 
 use crate::adapters::database::mysql::Db;
-use crate::domain::repositories::user::dto::{CreateUserDtoRequest, CreateUserDtoResponse};
+use crate::domain::repositories::user::dto::{
+    CreateUserDtoRequest, CreateUserDtoResponse, GetAccessTokenInformationDtoRequest,
+    GetAccessTokenInformationDtoResponse,
+};
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::create_user::{CreateUserUseCaseResponse, UserCreationError};
+use crate::domain::use_cases::user::get_access_token::GetAccessTokenError;
 use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::id::Id;
+use crate::domain::value_objects::password::Password;
 use async_trait::async_trait;
+use std::str::FromStr;
 use std::sync::Arc;
 
 /// User MySQL repository
@@ -62,5 +68,36 @@ impl UserRepository for UserMysqlRepository {
             created_at: now.clone(),
             updated_at: now,
         }))
+    }
+
+    #[instrument(skip(self), name = "user_repository_get_user_by_email")]
+    async fn get_access_token_information(
+        &self,
+        req: GetAccessTokenInformationDtoRequest,
+    ) -> Result<Option<GetAccessTokenInformationDtoResponse>, GetAccessTokenError> {
+        let result = sqlx::query!(
+            "
+            SELECT id, password
+            FROM users
+            WHERE email = ?
+                AND deleted_at IS NULL",
+            req.0.to_string()
+        )
+        .fetch_optional(self.db.pool.clone().as_ref())
+        .await
+        .map_err(|err| {
+            error!(error = %err, "Failed to get user by email");
+            GetAccessTokenError::DatabaseError()
+        })?;
+
+        let response = match result {
+            Some(row) => Some(GetAccessTokenInformationDtoResponse {
+                id: Id::from_str(&row.id).map_err(|_| GetAccessTokenError::InvalidId())?,
+                password: Password::new(&row.password, true).map_err(|_| GetAccessTokenError::InvalidPassword())?,
+            }),
+            None => None,
+        };
+
+        Ok(response)
     }
 }

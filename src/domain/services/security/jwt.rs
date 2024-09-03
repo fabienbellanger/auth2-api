@@ -164,7 +164,7 @@ impl Jwt {
     pub fn generate(&self, data: PayloadData) -> Result<AccessToken, JwtError> {
         let header = jsonwebtoken::Header::new(self.algorithm);
         let now = Utc::now();
-        let access_expired_at = now.add(chrono::Duration::minutes(self.refresh_lifetime));
+        let access_expired_at = now.add(chrono::Duration::minutes(self.access_lifetime));
 
         let payload = Payload {
             sub: data.user_id,
