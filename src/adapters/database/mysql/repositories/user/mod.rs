@@ -1,19 +1,46 @@
 //! User MySQL repository
 
-use crate::adapters::database::mysql::Db;
+use crate::adapters::database::mysql::{Db, PaginationSort};
 use crate::domain::repositories::user::dto::{
-    CreateUserDtoRequest, CreateUserDtoResponse, GetAccessTokenInformationDtoRequest,
-    GetAccessTokenInformationDtoResponse,
+    CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse,
+    GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse, GetUsersDtoRequest, GetUsersDtoResponse,
 };
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::create_user::{CreateUserUseCaseResponse, UserCreationError};
 use crate::domain::use_cases::user::get_access_token::GetAccessTokenError;
+use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
 use crate::domain::value_objects::datetime::UtcDateTime;
+use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::id::Id;
 use crate::domain::value_objects::password::Password;
 use async_trait::async_trait;
+use sqlx::mysql::MySqlRow;
+use sqlx::Row;
 use std::str::FromStr;
 use std::sync::Arc;
+
+impl From<sqlx::error::Error> for UserUseCaseError {
+    fn from(err: sqlx::error::Error) -> Self {
+        error!(error = %err, "Database error");
+        UserUseCaseError::DatabaseError("Database error".to_string())
+    }
+}
+
+impl TryFrom<MySqlRow> for UserUseCaseResponse {
+    type Error = UserUseCaseError;
+
+    fn try_from(row: MySqlRow) -> Result<Self, Self::Error> {
+        Ok(UserUseCaseResponse {
+            id: Id::from_str(row.try_get("id")?)?,
+            email: Email::new(row.try_get("email")?)?,
+            password: Password::new(row.try_get("password")?, true)?,
+            lastname: row.try_get("lastname")?,
+            firstname: row.try_get("firstname")?,
+            created_at: UtcDateTime::from_rfc3339(row.try_get("created_at")?)?,
+            updated_at: UtcDateTime::from_rfc3339(row.try_get("updated_at")?)?,
+        })
+    }
+}
 
 /// User MySQL repository
 #[derive(Debug, Clone)]
@@ -99,5 +126,55 @@ impl UserRepository for UserMysqlRepository {
         };
 
         Ok(response)
+    }
+
+    #[instrument(skip(self), name = "user_repository_get_users")]
+    async fn get_users(&self, req: GetUsersDtoRequest) -> Result<GetUsersDtoResponse, UserUseCaseError> {
+        let mut query = String::from(
+            r#"
+            SELECT id, email, lastname, firstname, created_at, updated_at
+            FROM users
+            WHERE deleted_at IS NULL
+        "#,
+        );
+
+        let filter = PaginationSort::from(req.0.filter.unwrap_or_default());
+
+        // Sorts and pagination
+        query.push_str(&filter.get_sorts_sql(Some(&[
+            "id",
+            "lastname",
+            "firstname",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+        ])));
+        query.push_str(&filter.get_pagination_sql());
+
+        let users = sqlx::query(&query)
+            .fetch_all(self.db.pool.clone().as_ref())
+            .await
+            .map_err(|err| {
+                error!(error = %err, "Failed to get users");
+                UserUseCaseError::DatabaseError("Failed to get users".to_string())
+            })?
+            .into_iter()
+            .map(UserUseCaseResponse::try_from)
+            .collect::<Result<Vec<_>, _>>()?;
+
+        Ok(GetUsersDtoResponse(users))
+    }
+
+    #[instrument(skip(self, _req), name = "user_repository_count_users")]
+    async fn count_users(&self, _req: CountUsersDtoRequest) -> Result<CountUsersDtoResponse, UserUseCaseError> {
+        let result = sqlx::query!("SELECT COUNT(*) AS total FROM users WHERE deleted_at IS NULL")
+            .fetch_one(self.db.pool.clone().as_ref())
+            .await
+            .map_err(|err| {
+                error!(error = %err, "Failed to count users");
+                UserUseCaseError::DatabaseError("Failed to count users".to_string())
+            })?;
+
+        Ok(CountUsersDtoResponse(result.total))
     }
 }

@@ -4,9 +4,9 @@ use chrono::{DateTime, Utc};
 use std::fmt::{Display, Formatter};
 use thiserror::Error;
 
-/// Datetime possible errors
+/// UTC Datetime possible errors
 #[derive(Debug, Clone, PartialEq, Error)]
-pub enum DateTimeError {
+pub enum UtcDateTimeError {
     #[error("Invalid date time: {0}")]
     InvalidDateTime(String),
 }
@@ -36,9 +36,9 @@ impl UtcDateTime {
     /// let invalid_datetime = UtcDateTime::from_rfc3339("2024-08-T12:00:00Z");
     /// assert!(invalid_datetime.is_err());
     /// ```
-    pub fn from_rfc3339(value: &str) -> Result<Self, DateTimeError> {
-        let dt =
-            DateTime::parse_from_rfc3339(value).map_err(|e| DateTimeError::InvalidDateTime(format!("{e}: {value}")))?;
+    pub fn from_rfc3339(value: &str) -> Result<Self, UtcDateTimeError> {
+        let dt = DateTime::parse_from_rfc3339(value)
+            .map_err(|e| UtcDateTimeError::InvalidDateTime(format!("{e}: {value}")))?;
 
         Ok(Self {
             value: dt.with_timezone(&Utc),

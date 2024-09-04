@@ -32,6 +32,7 @@ pub struct CreateUserUseCaseRequest {
     pub firstname: String,
 }
 
+// TODO: Change by using UserUseCaseResponse
 #[derive(Debug, Clone)]
 pub struct CreateUserUseCaseResponse {
     pub id: UserId,

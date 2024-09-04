@@ -4,4 +4,5 @@
 pub mod datetime;
 pub mod email;
 pub mod id;
+pub mod pagination;
 pub mod password;

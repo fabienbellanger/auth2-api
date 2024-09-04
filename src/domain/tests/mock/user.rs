@@ -2,12 +2,13 @@
 
 use crate::domain::entities::user::UserId;
 use crate::domain::repositories::user::dto::{
-    CreateUserDtoRequest, CreateUserDtoResponse, GetAccessTokenInformationDtoRequest,
-    GetAccessTokenInformationDtoResponse,
+    CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse,
+    GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse, GetUsersDtoRequest, GetUsersDtoResponse,
 };
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::create_user::{CreateUserUseCaseResponse, UserCreationError};
 use crate::domain::use_cases::user::get_access_token::GetAccessTokenError;
+use crate::domain::use_cases::user::UserUseCaseError;
 use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::password::Password;
 use async_trait::async_trait;
@@ -62,5 +63,15 @@ impl UserRepository for UserRepositoryMock {
             EMAIL_NOT_FOUND => Ok(None),
             _ => Err(GetAccessTokenError::DatabaseError()),
         }
+    }
+
+    /// Get all users
+    async fn get_users(&self, _req: GetUsersDtoRequest) -> Result<GetUsersDtoResponse, UserUseCaseError> {
+        Ok(GetUsersDtoResponse(vec![]))
+    }
+
+    /// Count all users
+    async fn count_users(&self, _req: CountUsersDtoRequest) -> Result<CountUsersDtoResponse, UserUseCaseError> {
+        Ok(CountUsersDtoResponse(0))
     }
 }
