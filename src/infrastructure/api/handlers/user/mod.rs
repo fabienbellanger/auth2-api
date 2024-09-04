@@ -13,7 +13,7 @@ use crate::infrastructure::api::handlers::user::dto::{
 };
 use crate::infrastructure::api::layers::state::SharedState;
 use crate::infrastructure::api::response::{ApiError, ApiSuccess};
-use crate::infrastructure::api::user_cases::AppUseCases;
+use crate::infrastructure::api::use_cases::AppUseCases;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::{Extension, Json};

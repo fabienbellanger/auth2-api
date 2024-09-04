@@ -42,10 +42,10 @@ hyper = "1.4.1"
 axum = "0.7.5"
 
 # sqlx
-sqlx = { version = "0.8.1", features = ["runtime-tokio-native-tls", "chrono", "mysql", "macros", "bigdecimal", "migrate"] }
+sqlx = { version = "0.8.2", features = ["runtime-tokio-native-tls", "chrono", "mysql", "macros", "bigdecimal", "migrate"] }
 
 # Email
-lettre = "0.11.7"
+lettre = "0.11.8"
 mime = "0.3.17"
 
 async-trait = "0.1.82"

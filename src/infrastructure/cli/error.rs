@@ -3,36 +3,30 @@
 #![allow(dead_code)]
 
 use crate::infrastructure::api::response::ApiError;
+use thiserror::Error;
 
 /// CLI error code
-#[derive(Debug, Clone, PartialEq)]
-pub enum CliErrorCode {
+#[derive(Debug, Clone, PartialEq, Error)]
+pub enum CliError {
     /// Invalid arguments
-    InvalidArguments,
+    #[error("Invalid arguments: {0}")]
+    InvalidArguments(String),
 
     /// Server error
-    ServerError,
-}
+    #[error("Server error: {0}")]
+    ServerError(String),
 
-/// CLI error
-#[derive(Debug, Clone, PartialEq)]
-pub struct CliError {
-    pub code: CliErrorCode,
-    pub message: String,
-}
+    /// Config error
+    #[error("Database error: {0}")]
+    ConfigError(String),
 
-impl CliError {
-    /// Create a new CLI error
-    pub fn new(code: CliErrorCode, message: &str) -> Self {
-        Self {
-            code,
-            message: message.to_string(),
-        }
-    }
+    /// Database error
+    #[error("Database error: {0}")]
+    DatabaseError(String),
 }
 
 impl From<ApiError> for CliError {
     fn from(err: ApiError) -> Self {
-        Self::new(CliErrorCode::ServerError, &err.to_string())
+        Self::ServerError(err.to_string())
     }
 }

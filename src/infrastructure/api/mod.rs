@@ -8,7 +8,7 @@ mod logger;
 pub mod response;
 mod routes;
 pub mod server;
-mod user_cases;
+mod use_cases;
 
 use std::sync::LazyLock;
 use tera::Tera;

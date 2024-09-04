@@ -10,7 +10,7 @@ use crate::adapters::database::GenericDb;
 use crate::config::Config;
 use crate::infrastructure::api::errors::timeout_error;
 use crate::infrastructure::api::response::ApiError;
-use crate::infrastructure::api::user_cases::AppUseCases;
+use crate::infrastructure::api::use_cases::AppUseCases;
 use axum::{error_handling::HandleErrorLayer, middleware, Extension, Router};
 use std::time::Duration;
 use tokio::net::TcpListener;
