@@ -3,14 +3,17 @@
 mod dto;
 mod error;
 
+use crate::domain::entities::user::UserId;
 use crate::domain::use_cases::user::create_user::CreateUserUseCaseRequest;
 use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCaseRequest;
+use crate::domain::use_cases::user::get_user::GetUserUseCaseRequest;
 use crate::domain::use_cases::user::get_users::GetUsersUseCaseRequest;
 use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::password::Password;
-use crate::infrastructure::api::extractors::{ExtractRequestId, Query};
+use crate::infrastructure::api::extractors::{ExtractRequestId, Path, Query};
 use crate::infrastructure::api::handlers::user::dto::{
-    CreateUserRequest, GetAccessTokenRequest, GetAccessTokenResponse, GetUsersRequest, GetUsersResponse, UserResponse,
+    CreateUserRequest, GetAccessTokenRequest, GetAccessTokenResponse, GetUserResponse, GetUsersRequest,
+    GetUsersResponse, UserResponse,
 };
 use crate::infrastructure::api::layers::state::SharedState;
 use crate::infrastructure::api::response::{ApiError, ApiSuccess};
@@ -18,6 +21,7 @@ use crate::infrastructure::api::use_cases::AppUseCases;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::{Extension, Json};
+use std::str::FromStr;
 
 /// User creation route: POST /api/v1/users
 #[instrument(skip(uc), name = "create_user_handler")]
@@ -71,6 +75,20 @@ pub async fn get_users(
         .get_users
         .call(GetUsersUseCaseRequest::try_from(request)?)
         .await?;
+
+    Ok(ApiSuccess::new(StatusCode::OK, response.into()))
+}
+
+/// Users list route: POST /api/v1/users/:user_id
+#[instrument(skip(uc), name = "get_user_handler")]
+pub async fn get_user(
+    Path(user_id): Path<String>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> Result<ApiSuccess<GetUserResponse>, ApiError> {
+    let user_id = UserId::from_str(&user_id)?;
+
+    let response = uc.user.get_user.call(GetUserUseCaseRequest { user_id }).await?;
 
     Ok(ApiSuccess::new(StatusCode::OK, response.into()))
 }

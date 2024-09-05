@@ -3,6 +3,7 @@
 use crate::adapters::database::DatabaseError;
 use crate::config::ConfigError;
 use crate::domain::services::security::jwt::JwtError;
+use crate::domain::value_objects::id::IdError;
 use crate::infrastructure::api::response::ApiError;
 use axum::BoxError;
 use tower::timeout::error::Elapsed;
@@ -31,5 +32,11 @@ impl From<ConfigError> for ApiError {
 impl From<DatabaseError> for ApiError {
     fn from(value: DatabaseError) -> Self {
         Self::InternalServerError(value.to_string())
+    }
+}
+
+impl From<IdError> for ApiError {
+    fn from(value: IdError) -> Self {
+        Self::BadRequest(value.to_string())
     }
 }

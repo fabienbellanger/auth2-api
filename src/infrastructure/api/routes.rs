@@ -47,6 +47,7 @@ fn api_users() -> Router<SharedState> {
     Router::new()
         .route("/", post(handlers::user::create_user))
         .route("/", get(handlers::user::get_users))
+        .route("/:user_id", get(handlers::user::get_user))
 }
 
 /// Scopes API routes

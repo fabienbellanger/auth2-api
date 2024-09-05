@@ -28,7 +28,7 @@ impl<U: UserRepository> GetUsersUseCase<U> {
     }
 
     /// Get all users
-    #[instrument(skip(self), name = "create_user_use_case")]
+    #[instrument(skip(self), name = "get_users_use_case")]
     pub async fn call(&self, request: GetUsersUseCaseRequest) -> Result<GetUsersUseCaseResponse, UserUseCaseError> {
         // TODO: Validation?
 

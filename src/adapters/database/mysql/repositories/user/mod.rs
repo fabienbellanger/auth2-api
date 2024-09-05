@@ -1,9 +1,11 @@
 //! User MySQL repository
 
 use crate::adapters::database::mysql::{Db, PaginationSort};
+use crate::domain::entities::user::UserId;
 use crate::domain::repositories::user::dto::{
     CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse,
-    GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse, GetUsersDtoRequest, GetUsersDtoResponse,
+    GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse, GetUserByIdDtoRequest,
+    GetUserByIdDtoResponse, GetUsersDtoRequest, GetUsersDtoResponse,
 };
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
@@ -12,6 +14,7 @@ use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::id::Id;
 use crate::domain::value_objects::password::Password;
 use async_trait::async_trait;
+use chrono::{DateTime, Utc};
 use sqlx::mysql::MySqlRow;
 use sqlx::Row;
 use std::str::FromStr;
@@ -173,5 +176,37 @@ impl UserRepository for UserMysqlRepository {
             })?;
 
         Ok(CountUsersDtoResponse(result.total))
+    }
+
+    #[instrument(skip(self, req), name = "user_repository_get_user")]
+    async fn get_user_by_id(&self, req: GetUserByIdDtoRequest) -> Result<GetUserByIdDtoResponse, UserUseCaseError> {
+        let result = sqlx::query!(
+            "
+            SELECT id, email, lastname, firstname, created_at, updated_at
+            FROM users
+            WHERE id = ?
+                AND deleted_at IS NULL",
+            req.0.user_id.to_string()
+        )
+        .fetch_optional(self.db.pool.clone().as_ref())
+        .await
+        .map_err(|err| {
+            error!(error = %err, "Failed to get user by ID");
+            UserUseCaseError::DatabaseError("Failed to get user by ID".to_string())
+        })?;
+
+        let user = match result {
+            Some(row) => UserUseCaseResponse {
+                id: UserId::from_str(&row.id)?,
+                email: Email::new(&row.email)?,
+                lastname: row.lastname,
+                firstname: row.firstname,
+                created_at: UtcDateTime::new(DateTime::<Utc>::from_naive_utc_and_offset(row.created_at, Utc)),
+                updated_at: UtcDateTime::new(DateTime::<Utc>::from_naive_utc_and_offset(row.updated_at, Utc)),
+            },
+            None => Err(UserUseCaseError::UserNotFound())?,
+        };
+
+        Ok(GetUserByIdDtoResponse(user))
     }
 }

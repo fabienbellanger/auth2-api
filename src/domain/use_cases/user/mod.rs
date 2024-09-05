@@ -2,11 +2,13 @@
 
 pub mod create_user;
 pub mod get_access_token;
+pub mod get_user;
 pub mod get_users;
 
 use crate::domain::entities::user::UserId;
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCase;
+use crate::domain::use_cases::user::get_user::GetUserUseCase;
 use crate::domain::use_cases::user::get_users::GetUsersUseCase;
 use crate::domain::value_objects::datetime::{UtcDateTime, UtcDateTimeError};
 use crate::domain::value_objects::email::{Email, EmailError};
@@ -20,6 +22,7 @@ pub struct UserUseCases<U: UserRepository> {
     pub create_user: CreateUserUseCase<U>,
     pub get_access_token: GetAccessTokenUseCase<U>,
     pub get_users: GetUsersUseCase<U>,
+    pub get_user: GetUserUseCase<U>,
 }
 
 impl<U: UserRepository> UserUseCases<U> {
@@ -28,7 +31,8 @@ impl<U: UserRepository> UserUseCases<U> {
         Self {
             create_user: CreateUserUseCase::new(user_repository.clone()),
             get_access_token: GetAccessTokenUseCase::new(user_repository.clone()),
-            get_users: GetUsersUseCase::new(user_repository),
+            get_users: GetUsersUseCase::new(user_repository.clone()),
+            get_user: GetUserUseCase::new(user_repository),
         }
     }
 }

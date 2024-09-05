@@ -3,11 +3,13 @@
 use crate::domain::entities::user::UserId;
 use crate::domain::repositories::user::dto::{
     CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse,
-    GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse, GetUsersDtoRequest, GetUsersDtoResponse,
+    GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse, GetUserByIdDtoRequest,
+    GetUserByIdDtoResponse, GetUsersDtoRequest, GetUsersDtoResponse,
 };
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
 use crate::domain::value_objects::datetime::UtcDateTime;
+use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::password::Password;
 use async_trait::async_trait;
 use std::str::FromStr;
@@ -70,5 +72,20 @@ impl UserRepository for UserRepositoryMock {
     /// Count all users
     async fn count_users(&self, _req: CountUsersDtoRequest) -> Result<CountUsersDtoResponse, UserUseCaseError> {
         Ok(CountUsersDtoResponse(0))
+    }
+
+    /// Get a user by ID
+    async fn get_user_by_id(&self, req: GetUserByIdDtoRequest) -> Result<GetUserByIdDtoResponse, UserUseCaseError> {
+        match req.0.user_id.to_string().as_str() {
+            VALID_ID => Ok(GetUserByIdDtoResponse(UserUseCaseResponse {
+                id: UserId::from_str(VALID_ID)?,
+                email: Email::new(VALID_EMAIL)?,
+                lastname: "Doe".to_string(),
+                firstname: "John".to_string(),
+                created_at: UtcDateTime::now(),
+                updated_at: UtcDateTime::now(),
+            })),
+            _ => Err(UserUseCaseError::DatabaseError("User not found".to_string())),
+        }
     }
 }

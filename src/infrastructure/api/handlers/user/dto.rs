@@ -2,6 +2,7 @@
 
 use crate::domain::use_cases::user::create_user::CreateUserUseCaseRequest;
 use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCaseResponse;
+use crate::domain::use_cases::user::get_user::GetUserUseCaseResponse;
 use crate::domain::use_cases::user::get_users::{GetUsersUseCaseRequest, GetUsersUseCaseResponse};
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
 use crate::domain::utils::query_sort::{Filter, Sorts};
@@ -10,6 +11,7 @@ use crate::domain::value_objects::pagination::Pagination;
 use crate::domain::value_objects::password::Password;
 use serde::{Deserialize, Serialize};
 
+/// User response
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct UserResponse {
     pub id: String,
@@ -33,6 +35,9 @@ impl From<UserUseCaseResponse> for UserResponse {
     }
 }
 
+// ================ User creation ================
+
+/// Create user request
 #[derive(Debug, Clone, Deserialize)]
 pub struct CreateUserRequest {
     pub email: String,
@@ -58,12 +63,16 @@ impl TryFrom<CreateUserRequest> for CreateUserUseCaseRequest {
     }
 }
 
+// ================ Get access token ================
+
+/// Get access token request
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetAccessTokenRequest {
     pub email: String,
     pub password: String,
 }
 
+/// Get access token response
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct GetAccessTokenResponse {
     pub access_token: String,
@@ -79,6 +88,9 @@ impl From<GetAccessTokenUseCaseResponse> for GetAccessTokenResponse {
     }
 }
 
+// ================ Get users ================
+
+/// Get users request
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetUsersRequest {
     #[serde(rename(deserialize = "p"))]
@@ -113,6 +125,7 @@ impl TryFrom<GetUsersRequest> for GetUsersUseCaseRequest {
     }
 }
 
+/// Get users response
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct GetUsersResponse {
     pub total: i64,
@@ -125,5 +138,17 @@ impl From<GetUsersUseCaseResponse> for GetUsersResponse {
             total: value.total,
             data: value.users.into_iter().map(|u| u.into()).collect(),
         }
+    }
+}
+
+// ================ Get user ================
+
+/// Get user response
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct GetUserResponse(UserResponse);
+
+impl From<GetUserUseCaseResponse> for GetUserResponse {
+    fn from(value: GetUserUseCaseResponse) -> Self {
+        Self(value.0.into())
     }
 }
