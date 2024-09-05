@@ -2,6 +2,7 @@
 
 use crate::domain::entities::user::UserId;
 use crate::domain::use_cases::user::create_user::CreateUserUseCaseRequest;
+use crate::domain::use_cases::user::delete_user::{DeleteUserUseCaseRequest, DeleteUserUseCaseResponse};
 use crate::domain::use_cases::user::get_user::GetUserUseCaseRequest;
 use crate::domain::use_cases::user::get_users::GetUsersUseCaseRequest;
 use crate::domain::use_cases::user::UserUseCaseResponse;
@@ -60,3 +61,13 @@ pub struct GetUserByIdDtoRequest(pub GetUserUseCaseRequest);
 /// Get users response
 #[derive(Debug, Clone)]
 pub struct GetUserByIdDtoResponse(pub UserUseCaseResponse);
+
+// ================ Delete a user ================
+
+/// Delete users request
+#[derive(Debug, Clone)]
+pub struct DeleteUserDtoRequest(pub DeleteUserUseCaseRequest);
+
+/// Delete users response
+#[derive(Debug, Clone)]
+pub struct DeleteUserDtoResponse(pub DeleteUserUseCaseResponse);

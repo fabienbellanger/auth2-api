@@ -1,6 +1,7 @@
 //! User handler DTO
 
 use crate::domain::use_cases::user::create_user::CreateUserUseCaseRequest;
+use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseResponse;
 use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCaseResponse;
 use crate::domain::use_cases::user::get_user::GetUserUseCaseResponse;
 use crate::domain::use_cases::user::get_users::{GetUsersUseCaseRequest, GetUsersUseCaseResponse};
@@ -150,5 +151,17 @@ pub struct GetUserResponse(UserResponse);
 impl From<GetUserUseCaseResponse> for GetUserResponse {
     fn from(value: GetUserUseCaseResponse) -> Self {
         Self(value.0.into())
+    }
+}
+
+// ================ Delete user ================
+
+/// Delete user response
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct DeleteUserResponse();
+
+impl From<DeleteUserUseCaseResponse> for DeleteUserResponse {
+    fn from(_value: DeleteUserUseCaseResponse) -> Self {
+        Self()
     }
 }

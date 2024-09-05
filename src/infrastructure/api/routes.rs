@@ -6,7 +6,7 @@ use crate::infrastructure::api::handlers;
 use crate::infrastructure::api::layers::auth::JwtLayer;
 use crate::infrastructure::api::layers::basic_auth::BasicAuthLayer;
 use crate::infrastructure::api::layers::state::SharedState;
-use axum::routing::{get, post};
+use axum::routing::{delete, get, post};
 use axum::Router;
 
 /// Return web routes list
@@ -48,6 +48,7 @@ fn api_users() -> Router<SharedState> {
         .route("/", post(handlers::user::create_user))
         .route("/", get(handlers::user::get_users))
         .route("/:user_id", get(handlers::user::get_user))
+        .route("/:user_id", delete(handlers::user::delete_user))
 }
 
 /// Scopes API routes

@@ -3,9 +3,9 @@
 pub mod dto;
 
 use crate::domain::repositories::user::dto::{
-    CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse,
-    GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse, GetUserByIdDtoRequest,
-    GetUserByIdDtoResponse, GetUsersDtoRequest, GetUsersDtoResponse,
+    CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse, DeleteUserDtoRequest,
+    DeleteUserDtoResponse, GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse,
+    GetUserByIdDtoRequest, GetUserByIdDtoResponse, GetUsersDtoRequest, GetUsersDtoResponse,
 };
 use crate::domain::use_cases::user::UserUseCaseError;
 use async_trait::async_trait;
@@ -29,4 +29,7 @@ pub trait UserRepository: Clone {
 
     /// Get a user by ID
     async fn get_user_by_id(&self, req: GetUserByIdDtoRequest) -> Result<GetUserByIdDtoResponse, UserUseCaseError>;
+
+    /// Delete a user by ID
+    async fn delete_user(&self, req: DeleteUserDtoRequest) -> Result<DeleteUserDtoResponse, UserUseCaseError>;
 }

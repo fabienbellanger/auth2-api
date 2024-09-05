@@ -2,11 +2,12 @@
 
 use crate::domain::entities::user::UserId;
 use crate::domain::repositories::user::dto::{
-    CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse,
-    GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse, GetUserByIdDtoRequest,
-    GetUserByIdDtoResponse, GetUsersDtoRequest, GetUsersDtoResponse,
+    CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse, DeleteUserDtoRequest,
+    DeleteUserDtoResponse, GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse,
+    GetUserByIdDtoRequest, GetUserByIdDtoResponse, GetUsersDtoRequest, GetUsersDtoResponse,
 };
 use crate::domain::repositories::user::UserRepository;
+use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseResponse;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
 use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::email::Email;
@@ -85,6 +86,14 @@ impl UserRepository for UserRepositoryMock {
                 created_at: UtcDateTime::now(),
                 updated_at: UtcDateTime::now(),
             })),
+            _ => Err(UserUseCaseError::DatabaseError("User not found".to_string())),
+        }
+    }
+
+    // Delete a user by ID
+    async fn delete_user(&self, req: DeleteUserDtoRequest) -> Result<DeleteUserDtoResponse, UserUseCaseError> {
+        match req.0.user_id.to_string().as_str() {
+            VALID_ID => Ok(DeleteUserDtoResponse(DeleteUserUseCaseResponse())),
             _ => Err(UserUseCaseError::DatabaseError("User not found".to_string())),
         }
     }

@@ -3,11 +3,12 @@
 use crate::adapters::database::mysql::{Db, PaginationSort};
 use crate::domain::entities::user::UserId;
 use crate::domain::repositories::user::dto::{
-    CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse,
-    GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse, GetUserByIdDtoRequest,
-    GetUserByIdDtoResponse, GetUsersDtoRequest, GetUsersDtoResponse,
+    CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse, DeleteUserDtoRequest,
+    DeleteUserDtoResponse, GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse,
+    GetUserByIdDtoRequest, GetUserByIdDtoResponse, GetUsersDtoRequest, GetUsersDtoResponse,
 };
 use crate::domain::repositories::user::UserRepository;
+use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseResponse;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
 use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::email::Email;
@@ -208,5 +209,30 @@ impl UserRepository for UserMysqlRepository {
         };
 
         Ok(GetUserByIdDtoResponse(user))
+    }
+
+    #[instrument(skip(self, req), name = "user_repository_delete_user")]
+    async fn delete_user(&self, req: DeleteUserDtoRequest) -> Result<DeleteUserDtoResponse, UserUseCaseError> {
+        let result = sqlx::query!(
+            "
+            UPDATE users
+            SET deleted_at = ?
+            WHERE id = ?
+                AND deleted_at IS NULL",
+            Some(UtcDateTime::now().value()),
+            req.0.user_id.to_string()
+        )
+        .execute(self.db.pool.clone().as_ref())
+        .await
+        .map_err(|err| {
+            error!(error = %err, "Failed to delete user");
+            UserUseCaseError::DatabaseError("Failed to delete user".to_string())
+        })?;
+
+        if result.rows_affected() == 0 {
+            return Err(UserUseCaseError::UserNotFound())?;
+        }
+
+        Ok(DeleteUserDtoResponse(DeleteUserUseCaseResponse()))
     }
 }

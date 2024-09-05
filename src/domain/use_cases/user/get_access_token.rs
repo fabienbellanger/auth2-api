@@ -81,7 +81,7 @@ impl<U: UserRepository> GetAccessTokenUseCase<U> {
                     Err(UserUseCaseError::IncorrectPassword())?
                 }
             }
-            None => Err(UserUseCaseError::UserNotFound())?,
+            None => Err(UserUseCaseError::Unauthorized())?,
         };
 
         // Generate access token
@@ -164,7 +164,7 @@ mod tests {
         let response = use_case.call(request).await;
         assert!(response.is_err());
         if let Err(e) = response {
-            assert_eq!(e, UserUseCaseError::UserNotFound());
+            assert_eq!(e, UserUseCaseError::Unauthorized());
         }
     }
 }

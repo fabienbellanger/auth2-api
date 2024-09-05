@@ -5,16 +5,14 @@ mod error;
 
 use crate::domain::entities::user::UserId;
 use crate::domain::use_cases::user::create_user::CreateUserUseCaseRequest;
+use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseRequest;
 use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCaseRequest;
 use crate::domain::use_cases::user::get_user::GetUserUseCaseRequest;
 use crate::domain::use_cases::user::get_users::GetUsersUseCaseRequest;
 use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::password::Password;
 use crate::infrastructure::api::extractors::{ExtractRequestId, Path, Query};
-use crate::infrastructure::api::handlers::user::dto::{
-    CreateUserRequest, GetAccessTokenRequest, GetAccessTokenResponse, GetUserResponse, GetUsersRequest,
-    GetUsersResponse, UserResponse,
-};
+use crate::infrastructure::api::handlers::user::dto::*;
 use crate::infrastructure::api::layers::state::SharedState;
 use crate::infrastructure::api::response::{ApiError, ApiSuccess};
 use crate::infrastructure::api::use_cases::AppUseCases;
@@ -63,7 +61,7 @@ pub async fn get_access_token(
     Ok(ApiSuccess::new(StatusCode::OK, response.into()))
 }
 
-/// Users list route: POST /api/v1/users
+/// Users list route: GET /api/v1/users
 #[instrument(skip(uc), name = "get_users_handler")]
 pub async fn get_users(
     Query(request): Query<GetUsersRequest>,
@@ -79,7 +77,7 @@ pub async fn get_users(
     Ok(ApiSuccess::new(StatusCode::OK, response.into()))
 }
 
-/// Users list route: POST /api/v1/users/:user_id
+/// Get user route: GET /api/v1/users/:user_id
 #[instrument(skip(uc), name = "get_user_handler")]
 pub async fn get_user(
     Path(user_id): Path<String>,
@@ -91,4 +89,18 @@ pub async fn get_user(
     let response = uc.user.get_user.call(GetUserUseCaseRequest { user_id }).await?;
 
     Ok(ApiSuccess::new(StatusCode::OK, response.into()))
+}
+
+/// Delete user route: DELETE /api/v1/users/:user_id
+#[instrument(skip(uc), name = "delete_user_handler")]
+pub async fn delete_user(
+    Path(user_id): Path<String>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> Result<ApiSuccess<DeleteUserResponse>, ApiError> {
+    let user_id = UserId::from_str(&user_id)?;
+
+    let response = uc.user.delete_user.call(DeleteUserUseCaseRequest { user_id }).await?;
+
+    Ok(ApiSuccess::new(StatusCode::NO_CONTENT, response.into()))
 }
