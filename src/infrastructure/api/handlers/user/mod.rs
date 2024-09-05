@@ -5,11 +5,12 @@ mod error;
 
 use crate::domain::use_cases::user::create_user::CreateUserUseCaseRequest;
 use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCaseRequest;
+use crate::domain::use_cases::user::get_users::GetUsersUseCaseRequest;
 use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::password::Password;
-use crate::infrastructure::api::extractors::ExtractRequestId;
+use crate::infrastructure::api::extractors::{ExtractRequestId, Query};
 use crate::infrastructure::api::handlers::user::dto::{
-    CreateUserRequest, CreateUserResponse, GetAccessTokenRequest, GetAccessTokenResponse,
+    CreateUserRequest, GetAccessTokenRequest, GetAccessTokenResponse, GetUsersRequest, GetUsersResponse, UserResponse,
 };
 use crate::infrastructure::api::layers::state::SharedState;
 use crate::infrastructure::api::response::{ApiError, ApiSuccess};
@@ -24,7 +25,7 @@ pub async fn create_user(
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
     Json(request): Json<CreateUserRequest>,
-) -> Result<ApiSuccess<CreateUserResponse>, ApiError> {
+) -> Result<ApiSuccess<UserResponse>, ApiError> {
     let response = uc
         .user
         .create_user
@@ -53,6 +54,22 @@ pub async fn get_access_token(
             password,
             jwt: state.jwt.clone(),
         })
+        .await?;
+
+    Ok(ApiSuccess::new(StatusCode::OK, response.into()))
+}
+
+/// Users list route: POST /api/v1/users
+#[instrument(skip(uc), name = "get_users_handler")]
+pub async fn get_users(
+    Query(request): Query<GetUsersRequest>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> Result<ApiSuccess<GetUsersResponse>, ApiError> {
+    let response = uc
+        .user
+        .get_users
+        .call(GetUsersUseCaseRequest::try_from(request)?)
         .await?;
 
     Ok(ApiSuccess::new(StatusCode::OK, response.into()))

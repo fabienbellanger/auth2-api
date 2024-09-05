@@ -18,9 +18,14 @@ pub struct UtcDateTime {
 }
 
 impl UtcDateTime {
-    /// Create a new date time
+    /// Create a new date time for now
     pub fn now() -> Self {
         Self { value: Utc::now() }
+    }
+
+    /// Create a new date time
+    pub fn new(value: DateTime<Utc>) -> Self {
+        Self { value }
     }
 
     /// Create a new date time from RFC3339 string

@@ -6,8 +6,6 @@ use crate::domain::repositories::user::dto::{
     GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse, GetUsersDtoRequest, GetUsersDtoResponse,
 };
 use crate::domain::repositories::user::UserRepository;
-use crate::domain::use_cases::user::create_user::{CreateUserUseCaseResponse, UserCreationError};
-use crate::domain::use_cases::user::get_access_token::GetAccessTokenError;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
 use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::email::Email;
@@ -33,11 +31,10 @@ impl TryFrom<MySqlRow> for UserUseCaseResponse {
         Ok(UserUseCaseResponse {
             id: Id::from_str(row.try_get("id")?)?,
             email: Email::new(row.try_get("email")?)?,
-            password: Password::new(row.try_get("password")?, true)?,
             lastname: row.try_get("lastname")?,
             firstname: row.try_get("firstname")?,
-            created_at: UtcDateTime::from_rfc3339(row.try_get("created_at")?)?,
-            updated_at: UtcDateTime::from_rfc3339(row.try_get("updated_at")?)?,
+            created_at: UtcDateTime::new(row.try_get("created_at")?),
+            updated_at: UtcDateTime::new(row.try_get("updated_at")?),
         })
     }
 }
@@ -58,10 +55,10 @@ impl UserMysqlRepository {
 #[async_trait]
 impl UserRepository for UserMysqlRepository {
     #[instrument(skip(self), name = "user_repository_create")]
-    async fn create_user(&self, req: CreateUserDtoRequest) -> Result<CreateUserDtoResponse, UserCreationError> {
+    async fn create_user(&self, req: CreateUserDtoRequest) -> Result<CreateUserDtoResponse, UserUseCaseError> {
         let user_id = Id::new().map_err(|err| {
             error!(error = %err, "Failed to create user ID");
-            UserCreationError::InvalidId()
+            UserUseCaseError::InvalidId()
         })?;
         let now = UtcDateTime::now();
 
@@ -83,13 +80,12 @@ impl UserRepository for UserMysqlRepository {
         .await
         .map_err(|err| {
             error!(error = %err, "Failed to create user");
-            UserCreationError::DatabaseError()
+            UserUseCaseError::DatabaseError("User creation error".to_string())
         })?;
 
-        Ok(CreateUserDtoResponse(CreateUserUseCaseResponse {
+        Ok(CreateUserDtoResponse(UserUseCaseResponse {
             id: user_id,
             email: req.0.email,
-            password: req.0.password,
             lastname: req.0.lastname,
             firstname: req.0.firstname,
             created_at: now.clone(),
@@ -101,7 +97,7 @@ impl UserRepository for UserMysqlRepository {
     async fn get_access_token_information(
         &self,
         req: GetAccessTokenInformationDtoRequest,
-    ) -> Result<Option<GetAccessTokenInformationDtoResponse>, GetAccessTokenError> {
+    ) -> Result<Option<GetAccessTokenInformationDtoResponse>, UserUseCaseError> {
         let result = sqlx::query!(
             "
             SELECT id, password
@@ -114,13 +110,14 @@ impl UserRepository for UserMysqlRepository {
         .await
         .map_err(|err| {
             error!(error = %err, "Failed to get user by email");
-            GetAccessTokenError::DatabaseError()
+            UserUseCaseError::DatabaseError("Failed to get user by email".to_string())
         })?;
 
         let response = match result {
             Some(row) => Some(GetAccessTokenInformationDtoResponse {
-                id: Id::from_str(&row.id).map_err(|_| GetAccessTokenError::InvalidId())?,
-                password: Password::new(&row.password, true).map_err(|_| GetAccessTokenError::InvalidPassword())?,
+                id: Id::from_str(&row.id).map_err(|_| UserUseCaseError::InvalidId())?,
+                password: Password::new(&row.password, true)
+                    .map_err(|_| UserUseCaseError::InvalidPassword("Failed to generate user ID".to_string()))?,
             }),
             None => None,
         };

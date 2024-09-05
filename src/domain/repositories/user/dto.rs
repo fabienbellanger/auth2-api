@@ -1,7 +1,7 @@
 //! DTO for user repository
 
 use crate::domain::entities::user::UserId;
-use crate::domain::use_cases::user::create_user::{CreateUserUseCaseRequest, CreateUserUseCaseResponse};
+use crate::domain::use_cases::user::create_user::CreateUserUseCaseRequest;
 use crate::domain::use_cases::user::get_users::GetUsersUseCaseRequest;
 use crate::domain::use_cases::user::UserUseCaseResponse;
 use crate::domain::value_objects::email::Email;
@@ -13,7 +13,7 @@ pub struct CreateUserDtoRequest(pub CreateUserUseCaseRequest);
 
 /// Create user response
 #[derive(Debug, Clone)]
-pub struct CreateUserDtoResponse(pub CreateUserUseCaseResponse);
+pub struct CreateUserDtoResponse(pub UserUseCaseResponse);
 
 /// Get user information for access token generation request
 #[derive(Debug, Clone)]

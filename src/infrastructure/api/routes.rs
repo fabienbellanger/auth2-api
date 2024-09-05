@@ -44,7 +44,9 @@ fn api_protected(state: SharedState) -> Router<SharedState> {
 
 /// Users API routes
 fn api_users() -> Router<SharedState> {
-    Router::new().route("/", post(handlers::user::create_user))
+    Router::new()
+        .route("/", post(handlers::user::create_user))
+        .route("/", get(handlers::user::get_users))
 }
 
 /// Scopes API routes

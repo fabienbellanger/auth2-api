@@ -5,32 +5,10 @@ use crate::domain::repositories::user::dto::GetAccessTokenInformationDtoRequest;
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::services::security::jwt::Jwt;
 use crate::domain::services::security::payload::PayloadData;
+use crate::domain::use_cases::user::UserUseCaseError;
 use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::password::Password;
-use thiserror::Error;
-
-/// Get access token errors
-#[derive(Debug, Clone, PartialEq, Error)]
-pub enum GetAccessTokenError {
-    #[error("Invalid user ID")]
-    InvalidId(),
-
-    #[error("Invalid user password")]
-    InvalidPassword(),
-
-    #[error("Incorrect user password")]
-    IncorrectPassword(),
-
-    #[error("User not found")]
-    UserNotFound(),
-
-    #[error("Token generation error")]
-    TokenGenerationError(),
-
-    #[error("Database error")]
-    DatabaseError(),
-}
 
 // TODO: Add application_id and client_id later
 #[derive(Debug, Clone)]
@@ -81,13 +59,12 @@ impl<U: UserRepository> GetAccessTokenUseCase<U> {
     pub async fn call(
         &self,
         request: GetAccessTokenUseCaseRequest,
-    ) -> Result<GetAccessTokenUseCaseResponse, GetAccessTokenError> {
+    ) -> Result<GetAccessTokenUseCaseResponse, UserUseCaseError> {
         // TODO: Validation?
 
-        let original_password = request
-            .password
-            .original()
-            .ok_or(GetAccessTokenError::InvalidPassword())?;
+        let original_password = request.password.original().ok_or(UserUseCaseError::InvalidPassword(
+            "No hashed password not found".to_string(),
+        ))?;
 
         // Get user by email
         let resp = self
@@ -101,17 +78,17 @@ impl<U: UserRepository> GetAccessTokenUseCase<U> {
                 if user.password.verify(&original_password).is_ok() {
                     user.id
                 } else {
-                    Err(GetAccessTokenError::IncorrectPassword())?
+                    Err(UserUseCaseError::IncorrectPassword())?
                 }
             }
-            None => Err(GetAccessTokenError::UserNotFound())?,
+            None => Err(UserUseCaseError::UserNotFound())?,
         };
 
         // Generate access token
         let payload = PayloadData::new(user_id.to_string(), "".to_string(), "".to_string());
         let access_token = request.jwt.generate(payload).map_err(|err| {
             error!(error = %err, "Error generating access token");
-            GetAccessTokenError::TokenGenerationError()
+            UserUseCaseError::TokenGenerationError()
         })?;
 
         Ok(access_token.into())
@@ -124,6 +101,7 @@ mod tests {
     use crate::domain::tests::mock::user::{
         UserRepositoryMock, EMAIL_NOT_FOUND, INVALID_EMAIL, INVALID_PASSWORD, VALID_EMAIL, VALID_PASSWORD,
     };
+    use crate::domain::use_cases::user::UserUseCaseError;
 
     #[tokio::test]
     async fn test_get_access_token_use_case() {
@@ -152,7 +130,7 @@ mod tests {
         let response = use_case.call(request).await;
         assert!(response.is_err());
         if let Err(e) = response {
-            assert_eq!(e, GetAccessTokenError::DatabaseError());
+            assert_eq!(e, UserUseCaseError::DatabaseError("User not found".to_string()));
         }
     }
 
@@ -169,7 +147,7 @@ mod tests {
         let response = use_case.call(request).await;
         assert!(response.is_err());
         if let Err(e) = response {
-            assert_eq!(e, GetAccessTokenError::IncorrectPassword());
+            assert_eq!(e, UserUseCaseError::IncorrectPassword());
         }
     }
 
@@ -186,7 +164,7 @@ mod tests {
         let response = use_case.call(request).await;
         assert!(response.is_err());
         if let Err(e) = response {
-            assert_eq!(e, GetAccessTokenError::UserNotFound());
+            assert_eq!(e, UserUseCaseError::UserNotFound());
         }
     }
 }

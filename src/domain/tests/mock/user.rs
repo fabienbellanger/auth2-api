@@ -6,9 +6,7 @@ use crate::domain::repositories::user::dto::{
     GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse, GetUsersDtoRequest, GetUsersDtoResponse,
 };
 use crate::domain::repositories::user::UserRepository;
-use crate::domain::use_cases::user::create_user::{CreateUserUseCaseResponse, UserCreationError};
-use crate::domain::use_cases::user::get_access_token::GetAccessTokenError;
-use crate::domain::use_cases::user::UserUseCaseError;
+use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
 use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::password::Password;
 use async_trait::async_trait;
@@ -31,19 +29,18 @@ impl UserRepository for UserRepositoryMock {
     /// Create a new user
     ///
     /// If the email is VALID_EMAIL, return a valid user, else return an error
-    async fn create_user(&self, req: CreateUserDtoRequest) -> Result<CreateUserDtoResponse, UserCreationError> {
+    async fn create_user(&self, req: CreateUserDtoRequest) -> Result<CreateUserDtoResponse, UserUseCaseError> {
         if req.0.email.value() == VALID_EMAIL {
-            Ok(CreateUserDtoResponse(CreateUserUseCaseResponse {
-                id: UserId::from_str(VALID_ID).unwrap(),
+            Ok(CreateUserDtoResponse(UserUseCaseResponse {
+                id: UserId::from_str(VALID_ID)?,
                 email: req.0.email,
-                password: req.0.password,
                 lastname: req.0.lastname,
                 firstname: req.0.firstname,
                 created_at: UtcDateTime::now(),
                 updated_at: UtcDateTime::now(),
             }))
         } else {
-            Err(UserCreationError::DatabaseError())
+            Err(UserUseCaseError::DatabaseError("User creation error".to_string()))
         }
     }
 
@@ -51,17 +48,17 @@ impl UserRepository for UserRepositoryMock {
     async fn get_access_token_information(
         &self,
         req: GetAccessTokenInformationDtoRequest,
-    ) -> Result<Option<GetAccessTokenInformationDtoResponse>, GetAccessTokenError> {
+    ) -> Result<Option<GetAccessTokenInformationDtoResponse>, UserUseCaseError> {
         match req.0.to_string().as_str() {
             VALID_EMAIL => {
                 // Valid user
                 Ok(Some(GetAccessTokenInformationDtoResponse {
-                    id: UserId::from_str(VALID_ID).unwrap(),
-                    password: Password::new(VALID_PASSWORD, false).unwrap(),
+                    id: UserId::from_str(VALID_ID)?,
+                    password: Password::new(VALID_PASSWORD, false)?,
                 }))
             }
             EMAIL_NOT_FOUND => Ok(None),
-            _ => Err(GetAccessTokenError::DatabaseError()),
+            _ => Err(UserUseCaseError::DatabaseError("User not found".to_string())),
         }
     }
 
