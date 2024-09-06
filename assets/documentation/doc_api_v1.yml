@@ -20,7 +20,7 @@ servers:
 paths:
   /token:
     post:
-      description: Get user access token
+      description: Get user token
       tags:
         - "Authentication"
       requestBody:

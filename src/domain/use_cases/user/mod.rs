@@ -5,6 +5,7 @@ pub mod delete_user;
 pub mod get_access_token;
 pub mod get_user;
 pub mod get_users;
+pub mod refresh_token;
 
 use crate::domain::entities::refresh_token::RefreshTokenError;
 use crate::domain::entities::user::UserId;

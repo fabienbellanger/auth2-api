@@ -2,9 +2,12 @@
 
 pub mod dto;
 
-use crate::domain::repositories::refresh_token::dto::{CreateRefreshTokenDtoRequest, CreateRefreshTokenDtoResponse};
 use crate::domain::use_cases::user::UserUseCaseError;
 use async_trait::async_trait;
+use dto::{
+    CreateRefreshTokenDtoRequest, CreateRefreshTokenDtoResponse, DeleteRefreshTokenDtoRequest,
+    DeleteRefreshTokenDtoResponse, GetRefreshTokenDtoRequest, GetRefreshTokenDtoResponse,
+};
 
 #[async_trait]
 pub trait RefreshTokenRepository: Clone {
@@ -13,4 +16,16 @@ pub trait RefreshTokenRepository: Clone {
         &self,
         req: CreateRefreshTokenDtoRequest,
     ) -> Result<CreateRefreshTokenDtoResponse, UserUseCaseError>;
+
+    /// Get a refresh token
+    async fn get_refresh_token(
+        &self,
+        req: GetRefreshTokenDtoRequest,
+    ) -> Result<GetRefreshTokenDtoResponse, UserUseCaseError>;
+
+    /// Delete a refresh token
+    async fn delete_refresh_token(
+        &self,
+        req: DeleteRefreshTokenDtoRequest,
+    ) -> Result<DeleteRefreshTokenDtoResponse, UserUseCaseError>;
 }
