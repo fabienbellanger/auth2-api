@@ -12,10 +12,11 @@ impl From<UserUseCaseError> for ApiError {
             UserUseCaseError::InvalidArguments(msg) => ApiError::BadRequest(msg),
             UserUseCaseError::InvalidId() => ApiError::InternalServerError("User creation error".to_string()),
             UserUseCaseError::DatabaseError(msg) => ApiError::InternalServerError(msg),
+            UserUseCaseError::RefreshTokenCreationError(msg) => ApiError::InternalServerError(msg),
             UserUseCaseError::IncorrectPassword() => ApiError::Unauthorized("User not found".to_string()),
             UserUseCaseError::UserNotFound() => ApiError::NotFound("User not found".to_string()),
             UserUseCaseError::Unauthorized() => ApiError::Unauthorized("Unauthorized".to_string()),
-            UserUseCaseError::TokenGenerationError() => {
+            UserUseCaseError::AccessTokenGenerationError() => {
                 ApiError::InternalServerError("Get access token error".to_string())
             }
         }

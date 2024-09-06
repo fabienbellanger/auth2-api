@@ -6,7 +6,9 @@ pub mod get_access_token;
 pub mod get_user;
 pub mod get_users;
 
+use crate::domain::entities::refresh_token::RefreshTokenError;
 use crate::domain::entities::user::UserId;
+use crate::domain::repositories::refresh_token::RefreshTokenRepository;
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::delete_user::DeleteUserUseCase;
 use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCase;
@@ -20,20 +22,20 @@ use create_user::CreateUserUseCase;
 use thiserror::Error;
 
 #[derive(Debug, Clone)]
-pub struct UserUseCases<U: UserRepository> {
+pub struct UserUseCases<U: UserRepository, T: RefreshTokenRepository> {
     pub create_user: CreateUserUseCase<U>,
-    pub get_access_token: GetAccessTokenUseCase<U>,
+    pub get_access_token: GetAccessTokenUseCase<U, T>,
     pub get_users: GetUsersUseCase<U>,
     pub get_user: GetUserUseCase<U>,
     pub delete_user: DeleteUserUseCase<U>,
 }
 
-impl<U: UserRepository> UserUseCases<U> {
+impl<U: UserRepository, T: RefreshTokenRepository> UserUseCases<U, T> {
     /// Create a new user use cases
-    pub fn new(user_repository: U) -> Self {
+    pub fn new(user_repository: U, refresh_token_repository: T) -> Self {
         Self {
             create_user: CreateUserUseCase::new(user_repository.clone()),
-            get_access_token: GetAccessTokenUseCase::new(user_repository.clone()),
+            get_access_token: GetAccessTokenUseCase::new(user_repository.clone(), refresh_token_repository),
             get_users: GetUsersUseCase::new(user_repository.clone()),
             get_user: GetUserUseCase::new(user_repository.clone()),
             delete_user: DeleteUserUseCase::new(user_repository),
@@ -52,8 +54,8 @@ pub enum UserUseCaseError {
     #[error("User not found")]
     UserNotFound(),
 
-    #[error("Token generation error")]
-    TokenGenerationError(),
+    #[error("Access token generation error")]
+    AccessTokenGenerationError(),
 
     #[error("Unauthorized")]
     Unauthorized(),
@@ -69,6 +71,9 @@ pub enum UserUseCaseError {
 
     #[error("Invalid UTC datetime: {0}")]
     InvalidUtcDateTime(String),
+
+    #[error("Refresh token creation error: {0}")]
+    RefreshTokenCreationError(String),
 
     #[error("{0}")]
     DatabaseError(String),
@@ -95,6 +100,12 @@ impl From<PasswordError> for UserUseCaseError {
 impl From<UtcDateTimeError> for UserUseCaseError {
     fn from(err: UtcDateTimeError) -> Self {
         UserUseCaseError::InvalidUtcDateTime(err.to_string())
+    }
+}
+
+impl From<RefreshTokenError> for UserUseCaseError {
+    fn from(err: RefreshTokenError) -> Self {
+        UserUseCaseError::RefreshTokenCreationError(err.to_string())
     }
 }
 

@@ -267,9 +267,17 @@ components:
         access_token_expired_at:
           type: string
           format: date-time
+        refresh_token:
+          type: string
+          format: uuid
+        refresh_token_expired_at:
+          type: string
+          format: date-time
       required:
         - access_token
         - access_token_expired_at
+        - refresh_token
+        - refresh_token_expired_at
     CreateUserRequest:
       type: object
       properties:

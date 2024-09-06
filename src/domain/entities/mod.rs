@@ -3,4 +3,5 @@
 
 pub mod access_token;
 pub mod email;
+pub mod refresh_token;
 pub mod user;

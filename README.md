@@ -211,6 +211,7 @@ rm ./keys/private.ec.key
 
 ## TODO
 
+- [ ] Add command to delete expired refresh tokens
 - [ ] Build in different targets (Linux on Mac)
 - [ ] Add OpenTelemetry metrics
     - [Distributed Tracing in Rust](https://medium.com/netwo/distributed-tracing-in-rust-b8eb2af3aff4)

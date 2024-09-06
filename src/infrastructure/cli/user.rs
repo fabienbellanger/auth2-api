@@ -1,5 +1,6 @@
 //! User CLI commands
 
+use crate::adapters::database::mysql::repositories::refresh_token::RefreshTokenMysqlRepository;
 use crate::adapters::database::mysql::repositories::user::UserMysqlRepository;
 use crate::adapters::database::mysql::Db;
 use crate::adapters::database::GenericDb;
@@ -25,7 +26,8 @@ pub async fn register(lastname: &str, firstname: &str, email: &str, password: &s
 
     // User use case
     let user_repository = UserMysqlRepository::new(db.clone());
-    let user_use_case = UserUseCases::new(user_repository);
+    let refresh_token_repository = RefreshTokenMysqlRepository::new(db.clone());
+    let user_use_case = UserUseCases::new(user_repository, refresh_token_repository);
 
     let email = Email::new(email).map_err(|err| CliError::InvalidArguments(err.to_string()))?;
     let password = Password::new(password, false).map_err(|err| CliError::InvalidArguments(err.to_string()))?;

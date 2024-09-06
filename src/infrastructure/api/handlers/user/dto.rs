@@ -78,13 +78,17 @@ pub struct GetAccessTokenRequest {
 pub struct GetAccessTokenResponse {
     pub access_token: String,
     pub access_token_expired_at: String,
+    pub refresh_token: String,
+    pub refresh_token_expired_at: String,
 }
 
 impl From<GetAccessTokenUseCaseResponse> for GetAccessTokenResponse {
     fn from(value: GetAccessTokenUseCaseResponse) -> Self {
         Self {
-            access_token: value.access_token,
-            access_token_expired_at: value.access_token_expired_at.to_string(),
+            access_token: value.access_token.token,
+            access_token_expired_at: value.access_token.expired_at.to_string(),
+            refresh_token: value.refresh_token.refresh_token.to_string(),
+            refresh_token_expired_at: value.refresh_token.expired_at.to_string(),
         }
     }
 }

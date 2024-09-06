@@ -12,7 +12,7 @@ pub enum UtcDateTimeError {
 }
 
 /// Date time with UTC timezone
-#[derive(Debug, Default, Clone, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, PartialEq, PartialOrd, Eq)]
 pub struct UtcDateTime {
     value: DateTime<Utc>,
 }

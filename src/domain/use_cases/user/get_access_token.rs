@@ -1,12 +1,14 @@
 //! Get Access Token Use Case
 
-use crate::domain::entities::access_token::{AccessToken, AccessTokenValue};
+use crate::domain::entities::access_token::AccessToken;
+use crate::domain::entities::refresh_token::RefreshToken;
+use crate::domain::repositories::refresh_token::dto::CreateRefreshTokenDtoRequest;
+use crate::domain::repositories::refresh_token::RefreshTokenRepository;
 use crate::domain::repositories::user::dto::GetAccessTokenInformationDtoRequest;
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::services::security::jwt::Jwt;
 use crate::domain::services::security::payload::PayloadData;
 use crate::domain::use_cases::user::UserUseCaseError;
-use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::password::Password;
 
@@ -23,35 +25,28 @@ pub struct GetAccessTokenUseCaseRequest {
     pub jwt: Jwt,
 }
 
-// TODO: Add refresh_token information later
 #[derive(Debug, Clone)]
 pub struct GetAccessTokenUseCaseResponse {
-    /// Access token value
-    pub access_token: AccessTokenValue,
+    /// Access token
+    pub access_token: AccessToken,
 
-    /// Access token expiration time
-    pub access_token_expired_at: UtcDateTime,
-}
-
-impl From<AccessToken> for GetAccessTokenUseCaseResponse {
-    fn from(value: AccessToken) -> Self {
-        Self {
-            access_token: value.token,
-            access_token_expired_at: value.expired_at,
-        }
-    }
+    /// Refresh token
+    pub refresh_token: RefreshToken,
 }
 
 #[derive(Debug, Clone)]
-pub struct GetAccessTokenUseCase<U: UserRepository> {
-    #[allow(dead_code)]
+pub struct GetAccessTokenUseCase<U: UserRepository, T: RefreshTokenRepository> {
     user_repository: U,
+    refresh_token_repository: T,
 }
 
-impl<U: UserRepository> GetAccessTokenUseCase<U> {
+impl<U: UserRepository, T: RefreshTokenRepository> GetAccessTokenUseCase<U, T> {
     /// Create a new use case
-    pub fn new(user_repository: U) -> Self {
-        Self { user_repository }
+    pub fn new(user_repository: U, refresh_token_repository: T) -> Self {
+        Self {
+            user_repository,
+            refresh_token_repository,
+        }
     }
 
     /// Generate a new access token
@@ -88,16 +83,31 @@ impl<U: UserRepository> GetAccessTokenUseCase<U> {
         let payload = PayloadData::new(user_id.to_string(), "".to_string(), "".to_string());
         let access_token = request.jwt.generate(payload).map_err(|err| {
             error!(error = %err, "Error generating access token");
-            UserUseCaseError::TokenGenerationError()
+            UserUseCaseError::AccessTokenGenerationError()
         })?;
 
-        Ok(access_token.into())
+        // Generate and save refresh token
+        let refresh_token =
+            RefreshToken::create(user_id.clone(), access_token.clone(), request.jwt.refresh_lifetime())?;
+        self.refresh_token_repository
+            .create_refresh_token(CreateRefreshTokenDtoRequest {
+                refresh_token: refresh_token.clone(),
+                access_token: access_token.clone(),
+                user_id,
+            })
+            .await?;
+
+        Ok(GetAccessTokenUseCaseResponse {
+            access_token,
+            refresh_token,
+        })
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::domain::tests::mock::refresh_token::RefreshTokenRepositoryMock;
     use crate::domain::tests::mock::user::{
         UserRepositoryMock, EMAIL_NOT_FOUND, INVALID_EMAIL, INVALID_PASSWORD, VALID_EMAIL, VALID_PASSWORD,
     };
@@ -106,7 +116,8 @@ mod tests {
     #[tokio::test]
     async fn test_get_access_token_use_case() {
         let user_repository = UserRepositoryMock {};
-        let use_case = GetAccessTokenUseCase::new(user_repository);
+        let refresh_token_repository = RefreshTokenRepositoryMock {};
+        let use_case = GetAccessTokenUseCase::new(user_repository, refresh_token_repository);
         let password = Password::new(VALID_PASSWORD, false).unwrap();
         let email = Email::new(VALID_EMAIL).unwrap();
         let jwt = Jwt::init("HS256", 1, 1, Some("secret"), None, None).unwrap();
@@ -120,7 +131,8 @@ mod tests {
     #[tokio::test]
     async fn test_get_access_token_use_case_invalid_email() {
         let user_repository = UserRepositoryMock {};
-        let use_case = GetAccessTokenUseCase::new(user_repository);
+        let refresh_token_repository = RefreshTokenRepositoryMock {};
+        let use_case = GetAccessTokenUseCase::new(user_repository, refresh_token_repository);
         let password = Password::new(VALID_PASSWORD, false).unwrap();
         let email = Email::new(INVALID_EMAIL).unwrap();
         let jwt = Jwt::init("HS256", 1, 1, Some("secret"), None, None).unwrap();
@@ -137,7 +149,8 @@ mod tests {
     #[tokio::test]
     async fn test_get_access_token_use_case_incorrect_password() {
         let user_repository = UserRepositoryMock {};
-        let use_case = GetAccessTokenUseCase::new(user_repository);
+        let refresh_token_repository = RefreshTokenRepositoryMock {};
+        let use_case = GetAccessTokenUseCase::new(user_repository, refresh_token_repository);
         let password = Password::new(INVALID_PASSWORD, false).unwrap();
         let email = Email::new(VALID_EMAIL).unwrap();
         let jwt = Jwt::init("HS256", 1, 1, Some("secret"), None, None).unwrap();
@@ -154,7 +167,8 @@ mod tests {
     #[tokio::test]
     async fn test_get_access_token_use_case_user_not_found() {
         let user_repository = UserRepositoryMock {};
-        let use_case = GetAccessTokenUseCase::new(user_repository);
+        let refresh_token_repository = RefreshTokenRepositoryMock {};
+        let use_case = GetAccessTokenUseCase::new(user_repository, refresh_token_repository);
         let password = Password::new(VALID_PASSWORD, false).unwrap();
         let email = Email::new(EMAIL_NOT_FOUND).unwrap();
         let jwt = Jwt::init("HS256", 1, 1, Some("secret"), None, None).unwrap();
