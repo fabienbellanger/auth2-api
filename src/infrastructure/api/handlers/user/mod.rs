@@ -86,9 +86,13 @@ pub async fn get_user(
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> Result<ApiSuccess<GetUserResponse>, ApiError> {
-    let user_id = UserId::from_str(&user_id)?;
-
-    let response = uc.user.get_user.call(GetUserUseCaseRequest { user_id }).await?;
+    let response = uc
+        .user
+        .get_user
+        .call(GetUserUseCaseRequest {
+            user_id: UserId::from_str(&user_id)?,
+        })
+        .await?;
 
     Ok(ApiSuccess::new(StatusCode::OK, response.into()))
 }
@@ -100,9 +104,13 @@ pub async fn delete_user(
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> Result<ApiSuccess<DeleteUserResponse>, ApiError> {
-    let user_id = UserId::from_str(&user_id)?;
-
-    let response = uc.user.delete_user.call(DeleteUserUseCaseRequest { user_id }).await?;
+    let response = uc
+        .user
+        .delete_user
+        .call(DeleteUserUseCaseRequest {
+            user_id: UserId::from_str(&user_id)?,
+        })
+        .await?;
 
     Ok(ApiSuccess::new(StatusCode::NO_CONTENT, response.into()))
 }

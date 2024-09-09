@@ -16,6 +16,7 @@ impl From<UserUseCaseError> for ApiError {
             UserUseCaseError::IncorrectPassword() => ApiError::Unauthorized("User not found".to_string()),
             UserUseCaseError::UserNotFound() => ApiError::NotFound("User not found".to_string()),
             UserUseCaseError::Unauthorized() => ApiError::Unauthorized("Unauthorized".to_string()),
+            UserUseCaseError::InvalidRefreshToken() => ApiError::Unauthorized("Invalid refresh token".to_string()),
             UserUseCaseError::AccessTokenGenerationError() => {
                 ApiError::InternalServerError("Get access token error".to_string())
             }

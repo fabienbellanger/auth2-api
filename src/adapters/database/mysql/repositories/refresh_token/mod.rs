@@ -81,9 +81,7 @@ impl RefreshTokenRepository for RefreshTokenMysqlRepository {
                 let user_id = Id::from_str(&row.user_id)?;
                 GetRefreshTokenDtoResponse { user_id }
             }
-            None => Err(UserUseCaseError::RefreshTokenCreationError(
-                "No valid refresh token found".to_string(),
-            ))?,
+            None => Err(UserUseCaseError::InvalidRefreshToken())?,
         };
 
         Ok(response)

@@ -79,6 +79,9 @@ pub enum UserUseCaseError {
     #[error("Refresh token creation error: {0}")]
     RefreshTokenCreationError(String),
 
+    #[error("Invalid Refresh token creation error")]
+    InvalidRefreshToken(),
+
     #[error("{0}")]
     DatabaseError(String),
 }
