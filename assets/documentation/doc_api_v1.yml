@@ -47,6 +47,34 @@ paths:
           $ref: '#/components/responses/UnprocessableEntity'
         '500':
           $ref: "#/components/responses/InternalServerError"
+  /refresh-token/{token}:
+    post:
+      description: Refresh user token
+      tags:
+        - "Authentication"
+      parameters:
+        - in: path
+          name: token
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Refresh token
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAccessTokenResponse'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /users:
     get:
       summary: ""

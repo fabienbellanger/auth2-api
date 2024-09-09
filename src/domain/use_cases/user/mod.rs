@@ -15,6 +15,7 @@ use crate::domain::use_cases::user::delete_user::DeleteUserUseCase;
 use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCase;
 use crate::domain::use_cases::user::get_user::GetUserUseCase;
 use crate::domain::use_cases::user::get_users::GetUsersUseCase;
+use crate::domain::use_cases::user::refresh_token::RefreshTokenUseCase;
 use crate::domain::value_objects::datetime::{UtcDateTime, UtcDateTimeError};
 use crate::domain::value_objects::email::{Email, EmailError};
 use crate::domain::value_objects::id::IdError;
@@ -29,6 +30,7 @@ pub struct UserUseCases<U: UserRepository, T: RefreshTokenRepository> {
     pub get_users: GetUsersUseCase<U>,
     pub get_user: GetUserUseCase<U>,
     pub delete_user: DeleteUserUseCase<U>,
+    pub refresh_token: RefreshTokenUseCase<T>,
 }
 
 impl<U: UserRepository, T: RefreshTokenRepository> UserUseCases<U, T> {
@@ -36,10 +38,11 @@ impl<U: UserRepository, T: RefreshTokenRepository> UserUseCases<U, T> {
     pub fn new(user_repository: U, refresh_token_repository: T) -> Self {
         Self {
             create_user: CreateUserUseCase::new(user_repository.clone()),
-            get_access_token: GetAccessTokenUseCase::new(user_repository.clone(), refresh_token_repository),
+            get_access_token: GetAccessTokenUseCase::new(user_repository.clone(), refresh_token_repository.clone()),
             get_users: GetUsersUseCase::new(user_repository.clone()),
             get_user: GetUserUseCase::new(user_repository.clone()),
             delete_user: DeleteUserUseCase::new(user_repository),
+            refresh_token: RefreshTokenUseCase::new(refresh_token_repository),
         }
     }
 }

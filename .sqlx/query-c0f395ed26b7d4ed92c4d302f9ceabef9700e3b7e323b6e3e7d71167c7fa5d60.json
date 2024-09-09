@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n                DELETE FROM refresh_tokens \n                WHERE refresh_token = ?\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": []
+  },
+  "hash": "c0f395ed26b7d4ed92c4d302f9ceabef9700e3b7e323b6e3e7d71167c7fa5d60"
+}

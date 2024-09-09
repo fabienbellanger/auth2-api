@@ -9,7 +9,9 @@ use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseRequest;
 use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCaseRequest;
 use crate::domain::use_cases::user::get_user::GetUserUseCaseRequest;
 use crate::domain::use_cases::user::get_users::GetUsersUseCaseRequest;
+use crate::domain::use_cases::user::refresh_token::RefreshTokenUseCaseRequest;
 use crate::domain::value_objects::email::Email;
+use crate::domain::value_objects::id::Id;
 use crate::domain::value_objects::password::Password;
 use crate::infrastructure::api::extractors::{ExtractRequestId, Path, Query};
 use crate::infrastructure::api::handlers::user::dto::*;
@@ -103,4 +105,24 @@ pub async fn delete_user(
     let response = uc.user.delete_user.call(DeleteUserUseCaseRequest { user_id }).await?;
 
     Ok(ApiSuccess::new(StatusCode::NO_CONTENT, response.into()))
+}
+
+/// Refresh token route: POST /api/v1/refresh-token/:refresh_token
+#[instrument(skip(uc, state), name = "refresh_token_user_handler")]
+pub async fn refresh_token(
+    Path(refresh_token): Path<String>,
+    State(state): State<SharedState>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> Result<ApiSuccess<RefreshTokenResponse>, ApiError> {
+    let response = uc
+        .user
+        .refresh_token
+        .call(RefreshTokenUseCaseRequest {
+            refresh_token_id: Id::from_str(&refresh_token)?,
+            jwt: state.jwt.clone(),
+        })
+        .await?;
+
+    Ok(ApiSuccess::new(StatusCode::OK, response.into()))
 }

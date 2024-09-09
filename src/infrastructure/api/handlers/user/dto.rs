@@ -5,6 +5,7 @@ use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseResponse;
 use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCaseResponse;
 use crate::domain::use_cases::user::get_user::GetUserUseCaseResponse;
 use crate::domain::use_cases::user::get_users::{GetUsersUseCaseRequest, GetUsersUseCaseResponse};
+use crate::domain::use_cases::user::refresh_token::RefreshTokenUseCaseResponse;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
 use crate::domain::utils::query_sort::{Filter, Sorts};
 use crate::domain::value_objects::email::Email;
@@ -167,5 +168,27 @@ pub struct DeleteUserResponse();
 impl From<DeleteUserUseCaseResponse> for DeleteUserResponse {
     fn from(_value: DeleteUserUseCaseResponse) -> Self {
         Self()
+    }
+}
+
+// ================ Refresh token ================
+
+/// Refresh token response
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct RefreshTokenResponse {
+    pub access_token: String,
+    pub access_token_expired_at: String,
+    pub refresh_token: String,
+    pub refresh_token_expired_at: String,
+}
+
+impl From<RefreshTokenUseCaseResponse> for RefreshTokenResponse {
+    fn from(value: RefreshTokenUseCaseResponse) -> Self {
+        Self {
+            access_token: value.access_token.token,
+            access_token_expired_at: value.access_token.expired_at.to_string(),
+            refresh_token: value.refresh_token.refresh_token.to_string(),
+            refresh_token_expired_at: value.refresh_token.expired_at.to_string(),
+        }
     }
 }

@@ -30,9 +30,9 @@ pub fn api(state: SharedState) -> Router<SharedState> {
     Router::new()
         // Public routes
         .route("/token", post(handlers::user::get_access_token))
+        .route("/refresh-token/:token", post(handlers::user::refresh_token))
         // .route("/forgotten-password/:email", post(Users::forgotten_password))
         // .route("/update-password/:token", patch(Users::update_password))
-        // .route("/refresh-token/:token", post(Users::refresh_token))
         // Private routes
         .nest("/", api_protected(state))
 }

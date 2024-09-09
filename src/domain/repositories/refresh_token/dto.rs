@@ -1,7 +1,7 @@
 //! DTO for refresh token repository
 
 use crate::domain::entities::access_token::AccessToken;
-use crate::domain::entities::refresh_token::RefreshToken;
+use crate::domain::entities::refresh_token::{RefreshToken, RefreshTokenId};
 use crate::domain::entities::user::UserId;
 
 // ================ Refresh token creation ================
@@ -22,13 +22,11 @@ pub struct CreateRefreshTokenDtoResponse();
 
 /// Get refresh token request
 #[derive(Debug, Clone)]
-pub struct GetRefreshTokenDtoRequest(pub RefreshToken);
+pub struct GetRefreshTokenDtoRequest(pub RefreshTokenId);
 
 /// Get refresh token response
 #[derive(Debug, Clone)]
 pub struct GetRefreshTokenDtoResponse {
-    pub refresh_token: RefreshToken,
-    pub access_token: AccessToken,
     pub user_id: UserId,
 }
 
@@ -36,7 +34,7 @@ pub struct GetRefreshTokenDtoResponse {
 
 /// Delete refresh token request
 #[derive(Debug, Clone)]
-pub struct DeleteRefreshTokenDtoRequest(pub RefreshToken);
+pub struct DeleteRefreshTokenDtoRequest(pub RefreshTokenId);
 
 /// Delete refresh token response
 #[derive(Debug, Clone)]
