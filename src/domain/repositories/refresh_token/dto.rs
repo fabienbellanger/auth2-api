@@ -39,3 +39,13 @@ pub struct DeleteRefreshTokenDtoRequest(pub RefreshTokenId);
 /// Delete refresh token response
 #[derive(Debug, Clone)]
 pub struct DeleteRefreshTokenDtoResponse();
+
+// ================ Delete expired refresh tokens ================
+
+#[derive(Debug, Clone)]
+pub struct DeleteExpiredRefreshTokensDtoRequest();
+
+#[derive(Debug, Clone)]
+pub struct DeleteExpiredRefreshTokensDtoResponse {
+    pub deleted: u64,
+}

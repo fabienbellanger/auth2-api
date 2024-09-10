@@ -1,7 +1,7 @@
 //! CLI module
 
+mod cmd;
 pub mod error;
-mod user;
 
 use crate::infrastructure::api::server::start_server;
 use crate::infrastructure::cli::error::CliError;
@@ -81,6 +81,10 @@ enum Commands {
         // )]
         // scopes: Option<Vec<String>>,
     },
+
+    /// Clean expired database data
+    #[clap(about = "Clean expired database data", long_about = None)]
+    CleanDatabase,
 }
 
 /// Start CLI
@@ -93,6 +97,7 @@ pub async fn start() -> Result<(), CliError> {
             firstname,
             email,
             password,
-        } => user::register(lastname, firstname, email, password).await,
+        } => cmd::user::register(lastname, firstname, email, password).await,
+        Commands::CleanDatabase => cmd::database::clean_data().await,
     }
 }

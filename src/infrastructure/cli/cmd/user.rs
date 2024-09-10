@@ -11,18 +11,19 @@ use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::password::Password;
 use crate::infrastructure::cli::error::CliError;
 
+/// Register a new user
 pub async fn register(lastname: &str, firstname: &str, email: &str, password: &str) -> Result<(), CliError> {
     println!("\nCreating new user...");
 
     // Load configuration
     let config = Config::from_env().map_err(|err| CliError::ConfigError(err.to_string()))?;
-    println!("    ► Configuration.....OK");
+    println!("\n► Configuration.....OK");
 
     // Database
     let db = Db::new(&config)
         .await
         .map_err(|err| CliError::DatabaseError(err.to_string()))?;
-    println!("    ► Database..........OK");
+    println!("► Database..........OK");
 
     // User use case
     let user_repository = UserMysqlRepository::new(db.clone());

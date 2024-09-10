@@ -2,8 +2,9 @@
 
 use crate::adapters::database::mysql::Db;
 use crate::domain::repositories::refresh_token::dto::{
-    CreateRefreshTokenDtoRequest, CreateRefreshTokenDtoResponse, DeleteRefreshTokenDtoRequest,
-    DeleteRefreshTokenDtoResponse, GetRefreshTokenDtoRequest, GetRefreshTokenDtoResponse,
+    CreateRefreshTokenDtoRequest, CreateRefreshTokenDtoResponse, DeleteExpiredRefreshTokensDtoRequest,
+    DeleteExpiredRefreshTokensDtoResponse, DeleteRefreshTokenDtoRequest, DeleteRefreshTokenDtoResponse,
+    GetRefreshTokenDtoRequest, GetRefreshTokenDtoResponse,
 };
 use crate::domain::repositories::refresh_token::RefreshTokenRepository;
 use crate::domain::use_cases::user::UserUseCaseError;
@@ -108,5 +109,30 @@ impl RefreshTokenRepository for RefreshTokenMysqlRepository {
         })?;
 
         Ok(DeleteRefreshTokenDtoResponse())
+    }
+
+    /// Delete expired refresh tokens
+    #[instrument(skip(self), name = "refresh_token_repository_delete_expired")]
+    async fn delete_expired_refresh_tokens(
+        &self,
+        _req: DeleteExpiredRefreshTokensDtoRequest,
+    ) -> Result<DeleteExpiredRefreshTokensDtoResponse, UserUseCaseError> {
+        let result = sqlx::query!(
+            r#"
+                DELETE FROM refresh_tokens 
+                WHERE expired_at < ?
+            "#,
+            UtcDateTime::now().value(),
+        )
+        .execute(self.db.pool.clone().as_ref())
+        .await
+        .map_err(|err| {
+            error!(error = %err, "Failed to delete expired refresh tokens");
+            UserUseCaseError::DatabaseError("Failed to delete expired refresh tokens".to_string())
+        })?;
+
+        Ok(DeleteExpiredRefreshTokensDtoResponse {
+            deleted: result.rows_affected(),
+        })
     }
 }

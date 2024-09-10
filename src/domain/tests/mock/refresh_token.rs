@@ -1,8 +1,9 @@
 //! Mock of the refresh token repository
 
 use crate::domain::repositories::refresh_token::dto::{
-    CreateRefreshTokenDtoRequest, CreateRefreshTokenDtoResponse, DeleteRefreshTokenDtoRequest,
-    DeleteRefreshTokenDtoResponse, GetRefreshTokenDtoRequest, GetRefreshTokenDtoResponse,
+    CreateRefreshTokenDtoRequest, CreateRefreshTokenDtoResponse, DeleteExpiredRefreshTokensDtoRequest,
+    DeleteExpiredRefreshTokensDtoResponse, DeleteRefreshTokenDtoRequest, DeleteRefreshTokenDtoResponse,
+    GetRefreshTokenDtoRequest, GetRefreshTokenDtoResponse,
 };
 use crate::domain::repositories::refresh_token::RefreshTokenRepository;
 use crate::domain::use_cases::user::UserUseCaseError;
@@ -55,7 +56,15 @@ impl RefreshTokenRepository for RefreshTokenRepositoryMock {
         }
 
         Err(UserUseCaseError::RefreshTokenCreationError(
-            "Refresh token creation error: ".to_string(),
+            "Refresh token creation error".to_string(),
         ))
+    }
+
+    /// Delete expired refresh tokens
+    async fn delete_expired_refresh_tokens(
+        &self,
+        _req: DeleteExpiredRefreshTokensDtoRequest,
+    ) -> Result<DeleteExpiredRefreshTokensDtoResponse, UserUseCaseError> {
+        Ok(DeleteExpiredRefreshTokensDtoResponse { deleted: 23 })
     }
 }
