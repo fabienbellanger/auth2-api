@@ -4,7 +4,7 @@ use crate::adapters::database::mysql::repositories::refresh_token::RefreshTokenM
 use crate::adapters::database::mysql::Db;
 use crate::adapters::database::GenericDb;
 use crate::config::Config;
-use crate::domain::use_cases::user::clean_expired_refresh_tokens::{
+use crate::domain::use_cases::database::clean_expired_refresh_tokens::{
     CleanExpiredRefreshTokens, CleanExpiredRefreshTokensUseCaseRequest,
 };
 use crate::infrastructure::cli::error::CliError;
@@ -25,8 +25,8 @@ pub async fn clean_data() -> Result<(), CliError> {
 
     // Refresh token use case
     let refresh_token_repository = RefreshTokenMysqlRepository::new(db.clone());
-    let use_case = CleanExpiredRefreshTokens::new(refresh_token_repository);
-    let affected_rows = use_case
+    let refresh_token_use_case = CleanExpiredRefreshTokens::new(refresh_token_repository);
+    let affected_rows = refresh_token_use_case
         .call(CleanExpiredRefreshTokensUseCaseRequest())
         .await
         .map_err(|err| CliError::DatabaseError(err.to_string()))?;

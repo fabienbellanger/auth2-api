@@ -1,6 +1,5 @@
 //! List of user use cases
 
-pub mod clean_expired_refresh_tokens;
 pub mod create_user;
 pub mod delete_user;
 pub mod get_access_token;
