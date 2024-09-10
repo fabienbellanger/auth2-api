@@ -35,7 +35,7 @@ impl<T: RefreshTokenRepository> RefreshTokenUseCase<T> {
         }
     }
 
-    /// Get all users
+    /// Generate a new access and refresh token
     #[instrument(skip(self), name = "refresh_token_use_case")]
     pub async fn call(
         &self,

@@ -27,7 +27,7 @@ impl<T: RefreshTokenRepository> CleanExpiredRefreshTokens<T> {
         }
     }
 
-    /// Get all users
+    /// Delete expired refresh tokens
     #[instrument(skip(self), name = "clean_expired_refresh_tokens_use_case")]
     pub async fn call(
         &self,
