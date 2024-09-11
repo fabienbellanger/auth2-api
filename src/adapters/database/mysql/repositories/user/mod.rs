@@ -5,7 +5,8 @@ use crate::domain::entities::user::UserId;
 use crate::domain::repositories::user::dto::{
     CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse, DeleteUserDtoRequest,
     DeleteUserDtoResponse, GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse,
-    GetUserByIdDtoRequest, GetUserByIdDtoResponse, GetUsersDtoRequest, GetUsersDtoResponse,
+    GetUserByEmailDtoRequest, GetUserByEmailDtoResponse, GetUserByIdDtoRequest, GetUserByIdDtoResponse,
+    GetUsersDtoRequest, GetUsersDtoResponse, UpdatePasswordDtoRequest, UpdatePasswordDtoResponse,
 };
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseResponse;
@@ -155,7 +156,7 @@ impl UserRepository for UserMysqlRepository {
         Ok(CountUsersDtoResponse(result.total))
     }
 
-    #[instrument(skip(self, req), name = "user_repository_get_user")]
+    #[instrument(skip(self, req), name = "user_repository_get_user_by_id")]
     async fn get_user_by_id(&self, req: GetUserByIdDtoRequest) -> Result<GetUserByIdDtoResponse, UserUseCaseError> {
         let result = sqlx::query!(
             "
@@ -187,6 +188,15 @@ impl UserRepository for UserMysqlRepository {
         Ok(GetUserByIdDtoResponse(user))
     }
 
+    #[instrument(skip(self, req), name = "user_repository_get_user_by_email")]
+    async fn get_user_by_email(
+        &self,
+        req: GetUserByEmailDtoRequest,
+    ) -> Result<GetUserByEmailDtoResponse, UserUseCaseError> {
+        dbg!(req);
+        todo!()
+    }
+
     #[instrument(skip(self, req), name = "user_repository_delete_user")]
     async fn delete_user(&self, req: DeleteUserDtoRequest) -> Result<DeleteUserDtoResponse, UserUseCaseError> {
         let result = sqlx::query!(
@@ -210,5 +220,14 @@ impl UserRepository for UserMysqlRepository {
         }
 
         Ok(DeleteUserDtoResponse(DeleteUserUseCaseResponse()))
+    }
+
+    #[instrument(skip(self, req), name = "user_repository_update_password")]
+    async fn update_password(
+        &self,
+        req: UpdatePasswordDtoRequest,
+    ) -> Result<UpdatePasswordDtoResponse, UserUseCaseError> {
+        dbg!(req);
+        todo!()
     }
 }

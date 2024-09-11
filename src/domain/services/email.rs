@@ -28,5 +28,5 @@ pub trait EmailTransport {
 
 /// List all email services
 pub trait EmailService {
-    // fn forgotten_password(&self, request: ForgottenPasswordRequest, token: &str) -> Result<(), EmailServiceError>;
+    // fn forgotten_password(&self, request: ForgottenPasswordRequest) -> Result<(), EmailServiceError>;
 }

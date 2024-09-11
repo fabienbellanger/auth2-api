@@ -3,6 +3,7 @@
 use crate::domain::entities::user::UserId;
 use crate::domain::use_cases::user::create_user::CreateUserUseCaseRequest;
 use crate::domain::use_cases::user::delete_user::{DeleteUserUseCaseRequest, DeleteUserUseCaseResponse};
+use crate::domain::use_cases::user::forgotten_password::ForgottenPasswordUseCaseRequest;
 use crate::domain::use_cases::user::get_user::GetUserUseCaseRequest;
 use crate::domain::use_cases::user::get_users::GetUsersUseCaseRequest;
 use crate::domain::use_cases::user::UserUseCaseResponse;
@@ -52,22 +53,48 @@ pub struct GetUsersDtoRequest(pub GetUsersUseCaseRequest);
 #[derive(Debug, Clone)]
 pub struct GetUsersDtoResponse(pub Vec<UserUseCaseResponse>);
 
-// ================ Get a user ================
+// ================ Get a user by ID ================
 
-/// Get users request
+/// Get user by ID request
 #[derive(Debug, Clone)]
 pub struct GetUserByIdDtoRequest(pub GetUserUseCaseRequest);
 
-/// Get users response
+/// Get user by ID response
 #[derive(Debug, Clone)]
 pub struct GetUserByIdDtoResponse(pub UserUseCaseResponse);
 
+// ================ Get a user by email ================
+
+/// Get user by email request
+#[derive(Debug, Clone)]
+pub struct GetUserByEmailDtoRequest(pub ForgottenPasswordUseCaseRequest);
+
+/// Get user by email response
+#[derive(Debug, Clone)]
+pub struct GetUserByEmailDtoResponse(pub UserUseCaseResponse);
+
 // ================ Delete a user ================
 
-/// Delete users request
+/// Delete a user request
 #[derive(Debug, Clone)]
 pub struct DeleteUserDtoRequest(pub DeleteUserUseCaseRequest);
 
-/// Delete users response
+/// Delete a user response
 #[derive(Debug, Clone)]
 pub struct DeleteUserDtoResponse(pub DeleteUserUseCaseResponse);
+
+// ================ Update password ================
+
+/// Update user password request
+#[derive(Debug, Clone)]
+pub struct UpdatePasswordDtoRequest {
+    /// User ID
+    pub user_id: UserId,
+
+    /// New password
+    pub password: Password,
+}
+
+/// Update user password response
+#[derive(Debug, Clone)]
+pub struct UpdatePasswordDtoResponse();

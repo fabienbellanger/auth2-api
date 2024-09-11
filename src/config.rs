@@ -78,6 +78,13 @@ pub struct Config {
     pub smtp_username: String,
     /// SMTP password
     pub smtp_password: String,
+
+    /// Forgotten password expiration duration (in hour)
+    pub forgotten_password_expiration_duration: i64,
+    /// Forgotten password base URL for link (Ex.: http://localhost)
+    pub forgotten_password_base_url: String,
+    /// Forgotten password email from
+    pub forgotten_password_email_from: String,
 }
 
 impl Config {

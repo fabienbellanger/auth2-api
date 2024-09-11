@@ -1,0 +1,24 @@
+{
+  "db_name": "MySQL",
+  "query": "\n                SELECT u.id AS user_id\n                FROM password_resets pr\n                    INNER JOIN users u ON u.id = pr.user_id AND u.deleted_at IS NULL\n                WHERE pr.token = ?\n                    AND pr.expired_at >= ?\n                LIMIT 1\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "user_id",
+        "type_info": {
+          "type": "VarString",
+          "flags": "NOT_NULL | PRIMARY_KEY | NO_DEFAULT_VALUE",
+          "max_size": 144
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "f6e8135de2527683fd04c4d6439b49a460289b7aef164b96d52090e2858deffa"
+}

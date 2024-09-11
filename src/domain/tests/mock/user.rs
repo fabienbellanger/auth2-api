@@ -4,7 +4,8 @@ use crate::domain::entities::user::UserId;
 use crate::domain::repositories::user::dto::{
     CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse, DeleteUserDtoRequest,
     DeleteUserDtoResponse, GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse,
-    GetUserByIdDtoRequest, GetUserByIdDtoResponse, GetUsersDtoRequest, GetUsersDtoResponse,
+    GetUserByEmailDtoRequest, GetUserByEmailDtoResponse, GetUserByIdDtoRequest, GetUserByIdDtoResponse,
+    GetUsersDtoRequest, GetUsersDtoResponse, UpdatePasswordDtoRequest, UpdatePasswordDtoResponse,
 };
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseResponse;
@@ -90,11 +91,27 @@ impl UserRepository for UserRepositoryMock {
         }
     }
 
-    // Delete a user by ID
+    /// Get a user by email
+    async fn get_user_by_email(
+        &self,
+        _req: GetUserByEmailDtoRequest,
+    ) -> Result<GetUserByEmailDtoResponse, UserUseCaseError> {
+        todo!()
+    }
+
+    /// Delete a user by ID
     async fn delete_user(&self, req: DeleteUserDtoRequest) -> Result<DeleteUserDtoResponse, UserUseCaseError> {
         match req.0.user_id.to_string().as_str() {
             VALID_ID => Ok(DeleteUserDtoResponse(DeleteUserUseCaseResponse())),
             _ => Err(UserUseCaseError::DatabaseError("User not found".to_string())),
         }
+    }
+
+    /// Update password
+    async fn update_password(
+        &self,
+        _req: UpdatePasswordDtoRequest,
+    ) -> Result<UpdatePasswordDtoResponse, UserUseCaseError> {
+        todo!()
     }
 }

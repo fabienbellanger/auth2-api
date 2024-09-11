@@ -18,6 +18,7 @@ pub struct PasswordReset {
 
 impl PasswordReset {
     /// Create a new password recovery
+    // TODO: Choose an algo for token
     pub fn new(user_id: UserId, expiration_duration: i64) -> Self {
         let now = UtcDateTime::now();
         let expired_at = match Duration::try_hours(expiration_duration) {
