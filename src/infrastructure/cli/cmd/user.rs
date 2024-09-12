@@ -1,10 +1,13 @@
 //! User CLI commands
 
+use crate::adapters::database::mysql::repositories::password_reset::PasswordResetMysqlRepository;
 use crate::adapters::database::mysql::repositories::refresh_token::RefreshTokenMysqlRepository;
 use crate::adapters::database::mysql::repositories::user::UserMysqlRepository;
 use crate::adapters::database::mysql::Db;
 use crate::adapters::database::GenericDb;
+use crate::adapters::email::EmailAdapter;
 use crate::config::Config;
+use crate::domain::entities::email::EmailConfig;
 use crate::domain::use_cases::user::create_user::CreateUserUseCaseRequest;
 use crate::domain::use_cases::user::UserUseCases;
 use crate::domain::value_objects::email::Email;
@@ -25,10 +28,19 @@ pub async fn register(lastname: &str, firstname: &str, email: &str, password: &s
         .map_err(|err| CliError::DatabaseError(err.to_string()))?;
     println!("► Database..........OK");
 
+    // Email service
+    let email_service = EmailAdapter::new(EmailConfig::from(config.clone()));
+
     // User use case
     let user_repository = UserMysqlRepository::new(db.clone());
     let refresh_token_repository = RefreshTokenMysqlRepository::new(db.clone());
-    let user_use_case = UserUseCases::new(user_repository, refresh_token_repository);
+    let password_reset_repository = PasswordResetMysqlRepository::new(db.clone());
+    let user_use_case = UserUseCases::new(
+        user_repository,
+        refresh_token_repository,
+        password_reset_repository,
+        email_service,
+    );
 
     let email = Email::new(email).map_err(|err| CliError::InvalidArguments(err.to_string()))?;
     let password = Password::new(password, false).map_err(|err| CliError::InvalidArguments(err.to_string()))?;

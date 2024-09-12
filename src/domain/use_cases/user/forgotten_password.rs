@@ -5,6 +5,8 @@ use crate::domain::repositories::password_reset::dto::CreateUpdatePasswordResetD
 use crate::domain::repositories::password_reset::PasswordResetRepository;
 use crate::domain::repositories::user::dto::GetUserByEmailDtoRequest;
 use crate::domain::repositories::user::UserRepository;
+use crate::domain::services::email::forgotten_password::ForgottenPasswordEmailRequest;
+use crate::domain::services::email::EmailService;
 use crate::domain::use_cases::user::UserUseCaseError;
 use crate::domain::value_objects::email::Email;
 
@@ -18,17 +20,19 @@ pub struct ForgottenPasswordUseCaseRequest {
 pub struct ForgottenPasswordUseCaseResponse(pub PasswordReset);
 
 #[derive(Debug, Clone)]
-pub struct ForgottenPasswordUseCase<U: UserRepository, P: PasswordResetRepository> {
+pub struct ForgottenPasswordUseCase<U: UserRepository, P: PasswordResetRepository, E: EmailService> {
     user_repository: U,
     password_reset_repository: P,
+    email_service: E,
 }
 
-impl<U: UserRepository, P: PasswordResetRepository> ForgottenPasswordUseCase<U, P> {
+impl<U: UserRepository, P: PasswordResetRepository, E: EmailService> ForgottenPasswordUseCase<U, P, E> {
     /// Create a new use case
-    pub fn new(user_repository: U, password_reset_repository: P) -> Self {
+    pub fn new(user_repository: U, password_reset_repository: P, email_service: E) -> Self {
         Self {
             user_repository,
             password_reset_repository,
+            email_service,
         }
     }
 
@@ -51,7 +55,12 @@ impl<U: UserRepository, P: PasswordResetRepository> ForgottenPasswordUseCase<U, 
             .await?;
 
         // Send email with the token to the user
-        // TODO: Send email
+        self.email_service
+            .forgotten_password(ForgottenPasswordEmailRequest {
+                email: user.0.email.clone(),
+                token: password_reset.token.clone(),
+            })
+            .map_err(|err| UserUseCaseError::SendEmailError(err.to_string()))?;
 
         Ok(ForgottenPasswordUseCaseResponse(password_reset))
     }

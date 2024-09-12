@@ -10,7 +10,7 @@ use async_trait::async_trait;
 pub mod dto;
 
 #[async_trait]
-pub trait PasswordResetRepository {
+pub trait PasswordResetRepository: Clone {
     /// Add or update forgotten password request
     async fn create_or_update(
         &self,

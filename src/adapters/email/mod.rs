@@ -1,7 +1,14 @@
 //! Email adapter using `lettre` crate
 
+pub mod forgotten_password;
+
+use crate::adapters::email::forgotten_password::ForgottenPassword;
 use crate::domain::entities::email::{EmailConfig, EmailMessage};
-use crate::domain::services::email::{EmailServiceError, EmailTransport};
+use crate::domain::services::email::forgotten_password::{
+    ForgottenPasswordEmailRequest, ForgottenPasswordEmailResponse,
+};
+use crate::domain::services::email::{EmailService, EmailServiceError, EmailTransport};
+use crate::APP_NAME;
 use lettre::address::AddressError;
 use lettre::message::{header, MultiPart, SinglePart};
 use lettre::{SmtpTransport, Transport};
@@ -68,5 +75,22 @@ impl EmailTransport for EmailAdapter {
             .map_err(|err| EmailServiceError::SendError(err.to_string()))?;
 
         Ok(())
+    }
+}
+
+impl EmailService for EmailAdapter {
+    fn forgotten_password(
+        &self,
+        request: ForgottenPasswordEmailRequest,
+    ) -> Result<ForgottenPasswordEmailResponse, EmailServiceError> {
+        let msg = ForgottenPassword {
+            app_name: APP_NAME.to_string(),
+            base_url: self.config.forgotten_password_base_url.clone(),
+            token: request.token,
+            email_from: self.config.forgotten_password_email_from.clone(),
+            email_to: request.email.to_string(),
+        };
+
+        self.send(msg.try_into()?).map(|_| ForgottenPasswordEmailResponse())
     }
 }

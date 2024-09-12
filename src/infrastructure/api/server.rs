@@ -7,7 +7,9 @@ use super::layers::{
 use super::{layers, logger, routes};
 use crate::adapters::database::mysql::Db;
 use crate::adapters::database::GenericDb;
+use crate::adapters::email::EmailAdapter;
 use crate::config::Config;
+use crate::domain::entities::email::EmailConfig;
 use crate::infrastructure::api::errors::timeout_error;
 use crate::infrastructure::api::response::ApiError;
 use crate::infrastructure::api::use_cases::AppUseCases;
@@ -77,8 +79,8 @@ async fn get_app(settings: &Config) -> Result<Router, ApiError> {
     // Database
     let db = Db::new(settings).await?;
 
-    // Email
-    // let email = Email::new(EmailConfig::from(settings.clone()));
+    // Email service
+    let email_service = EmailAdapter::new(EmailConfig::from(settings.clone()));
 
     app = app
         .fallback_service(ServeDir::new("assets").append_index_html_on_directories(true)) // FIXME: static_file_error not work this Axum 0.6.9!
@@ -87,7 +89,7 @@ async fn get_app(settings: &Config) -> Result<Router, ApiError> {
             layers::override_http_errors,
         ))
         .layer(layers)
-        .layer(Extension(AppUseCases::new(db).await?));
+        .layer(Extension(AppUseCases::new(db, email_service).await?));
 
     // State
     let app = app.with_state(global_state);

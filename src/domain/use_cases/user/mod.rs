@@ -7,16 +7,21 @@ pub mod get_access_token;
 pub mod get_user;
 pub mod get_users;
 pub mod refresh_token;
+pub mod update_password_from_token;
 
 use crate::domain::entities::refresh_token::RefreshTokenError;
 use crate::domain::entities::user::UserId;
+use crate::domain::repositories::password_reset::PasswordResetRepository;
 use crate::domain::repositories::refresh_token::RefreshTokenRepository;
 use crate::domain::repositories::user::UserRepository;
+use crate::domain::services::email::{EmailService, EmailServiceError};
 use crate::domain::use_cases::user::delete_user::DeleteUserUseCase;
+use crate::domain::use_cases::user::forgotten_password::ForgottenPasswordUseCase;
 use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCase;
 use crate::domain::use_cases::user::get_user::GetUserUseCase;
 use crate::domain::use_cases::user::get_users::GetUsersUseCase;
 use crate::domain::use_cases::user::refresh_token::RefreshTokenUseCase;
+use crate::domain::use_cases::user::update_password_from_token::UpdatePasswordFromTokenUseCase;
 use crate::domain::value_objects::datetime::{UtcDateTime, UtcDateTimeError};
 use crate::domain::value_objects::email::{Email, EmailError};
 use crate::domain::value_objects::id::IdError;
@@ -25,25 +30,40 @@ use create_user::CreateUserUseCase;
 use thiserror::Error;
 
 #[derive(Debug, Clone)]
-pub struct UserUseCases<U: UserRepository, T: RefreshTokenRepository> {
+pub struct UserUseCases<U: UserRepository, T: RefreshTokenRepository, P: PasswordResetRepository, E: EmailService> {
     pub create_user: CreateUserUseCase<U>,
     pub get_access_token: GetAccessTokenUseCase<U, T>,
     pub get_users: GetUsersUseCase<U>,
     pub get_user: GetUserUseCase<U>,
     pub delete_user: DeleteUserUseCase<U>,
     pub refresh_token: RefreshTokenUseCase<T>,
+    pub forgotten_password: ForgottenPasswordUseCase<U, P, E>,
+    pub update_password_from_token: UpdatePasswordFromTokenUseCase<U, P>,
 }
 
-impl<U: UserRepository, T: RefreshTokenRepository> UserUseCases<U, T> {
+impl<U: UserRepository, T: RefreshTokenRepository, P: PasswordResetRepository, E: EmailService>
+    UserUseCases<U, T, P, E>
+{
     /// Create a new user use cases
-    pub fn new(user_repository: U, refresh_token_repository: T) -> Self {
+    pub fn new(
+        user_repository: U,
+        refresh_token_repository: T,
+        password_reset_repository: P,
+        email_service: E,
+    ) -> Self {
         Self {
             create_user: CreateUserUseCase::new(user_repository.clone()),
             get_access_token: GetAccessTokenUseCase::new(user_repository.clone(), refresh_token_repository.clone()),
             get_users: GetUsersUseCase::new(user_repository.clone()),
             get_user: GetUserUseCase::new(user_repository.clone()),
-            delete_user: DeleteUserUseCase::new(user_repository),
+            delete_user: DeleteUserUseCase::new(user_repository.clone()),
             refresh_token: RefreshTokenUseCase::new(refresh_token_repository),
+            forgotten_password: ForgottenPasswordUseCase::new(
+                user_repository.clone(),
+                password_reset_repository.clone(),
+                email_service,
+            ),
+            update_password_from_token: UpdatePasswordFromTokenUseCase::new(user_repository, password_reset_repository),
         }
     }
 }
@@ -83,6 +103,15 @@ pub enum UserUseCaseError {
     #[error("Invalid Refresh token creation error")]
     InvalidRefreshToken(),
 
+    #[error("Not forgotten password found")]
+    ForgottenPasswordNotFound(),
+
+    #[error("Model conversion error")]
+    FromModelError(),
+
+    #[error("Send email error: {0}")]
+    SendEmailError(String),
+
     #[error("{0}")]
     DatabaseError(String),
 }
@@ -114,6 +143,12 @@ impl From<UtcDateTimeError> for UserUseCaseError {
 impl From<RefreshTokenError> for UserUseCaseError {
     fn from(err: RefreshTokenError) -> Self {
         UserUseCaseError::RefreshTokenCreationError(err.to_string())
+    }
+}
+
+impl From<EmailServiceError> for UserUseCaseError {
+    fn from(err: EmailServiceError) -> Self {
+        UserUseCaseError::SendEmailError(err.to_string())
     }
 }
 

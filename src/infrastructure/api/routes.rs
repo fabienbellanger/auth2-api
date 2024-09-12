@@ -6,7 +6,7 @@ use crate::infrastructure::api::handlers;
 use crate::infrastructure::api::layers::auth::JwtLayer;
 use crate::infrastructure::api::layers::basic_auth::BasicAuthLayer;
 use crate::infrastructure::api::layers::state::SharedState;
-use axum::routing::{delete, get, post};
+use axum::routing::{delete, get, patch, post};
 use axum::Router;
 
 /// Return web routes list
@@ -31,8 +31,8 @@ pub fn api(state: SharedState) -> Router<SharedState> {
         // Public routes
         .route("/token", post(handlers::user::get_access_token))
         .route("/refresh-token/:token", post(handlers::user::refresh_token))
-        // .route("/forgotten-password/:email", post(Users::forgotten_password))
-        // .route("/update-password/:token", patch(Users::update_password))
+        .route("/forgotten-password/:email", post(handlers::user::forgotten_password))
+        .route("/update-password", patch(handlers::user::update_password_from_token))
         // Private routes
         .nest("/", api_protected(state))
 }

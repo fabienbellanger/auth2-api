@@ -22,7 +22,7 @@ paths:
     post:
       description: Get user token
       tags:
-        - "Authentication"
+        - "User"
       requestBody:
         required: true
         content:
@@ -51,7 +51,7 @@ paths:
     post:
       description: Refresh user token
       tags:
-        - "Authentication"
+        - "User"
       parameters:
         - in: path
           name: token
@@ -73,6 +73,66 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         '422':
           $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+  /forgotten-password/{email}:
+    post:
+      security:
+        - bearerAuth: [ ]
+      summary: Forgotten password
+      description: Forgotten password request
+      tags:
+        - "User"
+      parameters:
+        - in: path
+          name: email
+          schema:
+            type: string
+            format: email
+          required: true
+          description: User email
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForgottenPasswordResponse'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '405':
+          $ref: "#/components/responses/MethodNotAllowed"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+  /update-password:
+    patch:
+      summary: "Update password"
+      description: Set a new user password from forgotten password request
+      tags:
+        - "User"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePasswordFromTokenRequest"
+            example:
+              token: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+              password: "BBBBBBBB"
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '405':
+          $ref: "#/components/responses/MethodNotAllowed"
         '500':
           $ref: "#/components/responses/InternalServerError"
   /users:
@@ -387,3 +447,25 @@ components:
                 $ref: "#/components/schemas/GetUserResponse"
           required:
             - data
+    ForgottenPasswordResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        expired_at:
+          type: string
+          format: date-time
+      required:
+        - token
+        - expired_at
+    UpdatePasswordFromTokenRequest:
+      type: object
+      properties:
+        token:
+          type: string
+        password:
+          type: string
+          minLength: 8
+      required:
+        - token
+        - password

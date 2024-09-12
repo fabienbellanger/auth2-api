@@ -6,10 +6,12 @@ mod error;
 use crate::domain::entities::user::UserId;
 use crate::domain::use_cases::user::create_user::CreateUserUseCaseRequest;
 use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseRequest;
+use crate::domain::use_cases::user::forgotten_password::ForgottenPasswordUseCaseRequest;
 use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCaseRequest;
 use crate::domain::use_cases::user::get_user::GetUserUseCaseRequest;
 use crate::domain::use_cases::user::get_users::GetUsersUseCaseRequest;
 use crate::domain::use_cases::user::refresh_token::RefreshTokenUseCaseRequest;
+use crate::domain::use_cases::user::update_password_from_token::UpdatePasswordFromTokenUseCaseRequest;
 use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::id::Id;
 use crate::domain::value_objects::password::Password;
@@ -133,4 +135,45 @@ pub async fn refresh_token(
         .await?;
 
     Ok(ApiSuccess::new(StatusCode::OK, response.into()))
+}
+
+/// Send forgotten password request: POST /api/v1/forgotten-password/:email
+#[instrument(skip(uc, state), name = "forgotten_password_handler")]
+pub async fn forgotten_password(
+    Path(email): Path<String>,
+    State(state): State<SharedState>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> Result<ApiSuccess<ForgottenPasswordResponse>, ApiError> {
+    let response = uc
+        .user
+        .forgotten_password
+        .call(ForgottenPasswordUseCaseRequest {
+            user_email: Email::new(&email)?,
+            expiration_duration: state.config.forgotten_password_expiration_duration,
+        })
+        .await?;
+
+    Ok(ApiSuccess::new(StatusCode::OK, response.into()))
+}
+
+/// Update user password from forgotten password request: PATCH /api/v1/update-password
+#[instrument(skip(uc), name = "update_password_from_token_handler")]
+pub async fn update_password_from_token(
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+    Json(body): Json<UpdatePasswordFromTokenRequest>,
+) -> Result<ApiSuccess<UpdatePasswordFromTokenResponse>, ApiError> {
+    uc.user
+        .update_password_from_token
+        .call(UpdatePasswordFromTokenUseCaseRequest {
+            token: body.token,
+            password: Password::new(&body.password, false)?,
+        })
+        .await?;
+
+    Ok(ApiSuccess::new(
+        StatusCode::NO_CONTENT,
+        UpdatePasswordFromTokenResponse(),
+    ))
 }

@@ -1,6 +1,6 @@
 {
   "db_name": "MySQL",
-  "query": "\n            SELECT id, email, lastname, firstname, created_at, updated_at\n            FROM users\n            WHERE id = ?\n                AND deleted_at IS NULL",
+  "query": "\n            SELECT id, email, lastname, firstname, created_at, updated_at, deleted_at\n            FROM users\n            WHERE email = ?\n                AND deleted_at IS NULL\n            LIMIT 1",
   "describe": {
     "columns": [
       {
@@ -56,6 +56,15 @@
           "flags": "NOT_NULL | BINARY | NO_DEFAULT_VALUE",
           "max_size": 23
         }
+      },
+      {
+        "ordinal": 6,
+        "name": "deleted_at",
+        "type_info": {
+          "type": "Datetime",
+          "flags": "MULTIPLE_KEY | BINARY",
+          "max_size": 23
+        }
       }
     ],
     "parameters": {
@@ -67,8 +76,9 @@
       false,
       false,
       false,
-      false
+      false,
+      true
     ]
   },
-  "hash": "8459eede8dfdbc35821d2a54b94ad0592e5436766c306db22180ea428e2cb5c5"
+  "hash": "a28a4a64feb5470cdca6337b7a8e6425ea13d766ce071946548f271d8f92cbcc"
 }

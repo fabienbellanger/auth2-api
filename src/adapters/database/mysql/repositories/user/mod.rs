@@ -1,7 +1,9 @@
 //! User MySQL repository
 
+mod model;
+
+use crate::adapters::database::mysql::repositories::user::model::UserModel;
 use crate::adapters::database::mysql::{Db, PaginationSort};
-use crate::domain::entities::user::UserId;
 use crate::domain::repositories::user::dto::{
     CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse, DeleteUserDtoRequest,
     DeleteUserDtoResponse, GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse,
@@ -12,11 +14,9 @@ use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseResponse;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
 use crate::domain::value_objects::datetime::UtcDateTime;
-use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::id::Id;
 use crate::domain::value_objects::password::Password;
 use async_trait::async_trait;
-use chrono::{DateTime, Utc};
 use std::str::FromStr;
 use std::sync::Arc;
 
@@ -110,7 +110,7 @@ impl UserRepository for UserMysqlRepository {
     async fn get_users(&self, req: GetUsersDtoRequest) -> Result<GetUsersDtoResponse, UserUseCaseError> {
         let mut query = String::from(
             r#"
-            SELECT id, email, lastname, firstname, created_at, updated_at
+            SELECT id, email, lastname, firstname, created_at, updated_at, deleted_at
             FROM users
             WHERE deleted_at IS NULL
         "#,
@@ -129,7 +129,7 @@ impl UserRepository for UserMysqlRepository {
         ])));
         query.push_str(&filter.get_pagination_sql());
 
-        let users = sqlx::query(&query)
+        let users = sqlx::query_as::<_, UserModel>(&query)
             .fetch_all(self.db.pool.clone().as_ref())
             .await
             .map_err(|err| {
@@ -138,7 +138,11 @@ impl UserRepository for UserMysqlRepository {
             })?
             .into_iter()
             .map(UserUseCaseResponse::try_from)
-            .collect::<Result<Vec<_>, _>>()?;
+            .collect::<Result<Vec<UserUseCaseResponse>, _>>()
+            .map_err(|err| {
+                error!(error = %err, "Failed to convert user model to user use case response");
+                UserUseCaseError::FromModelError()
+            })?;
 
         Ok(GetUsersDtoResponse(users))
     }
@@ -158,9 +162,10 @@ impl UserRepository for UserMysqlRepository {
 
     #[instrument(skip(self, req), name = "user_repository_get_user_by_id")]
     async fn get_user_by_id(&self, req: GetUserByIdDtoRequest) -> Result<GetUserByIdDtoResponse, UserUseCaseError> {
-        let result = sqlx::query!(
+        let result = sqlx::query_as!(
+            UserModel,
             "
-            SELECT id, email, lastname, firstname, created_at, updated_at
+            SELECT id, email, lastname, firstname, created_at, updated_at, deleted_at
             FROM users
             WHERE id = ?
                 AND deleted_at IS NULL",
@@ -174,14 +179,10 @@ impl UserRepository for UserMysqlRepository {
         })?;
 
         let user = match result {
-            Some(row) => UserUseCaseResponse {
-                id: UserId::from_str(&row.id)?,
-                email: Email::new(&row.email)?,
-                lastname: row.lastname,
-                firstname: row.firstname,
-                created_at: UtcDateTime::new(DateTime::<Utc>::from_naive_utc_and_offset(row.created_at, Utc)),
-                updated_at: UtcDateTime::new(DateTime::<Utc>::from_naive_utc_and_offset(row.updated_at, Utc)),
-            },
+            Some(row) => row.try_into().map_err(|err| {
+                error!(error = %err, "Failed to convert user model to user use case response");
+                UserUseCaseError::FromModelError()
+            })?,
             None => Err(UserUseCaseError::UserNotFound())?,
         };
 
@@ -193,8 +194,32 @@ impl UserRepository for UserMysqlRepository {
         &self,
         req: GetUserByEmailDtoRequest,
     ) -> Result<GetUserByEmailDtoResponse, UserUseCaseError> {
-        dbg!(req);
-        todo!()
+        let result = sqlx::query_as!(
+            UserModel,
+            "
+            SELECT id, email, lastname, firstname, created_at, updated_at, deleted_at
+            FROM users
+            WHERE email = ?
+                AND deleted_at IS NULL
+            LIMIT 1",
+            req.0.user_email.to_string()
+        )
+        .fetch_optional(self.db.pool.clone().as_ref())
+        .await
+        .map_err(|err| {
+            error!(error = %err, "Failed to get user by email");
+            UserUseCaseError::DatabaseError("Failed to get user by email".to_string())
+        })?;
+
+        let user = match result {
+            Some(row) => row.try_into().map_err(|err| {
+                error!(error = %err, "Failed to convert user model to user use case response");
+                UserUseCaseError::FromModelError()
+            })?,
+            None => Err(UserUseCaseError::UserNotFound())?,
+        };
+
+        Ok(GetUserByEmailDtoResponse(user))
     }
 
     #[instrument(skip(self, req), name = "user_repository_delete_user")]
@@ -227,7 +252,26 @@ impl UserRepository for UserMysqlRepository {
         &self,
         req: UpdatePasswordDtoRequest,
     ) -> Result<UpdatePasswordDtoResponse, UserUseCaseError> {
-        dbg!(req);
-        todo!()
+        let result = sqlx::query!(
+            "
+            UPDATE users
+            SET password = ?
+            WHERE id = ?
+                AND deleted_at IS NULL",
+            req.password.to_string(),
+            req.user_id.to_string()
+        )
+        .execute(self.db.pool.clone().as_ref())
+        .await
+        .map_err(|err| {
+            error!(error = %err, "Failed to update user password");
+            UserUseCaseError::DatabaseError("Failed to update user password".to_string())
+        })?;
+
+        if result.rows_affected() == 0 {
+            return Err(UserUseCaseError::UserNotFound())?;
+        }
+
+        Ok(UpdatePasswordDtoResponse())
     }
 }

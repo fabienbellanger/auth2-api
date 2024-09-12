@@ -2,6 +2,7 @@
 
 use crate::domain::use_cases::user::create_user::CreateUserUseCaseRequest;
 use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseResponse;
+use crate::domain::use_cases::user::forgotten_password::ForgottenPasswordUseCaseResponse;
 use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCaseResponse;
 use crate::domain::use_cases::user::get_user::GetUserUseCaseResponse;
 use crate::domain::use_cases::user::get_users::{GetUsersUseCaseRequest, GetUsersUseCaseResponse};
@@ -192,3 +193,34 @@ impl From<RefreshTokenUseCaseResponse> for RefreshTokenResponse {
         }
     }
 }
+
+// ================ Forgotten password ================
+
+/// Forgotten password response
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct ForgottenPasswordResponse {
+    pub token: String,
+    pub expired_at: String,
+}
+
+impl From<ForgottenPasswordUseCaseResponse> for ForgottenPasswordResponse {
+    fn from(value: ForgottenPasswordUseCaseResponse) -> Self {
+        Self {
+            token: value.0.token.to_string(),
+            expired_at: value.0.expired_at.to_string(),
+        }
+    }
+}
+
+// ================ Update user password from token ================
+
+/// Forgotten password response
+#[derive(Debug, Clone, PartialEq, Deserialize)]
+pub struct UpdatePasswordFromTokenRequest {
+    pub token: String,
+    pub password: String,
+}
+
+/// Forgotten password response
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct UpdatePasswordFromTokenResponse();

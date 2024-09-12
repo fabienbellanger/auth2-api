@@ -17,6 +17,9 @@ impl From<UserUseCaseError> for ApiError {
             UserUseCaseError::UserNotFound() => ApiError::NotFound("User not found".to_string()),
             UserUseCaseError::Unauthorized() => ApiError::Unauthorized("Unauthorized".to_string()),
             UserUseCaseError::InvalidRefreshToken() => ApiError::Unauthorized("Invalid refresh token".to_string()),
+            UserUseCaseError::ForgottenPasswordNotFound() => ApiError::NotFound("No password reset found".to_string()),
+            UserUseCaseError::FromModelError() => ApiError::InternalServerError("Internal server error".to_string()),
+            UserUseCaseError::SendEmailError(msg) => ApiError::InternalServerError(msg),
             UserUseCaseError::AccessTokenGenerationError() => {
                 ApiError::InternalServerError("Get access token error".to_string())
             }

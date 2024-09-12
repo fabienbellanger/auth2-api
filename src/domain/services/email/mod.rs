@@ -1,9 +1,14 @@
 //! Email service
 
+pub mod forgotten_password;
+
 use crate::domain::entities::email::EmailMessage;
+use crate::domain::services::email::forgotten_password::{
+    ForgottenPasswordEmailRequest, ForgottenPasswordEmailResponse,
+};
 use thiserror::Error;
 
-#[derive(Debug, Clone, Error)]
+#[derive(Debug, Clone, PartialEq, Error)]
 pub enum EmailServiceError {
     #[error("Send email error: {0}")]
     SendError(String),
@@ -19,6 +24,9 @@ pub enum EmailServiceError {
 
     #[error("Multipart error: {0}")]
     MultiPartError(String),
+
+    #[error("Invalid parameter: {0}")]
+    InvalidParameter(String),
 }
 
 pub trait EmailTransport {
@@ -28,5 +36,9 @@ pub trait EmailTransport {
 
 /// List all email services
 pub trait EmailService {
-    // fn forgotten_password(&self, request: ForgottenPasswordRequest) -> Result<(), EmailServiceError>;
+    /// Send email for a forgotten password request
+    fn forgotten_password(
+        &self,
+        request: ForgottenPasswordEmailRequest,
+    ) -> Result<ForgottenPasswordEmailResponse, EmailServiceError>;
 }

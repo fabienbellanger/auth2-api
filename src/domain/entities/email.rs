@@ -1,5 +1,7 @@
 //! Email entity
 
+use crate::config::Config;
+
 pub type EmailAddress = String;
 
 #[derive(Debug, Default, Clone)]
@@ -18,27 +20,30 @@ pub struct EmailConfig {
 
     /// SMTP password
     pub password: Option<String>,
+
+    /// Forgotten password link base URL
+    pub forgotten_password_base_url: String,
+
+    /// Forgotten password email from
+    pub forgotten_password_email_from: String,
 }
 
-impl EmailConfig {
-    /// New email configuration without authentication
-    pub fn new(host: String, port: u16, timeout: u64) -> Self {
-        Self {
-            host,
-            port,
-            timeout,
-            username: None,
-            password: None,
-        }
-    }
-    /// New email configuration with authentication
-    pub fn new_with_auth(host: String, port: u16, timeout: u64, username: String, password: String) -> Self {
-        Self {
-            host,
-            port,
-            timeout,
-            username: Some(username),
-            password: Some(password),
+impl From<Config> for EmailConfig {
+    fn from(config: Config) -> Self {
+        EmailConfig {
+            host: config.smtp_host,
+            port: config.smtp_port,
+            timeout: config.smtp_timeout,
+            username: match config.smtp_username.is_empty() {
+                false => Some(config.smtp_username),
+                true => None,
+            },
+            password: match config.smtp_password.is_empty() {
+                false => Some(config.smtp_password),
+                true => None,
+            },
+            forgotten_password_base_url: config.forgotten_password_base_url,
+            forgotten_password_email_from: config.forgotten_password_email_from,
         }
     }
 }
