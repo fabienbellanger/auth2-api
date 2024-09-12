@@ -110,8 +110,12 @@ impl UserRepository for UserRepositoryMock {
     /// Update password
     async fn update_password(
         &self,
-        _req: UpdatePasswordDtoRequest,
+        req: UpdatePasswordDtoRequest,
     ) -> Result<UpdatePasswordDtoResponse, UserUseCaseError> {
-        todo!()
+        if req.user_id.to_string().as_str() == VALID_ID {
+            Ok(UpdatePasswordDtoResponse())
+        } else {
+            Err(UserUseCaseError::DatabaseError("User not found".to_string()))
+        }
     }
 }
