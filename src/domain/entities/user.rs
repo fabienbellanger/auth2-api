@@ -33,7 +33,7 @@ impl User {
     ///     lastname: "Doe".to_owned(),
     ///     firstname: "John".to_owned(),
     ///     email: Email::new("john.doe@test.com").unwrap(),
-    ///     password: Password::new("1234567890", false).unwrap(),
+    ///     password: Password::new("1A,R;(9h0Y&gYH5=7eY!ff", false).unwrap(),
     ///     created_at: UtcDateTime::now(),
     ///     updated_at: UtcDateTime::now(),
     ///     deleted_at: None,

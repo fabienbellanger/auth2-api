@@ -31,7 +31,7 @@ paths:
               $ref: '#/components/schemas/GetAccessTokenRequest'
             example:
               email: user@example.com
-              password: "AAAAAAAA"
+              password: "1A,R;(9h0Y&gYH5=7eY!gg"
       responses:
         '200':
           description: OK
@@ -121,7 +121,7 @@ paths:
               $ref: "#/components/schemas/UpdatePasswordFromTokenRequest"
             example:
               token: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-              password: "BBBBBBBB"
+              password: "1A,R;(9h0Y&gYH5=7eY!gg"
       responses:
         '204':
           description: No Content

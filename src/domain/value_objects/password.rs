@@ -5,6 +5,7 @@
 use argon2::password_hash::rand_core::OsRng;
 use argon2::password_hash::SaltString;
 use argon2::{Algorithm, Argon2, Params, PasswordHash, PasswordHasher, PasswordVerifier, Version};
+use passwords::{analyzer, scorer};
 use std::fmt::{Display, Formatter};
 use thiserror::Error;
 use validator::Validate;
@@ -16,6 +17,9 @@ pub enum PasswordError {
 
     #[error("Password hash error: {0}")]
     HashError(String),
+
+    #[error("Password is not strong enough")]
+    PasswordNotStrong(),
 }
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, Validate)]
@@ -28,24 +32,44 @@ pub struct Password {
 impl Password {
     /// Create and validate a new hashed password
     ///
+    /// Password score:
+    /// - 0 ~ 20 is very dangerous
+    /// - 20 ~ 40 is dangerous
+    /// - 40 ~ 60 is very weak
+    /// - 60 ~ 80 is weak
+    /// - 80 ~ 90 is good
+    /// - 90 ~ 95 is strong
+    /// - 95 ~ 99 is very strong
+    /// - 99 ~ 100 is invulnerable
+    ///
     /// # Example
     /// ```rust
     /// use fake::Fake;
     /// use fake::faker::internet::fr_fr::Password as FakePassword;
     /// use auth2_api::domain::value_objects::password::Password;
     ///
-    /// let valid_password: String = FakePassword(8..12).fake();
+    /// let valid_password: String = FakePassword(16..25).fake();
     /// let password = Password::new(&valid_password, false);
     /// assert!(password.is_ok());
     ///
     /// // `Password` implements the `Display` trait
     /// println!("{}", password.unwrap());
     ///
+    /// // Password not enough strong
+    /// let not_strong_password: String = FakePassword(8..9).fake();
+    /// let password = Password::new(&not_strong_password, false);
+    /// assert!(password.is_err());
+    ///
     /// assert!(Password::new("", false).is_err());
     /// let invalid_password: String = FakePassword(2..7).fake();
     /// assert!(Password::new(&invalid_password, false).is_err());
     /// ```
     pub fn new(value: &str, hashed: bool) -> Result<Self, PasswordError> {
+        // Is password strong enough?
+        if !hashed && scorer::score(&analyzer::analyze(value)) < 80.0 {
+            return Err(PasswordError::PasswordNotStrong());
+        }
+
         let mut password = Self {
             value: value.to_string(),
             original: None,
@@ -90,8 +114,8 @@ impl Password {
     /// use auth2_api::domain::value_objects::password::{Password, PasswordError};
     ///
     /// // Valid password
-    /// let hashed_password = Password::new("1234567890", false).unwrap();
-    /// assert!(hashed_password.verify("1234567890").is_ok());
+    /// let hashed_password = Password::new("1A,R;(9h0Y&gYH5=7eY!ff", false).unwrap();
+    /// assert!(hashed_password.verify("1A,R;(9h0Y&gYH5=7eY!ff").is_ok());
     ///
     /// // Invalid password
     /// assert!(hashed_password.verify("1234567").is_err());

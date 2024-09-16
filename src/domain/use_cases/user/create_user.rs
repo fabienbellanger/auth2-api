@@ -47,7 +47,7 @@ mod tests {
     async fn test_create_user_use_case() {
         let user_repository = UserRepositoryMock {};
         let use_case = CreateUserUseCase::new(user_repository);
-        let password: String = Password(8..12).fake();
+        let password: String = Password(16..25).fake();
 
         let request = CreateUserUseCaseRequest {
             email: Email::new(&VALID_EMAIL).unwrap(),
@@ -64,7 +64,7 @@ mod tests {
     async fn test_create_user_use_case_invalid_email() {
         let user_repository = UserRepositoryMock {};
         let use_case = CreateUserUseCase::new(user_repository);
-        let password: String = Password(8..12).fake();
+        let password: String = Password(16..25).fake();
 
         let request = CreateUserUseCaseRequest {
             email: Email::new(&INVALID_EMAIL).unwrap(),

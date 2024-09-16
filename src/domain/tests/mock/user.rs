@@ -18,11 +18,11 @@ use std::str::FromStr;
 
 pub const VALID_ID: &str = "3288fb86-db99-471d-95bc-1451c7ec6f7b";
 pub const VALID_EMAIL: &str = "john.doe@test.com";
-pub const VALID_PASSWORD: &str = "123456789";
+pub const VALID_PASSWORD: &str = "1A,R;(9h0Y&gYH5=7eY!ff";
 pub const INVALID_ID: &str = "1a811ea9-2c02-4acc-ae9f-c8f8522702f3";
 pub const INVALID_EMAIL: &str = "jane.doe@test.com";
 pub const EMAIL_NOT_FOUND: &str = "lucky.luke@test.com";
-pub const INVALID_PASSWORD: &str = "7844125963";
+pub const INVALID_PASSWORD: &str = "1A,R;(9h0Y&gYH5=7eY!ee";
 
 /// User repository mock
 #[derive(Debug, Clone)]

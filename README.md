@@ -211,7 +211,8 @@ rm ./keys/private.ec.key
 
 ## TODO
 
-- [ ] Add command to delete expired refresh tokens
+- [ ] Use `passwords` crate to check if a password is strong enough
+- [ ] Update user password: check if the new password is different from the old one
 - [ ] Build in different targets (Linux on Mac)
 - [ ] Add OpenTelemetry metrics
     - [Distributed Tracing in Rust](https://medium.com/netwo/distributed-tracing-in-rust-b8eb2af3aff4)
