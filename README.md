@@ -211,7 +211,6 @@ rm ./keys/private.ec.key
 
 ## TODO
 
-- [ ] Use `passwords` crate to check if a password is strong enough
 - [ ] Update user password: check if the new password is different from the old one
 - [ ] Build in different targets (Linux on Mac)
 - [ ] Add OpenTelemetry metrics

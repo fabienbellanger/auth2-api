@@ -10,6 +10,9 @@ use std::fmt::{Display, Formatter};
 use thiserror::Error;
 use validator::Validate;
 
+/// Minimum password score to be accepted
+const SCORE_MIN: f64 = 80.0;
+
 #[derive(Debug, Clone, PartialEq, Error)]
 pub enum PasswordError {
     #[error("Invalid password: {0}")]
@@ -32,7 +35,7 @@ pub struct Password {
 impl Password {
     /// Create and validate a new hashed password
     ///
-    /// Password score:
+    /// Password scores:
     /// - 0 ~ 20 is very dangerous
     /// - 20 ~ 40 is dangerous
     /// - 40 ~ 60 is very weak
@@ -66,7 +69,7 @@ impl Password {
     /// ```
     pub fn new(value: &str, hashed: bool) -> Result<Self, PasswordError> {
         // Is password strong enough?
-        if !hashed && scorer::score(&analyzer::analyze(value)) < 80.0 {
+        if !hashed && scorer::score(&analyzer::analyze(value)) < SCORE_MIN {
             return Err(PasswordError::PasswordNotStrong());
         }
 
