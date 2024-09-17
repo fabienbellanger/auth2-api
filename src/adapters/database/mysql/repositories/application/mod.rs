@@ -95,7 +95,7 @@ impl ApplicationRepository for ApplicationMysqlRepository {
                 error!(error = %err, "Failed to convert application model to application use case response");
                 ApplicationUseCaseError::FromModelError()
             })?,
-            None => Err(ApplicationUseCaseError::ApplicationNotFound)?,
+            None => Err(ApplicationUseCaseError::ApplicationNotFound())?,
         };
 
         Ok(GetApplicationByIdDtoResponse(application))
@@ -146,10 +146,11 @@ impl ApplicationRepository for ApplicationMysqlRepository {
         let result = sqlx::query!(
             "
             UPDATE applications
-            SET name = ?
+            SET name = ?, updated_at = ?
             WHERE id = ?
                 AND deleted_at IS NULL",
             req.0.name,
+            UtcDateTime::now().value(),
             req.0.id.to_string()
         )
         .execute(self.db.pool.clone().as_ref())
@@ -160,7 +161,7 @@ impl ApplicationRepository for ApplicationMysqlRepository {
         })?;
 
         if result.rows_affected() == 0 {
-            return Err(ApplicationUseCaseError::ApplicationNotFound)?;
+            return Err(ApplicationUseCaseError::ApplicationNotFound())?;
         }
 
         Ok(UpdateApplicationDtoResponse(UpdateApplicationUseCaseResponse()))
@@ -188,7 +189,7 @@ impl ApplicationRepository for ApplicationMysqlRepository {
         })?;
 
         if result.rows_affected() == 0 {
-            return Err(ApplicationUseCaseError::ApplicationNotFound)?;
+            return Err(ApplicationUseCaseError::ApplicationNotFound())?;
         }
 
         Ok(DeleteApplicationDtoResponse(DeleteApplicationUseCaseResponse()))

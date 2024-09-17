@@ -41,7 +41,7 @@ impl<A: ApplicationRepository> ApplicationUseCases<A> {
 #[derive(Debug, Clone, PartialEq, Error)]
 pub enum ApplicationUseCaseError {
     #[error("Application not found")]
-    ApplicationNotFound,
+    ApplicationNotFound(),
 
     #[error("Invalid application id")]
     InvalidId(),

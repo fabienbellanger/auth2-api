@@ -211,6 +211,7 @@ rm ./keys/private.ec.key
 
 ## TODO
 
+- [ ] Check if application name is empty
 - [ ] Update user password: check if the new password is different from the old one
 - [ ] Build in different targets (Linux on Mac)
 - [ ] Add OpenTelemetry metrics

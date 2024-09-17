@@ -1,4 +1,4 @@
-//! User handler DTO
+//! Users handlers DTO
 
 use crate::domain::use_cases::user::create_user::CreateUserUseCaseRequest;
 use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseResponse;

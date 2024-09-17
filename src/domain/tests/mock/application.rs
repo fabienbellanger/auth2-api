@@ -59,7 +59,7 @@ impl ApplicationRepository for ApplicationRepositoryMock {
                 updated_at: now,
             }))
         } else {
-            Err(ApplicationUseCaseError::ApplicationNotFound)
+            Err(ApplicationUseCaseError::ApplicationNotFound())
         }
     }
 

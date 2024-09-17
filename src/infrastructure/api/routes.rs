@@ -39,7 +39,9 @@ pub fn api(state: SharedState) -> Router<SharedState> {
 
 /// Protected API routes
 fn api_protected(state: SharedState) -> Router<SharedState> {
-    Router::new().nest("/users", api_users().layer(auth!(state)))
+    Router::new()
+        .nest("/users", api_users().layer(auth!(state.clone())))
+        .nest("/applications", api_applications().layer(auth!(state)))
 }
 
 /// Users API routes
@@ -49,6 +51,11 @@ fn api_users() -> Router<SharedState> {
         .route("/", get(handlers::user::get_users))
         .route("/:user_id", get(handlers::user::get_user))
         .route("/:user_id", delete(handlers::user::delete_user))
+}
+
+/// Applications API routes
+fn api_applications() -> Router<SharedState> {
+    Router::new().route("/", post(handlers::application::create_application))
 }
 
 /// Scopes API routes

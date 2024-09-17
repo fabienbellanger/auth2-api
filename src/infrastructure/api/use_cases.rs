@@ -1,10 +1,12 @@
 //! Use cases
 
+use crate::adapters::database::mysql::repositories::application::ApplicationMysqlRepository;
 use crate::adapters::database::mysql::repositories::password_reset::PasswordResetMysqlRepository;
 use crate::adapters::database::mysql::repositories::refresh_token::RefreshTokenMysqlRepository;
 use crate::adapters::database::mysql::repositories::user::UserMysqlRepository;
 use crate::adapters::database::mysql::Db;
 use crate::adapters::email::EmailAdapter;
+use crate::domain::use_cases::application::ApplicationUseCases;
 use crate::domain::use_cases::user::UserUseCases;
 use crate::infrastructure::api::response::ApiError;
 
@@ -12,6 +14,7 @@ use crate::infrastructure::api::response::ApiError;
 pub struct AppUseCases {
     pub user:
         UserUseCases<UserMysqlRepository, RefreshTokenMysqlRepository, PasswordResetMysqlRepository, EmailAdapter>,
+    pub application: ApplicationUseCases<ApplicationMysqlRepository>,
 }
 
 impl AppUseCases {
@@ -27,6 +30,13 @@ impl AppUseCases {
             email_service,
         );
 
-        Ok(Self { user: user_use_case })
+        // Application
+        let application_repository = ApplicationMysqlRepository::new(db.clone());
+        let application_use_case = ApplicationUseCases::new(application_repository);
+
+        Ok(Self {
+            user: user_use_case,
+            application: application_use_case,
+        })
     }
 }
