@@ -28,7 +28,7 @@ impl PasswordResetMysqlRepository {
 
 #[async_trait]
 impl PasswordResetRepository for PasswordResetMysqlRepository {
-    /// Add or update forgotten password request
+    #[instrument(skip(self), name = "password_reset_repository_create_update")]
     async fn create_or_update(
         &self,
         req: CreateUpdatePasswordResetDtoRequest,
@@ -51,7 +51,7 @@ impl PasswordResetRepository for PasswordResetMysqlRepository {
         Ok(CreateUpdatePasswordResetDtoResponse())
     }
 
-    /// Get user ID from token
+    #[instrument(skip(self), name = "password_reset_repository_get_user")]
     async fn get_user_from_token(
         &self,
         req: GetUserIdFromTokenDtoRequest,
@@ -83,7 +83,7 @@ impl PasswordResetRepository for PasswordResetMysqlRepository {
         Ok(GetUserIdFromTokenDtoResponse { user_id })
     }
 
-    /// Delete forgotten password
+    #[instrument(skip(self), name = "password_reset_repository_delete")]
     async fn delete(
         &self,
         req: DeletePasswordResetDtoRequest,

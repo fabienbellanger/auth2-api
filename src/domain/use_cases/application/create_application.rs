@@ -34,3 +34,37 @@ impl<A: ApplicationRepository> CreateApplicationUseCase<A> {
         Ok(application.0)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::domain::tests::mock::application::{
+        ApplicationRepositoryMock, INVALID_APPLICATION_NAME, VALID_APPLICATION_NAME,
+    };
+
+    #[tokio::test]
+    async fn test_create_application() {
+        let application_repository = ApplicationRepositoryMock {};
+        let use_case = CreateApplicationUseCase::new(application_repository);
+
+        let request = CreateApplicationUseCaseRequest {
+            name: VALID_APPLICATION_NAME.to_string(),
+        };
+
+        let response = use_case.call(request).await;
+        assert!(response.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_create_application_error() {
+        let application_repository = ApplicationRepositoryMock {};
+        let use_case = CreateApplicationUseCase::new(application_repository);
+
+        let request = CreateApplicationUseCaseRequest {
+            name: INVALID_APPLICATION_NAME.to_string(),
+        };
+
+        let response = use_case.call(request).await;
+        assert!(response.is_err());
+    }
+}

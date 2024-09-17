@@ -1,6 +1,11 @@
 //! Application repository
 
-use crate::domain::repositories::application::dto::{CreateApplicationDtoRequest, CreateApplicationDtoResponse};
+use crate::domain::repositories::application::dto::{
+    CountApplicationsDtoRequest, CountApplicationsDtoResponse, CreateApplicationDtoRequest,
+    CreateApplicationDtoResponse, DeleteApplicationDtoRequest, DeleteApplicationDtoResponse,
+    GetApplicationByIdDtoRequest, GetApplicationByIdDtoResponse, GetApplicationsDtoRequest, GetApplicationsDtoResponse,
+    UpdateApplicationDtoRequest, UpdateApplicationDtoResponse,
+};
 use crate::domain::use_cases::application::ApplicationUseCaseError;
 use async_trait::async_trait;
 
@@ -14,15 +19,33 @@ pub trait ApplicationRepository: Clone {
         req: CreateApplicationDtoRequest,
     ) -> Result<CreateApplicationDtoResponse, ApplicationUseCaseError>;
 
-    // /// Get application by ID
-    // async fn get_by_id(&self, request: dto::GetApplicationByIdDtoRequest) -> Result<dto::GetApplicationByIdDtoResponse, dto::GetApplicationByIdDtoError>;
-    //
-    // /// Get all applications
-    // async fn get_all(&self) -> Result<dto::GetAllApplicationsDtoResponse, dto::GetAllApplicationsDtoError>;
-    //
-    // /// Update application
-    // async fn update(&self, request: dto::UpdateApplicationDtoRequest) -> Result<dto::UpdateApplicationDtoResponse, dto::UpdateApplicationDtoError>;
-    //
-    // /// Delete application
-    // async fn delete(&self, request: dto::DeleteApplicationDtoRequest) -> Result<dto::DeleteApplicationDtoResponse, dto::DeleteApplicationDtoError>;
+    /// Get application by ID
+    async fn get_by_id(
+        &self,
+        req: GetApplicationByIdDtoRequest,
+    ) -> Result<GetApplicationByIdDtoResponse, ApplicationUseCaseError>;
+
+    /// Get all applications
+    async fn get_applications(
+        &self,
+        req: GetApplicationsDtoRequest,
+    ) -> Result<GetApplicationsDtoResponse, ApplicationUseCaseError>;
+
+    /// Update application
+    async fn update(
+        &self,
+        req: UpdateApplicationDtoRequest,
+    ) -> Result<UpdateApplicationDtoResponse, ApplicationUseCaseError>;
+
+    /// Delete application
+    async fn delete(
+        &self,
+        req: DeleteApplicationDtoRequest,
+    ) -> Result<DeleteApplicationDtoResponse, ApplicationUseCaseError>;
+
+    /// Count all applications
+    async fn count_applications(
+        &self,
+        req: CountApplicationsDtoRequest,
+    ) -> Result<CountApplicationsDtoResponse, ApplicationUseCaseError>;
 }

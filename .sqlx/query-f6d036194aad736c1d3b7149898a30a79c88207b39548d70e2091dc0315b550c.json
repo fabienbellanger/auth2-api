@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n            UPDATE applications\n            SET name = ?\n            WHERE id = ?\n                AND deleted_at IS NULL",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "f6d036194aad736c1d3b7149898a30a79c88207b39548d70e2091dc0315b550c"
+}

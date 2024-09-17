@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n            INSERT INTO applications (id, name, created_at, updated_at, deleted_at)\n            VALUES (?, ?, ?, ?, NULL)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 4
+    },
+    "nullable": []
+  },
+  "hash": "60afbd6c157441adaf59ab3c375053c699b5de7f85f0ae39ec7168e040b3c555"
+}

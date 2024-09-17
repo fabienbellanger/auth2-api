@@ -44,7 +44,7 @@ impl UserRepository for UserMysqlRepository {
         let now = UtcDateTime::now();
 
         // Create user
-        let _result = sqlx::query!(
+        sqlx::query!(
             "
             INSERT INTO users (id, email, password, lastname, firstname, created_at, updated_at, deleted_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, NULL)
