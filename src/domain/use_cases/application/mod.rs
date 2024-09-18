@@ -49,6 +49,9 @@ pub enum ApplicationUseCaseError {
     #[error("Model conversion error")]
     FromModelError(),
 
+    #[error("Invalid name: {0}")]
+    InvalidName(String),
+
     #[error("{0}")]
     DatabaseError(String),
 }

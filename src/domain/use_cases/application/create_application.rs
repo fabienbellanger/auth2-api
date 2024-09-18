@@ -3,9 +3,11 @@
 use crate::domain::repositories::application::dto::CreateApplicationDtoRequest;
 use crate::domain::repositories::application::ApplicationRepository;
 use crate::domain::use_cases::application::{ApplicationUseCaseError, ApplicationUseCaseResponse};
+use validator::Validate;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Validate)]
 pub struct CreateApplicationUseCaseRequest {
+    #[validate(length(min = 3))]
     pub name: String,
 }
 
@@ -26,6 +28,10 @@ impl<A: ApplicationRepository> CreateApplicationUseCase<A> {
         &self,
         request: CreateApplicationUseCaseRequest,
     ) -> Result<ApplicationUseCaseResponse, ApplicationUseCaseError> {
+        if let Err(err) = request.validate() {
+            return Err(ApplicationUseCaseError::InvalidName(err.to_string()));
+        }
+
         let application = self
             .application_repository
             .create(CreateApplicationDtoRequest(request))
@@ -53,6 +59,17 @@ mod tests {
 
         let response = use_case.call(request).await;
         assert!(response.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_create_application_invalid_name() {
+        let application_repository = ApplicationRepositoryMock {};
+        let use_case = CreateApplicationUseCase::new(application_repository);
+
+        let request = CreateApplicationUseCaseRequest { name: "dd".to_string() };
+
+        let response = use_case.call(request).await;
+        assert!(response.is_err());
     }
 
     #[tokio::test]

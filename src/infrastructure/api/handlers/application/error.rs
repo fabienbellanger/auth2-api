@@ -10,6 +10,7 @@ impl From<ApplicationUseCaseError> for ApiError {
                 ApiError::InternalServerError("Application creation error".to_string())
             }
             ApplicationUseCaseError::DatabaseError(msg) => ApiError::InternalServerError(msg),
+            ApplicationUseCaseError::InvalidName(msg) => ApiError::BadRequest(msg),
             ApplicationUseCaseError::FromModelError() => {
                 ApiError::InternalServerError("Internal server error".to_string())
             }
