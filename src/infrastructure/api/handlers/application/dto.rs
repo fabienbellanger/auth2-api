@@ -1,6 +1,7 @@
 //! Applications handlers DTO
 
 use crate::domain::use_cases::application::create_application::CreateApplicationUseCaseRequest;
+use crate::domain::use_cases::application::delete_application::DeleteApplicationUseCaseResponse;
 use crate::domain::use_cases::application::get_applications::{
     GetApplicationsUseCaseRequest, GetApplicationsUseCaseResponse,
 };
@@ -94,5 +95,17 @@ impl From<GetApplicationsUseCaseResponse> for GetApplicationsResponse {
             total: value.total,
             data: value.applications.into_iter().map(|app| app.into()).collect(),
         }
+    }
+}
+
+// ================ Delete application ================
+
+/// Delete an application response
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct DeleteApplicationResponse();
+
+impl From<DeleteApplicationUseCaseResponse> for DeleteApplicationResponse {
+    fn from(_: DeleteApplicationUseCaseResponse) -> Self {
+        Self {}
     }
 }

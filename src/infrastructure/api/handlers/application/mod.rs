@@ -1,6 +1,7 @@
 //! Applications handlers
 
 use crate::domain::use_cases::application::create_application::CreateApplicationUseCaseRequest;
+use crate::domain::use_cases::application::delete_application::DeleteApplicationUseCaseRequest;
 use crate::domain::use_cases::application::get_application::GetApplicationByIdUseCaseRequest;
 use crate::domain::use_cases::application::get_applications::GetApplicationsUseCaseRequest;
 use crate::domain::value_objects::id::Id;
@@ -63,4 +64,22 @@ pub async fn get_all(
         .await?;
 
     Ok(ApiSuccess::new(StatusCode::OK, response.into()))
+}
+
+/// Delete an application route: DELETE /api/v1/applications/:application_id
+#[instrument(skip(uc), name = "delete_application_handler")]
+pub async fn delete(
+    Path(application_id): Path<String>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> Result<ApiSuccess<DeleteApplicationResponse>, ApiError> {
+    let response = uc
+        .application
+        .delete_application
+        .call(DeleteApplicationUseCaseRequest {
+            id: Id::from_str(&application_id)?,
+        })
+        .await?;
+
+    Ok(ApiSuccess::new(StatusCode::NO_CONTENT, response.into()))
 }
