@@ -47,10 +47,10 @@ fn api_protected(state: SharedState) -> Router<SharedState> {
 /// Users API routes
 fn api_users() -> Router<SharedState> {
     Router::new()
-        .route("/", post(handlers::user::create_user))
-        .route("/", get(handlers::user::get_users))
-        .route("/:user_id", get(handlers::user::get_user))
-        .route("/:user_id", delete(handlers::user::delete_user))
+        .route("/", post(handlers::user::create))
+        .route("/", get(handlers::user::get_all))
+        .route("/:user_id", get(handlers::user::get_by_id))
+        .route("/:user_id", delete(handlers::user::delete))
 }
 
 /// Applications API routes
@@ -60,6 +60,7 @@ fn api_applications() -> Router<SharedState> {
         .route("/", get(handlers::application::get_all))
         .route("/:application_id", get(handlers::application::get_by_id))
         .route("/:application_id", delete(handlers::application::delete))
+        .route("/:application_id", patch(handlers::application::update))
 }
 
 /// Scopes API routes

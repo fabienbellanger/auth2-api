@@ -328,7 +328,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateApplicationRequest'
+              $ref: '#/components/schemas/CreateUpdateApplicationRequest'
       responses:
         '200':
           description: OK
@@ -391,6 +391,38 @@ paths:
             format: uuid
           required: true
           description: Application ID
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      summary: Update application
+      description: Update an application by ID
+      tags:
+        - "Applications"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Application ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateApplicationRequest'
       responses:
         '204':
           description: No Content
@@ -602,7 +634,7 @@ components:
       required:
         - token
         - password
-    CreateApplicationRequest:
+    CreateUpdateApplicationRequest:
       type: object
       properties:
         name:

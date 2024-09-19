@@ -27,7 +27,7 @@ use std::str::FromStr;
 
 /// User creation route: POST /api/v1/users
 #[instrument(skip(uc), name = "create_user_handler")]
-pub async fn create_user(
+pub async fn create(
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
     Json(request): Json<CreateUserRequest>,
@@ -67,7 +67,7 @@ pub async fn get_access_token(
 
 /// Users list route: GET /api/v1/users
 #[instrument(skip(uc), name = "get_users_handler")]
-pub async fn get_users(
+pub async fn get_all(
     Query(request): Query<GetUsersRequest>,
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
@@ -83,7 +83,7 @@ pub async fn get_users(
 
 /// Get user route: GET /api/v1/users/:user_id
 #[instrument(skip(uc), name = "get_user_handler")]
-pub async fn get_user(
+pub async fn get_by_id(
     Path(user_id): Path<String>,
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
@@ -101,7 +101,7 @@ pub async fn get_user(
 
 /// Delete user route: DELETE /api/v1/users/:user_id
 #[instrument(skip(uc), name = "delete_user_handler")]
-pub async fn delete_user(
+pub async fn delete(
     Path(user_id): Path<String>,
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,

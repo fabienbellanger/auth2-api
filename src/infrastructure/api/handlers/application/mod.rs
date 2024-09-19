@@ -4,6 +4,7 @@ use crate::domain::use_cases::application::create_application::CreateApplication
 use crate::domain::use_cases::application::delete_application::DeleteApplicationUseCaseRequest;
 use crate::domain::use_cases::application::get_application::GetApplicationByIdUseCaseRequest;
 use crate::domain::use_cases::application::get_applications::GetApplicationsUseCaseRequest;
+use crate::domain::use_cases::application::update_application::UpdateApplicationUseCaseRequest;
 use crate::domain::value_objects::id::Id;
 use crate::infrastructure::api::extractors::{ExtractRequestId, Path, Query};
 use crate::infrastructure::api::handlers::application::dto::*;
@@ -78,6 +79,26 @@ pub async fn delete(
         .delete_application
         .call(DeleteApplicationUseCaseRequest {
             id: Id::from_str(&application_id)?,
+        })
+        .await?;
+
+    Ok(ApiSuccess::new(StatusCode::NO_CONTENT, response.into()))
+}
+
+/// Update an application route: PATCH /api/v1/applications/:application_id
+#[instrument(skip(uc), name = "update_application_handler")]
+pub async fn update(
+    Path(application_id): Path<String>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+    Json(request): Json<UpdateApplicationRequest>,
+) -> Result<ApiSuccess<UpdateApplicationResponse>, ApiError> {
+    let response = uc
+        .application
+        .update_application
+        .call(UpdateApplicationUseCaseRequest {
+            id: Id::from_str(&application_id)?,
+            name: request.name,
         })
         .await?;
 

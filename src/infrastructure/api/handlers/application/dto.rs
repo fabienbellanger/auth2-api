@@ -5,6 +5,7 @@ use crate::domain::use_cases::application::delete_application::DeleteApplication
 use crate::domain::use_cases::application::get_applications::{
     GetApplicationsUseCaseRequest, GetApplicationsUseCaseResponse,
 };
+use crate::domain::use_cases::application::update_application::UpdateApplicationUseCaseResponse;
 use crate::domain::use_cases::application::{ApplicationUseCaseError, ApplicationUseCaseResponse};
 use crate::domain::utils::query_sort::{Filter, Sorts};
 use crate::domain::value_objects::pagination::Pagination;
@@ -106,6 +107,24 @@ pub struct DeleteApplicationResponse();
 
 impl From<DeleteApplicationUseCaseResponse> for DeleteApplicationResponse {
     fn from(_: DeleteApplicationUseCaseResponse) -> Self {
+        Self {}
+    }
+}
+
+// ================ Update application ================
+
+/// Update an application request
+#[derive(Debug, Clone, Deserialize)]
+pub struct UpdateApplicationRequest {
+    pub name: String,
+}
+
+/// Update an application response
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct UpdateApplicationResponse();
+
+impl From<UpdateApplicationUseCaseResponse> for UpdateApplicationResponse {
+    fn from(_: UpdateApplicationUseCaseResponse) -> Self {
         Self {}
     }
 }
