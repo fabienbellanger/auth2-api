@@ -61,7 +61,9 @@ pub async fn get_all(
     let response = uc
         .application
         .get_applications
-        .call(GetApplicationsUseCaseRequest::try_from(request)?)
+        .call(GetApplicationsUseCaseRequest {
+            filter: request.try_into()?,
+        })
         .await?;
 
     Ok(ApiSuccess::new(StatusCode::OK, response.into()))

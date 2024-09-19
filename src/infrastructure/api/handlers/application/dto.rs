@@ -2,13 +2,10 @@
 
 use crate::domain::use_cases::application::create_application::CreateApplicationUseCaseRequest;
 use crate::domain::use_cases::application::delete_application::DeleteApplicationUseCaseResponse;
-use crate::domain::use_cases::application::get_applications::{
-    GetApplicationsUseCaseRequest, GetApplicationsUseCaseResponse,
-};
+use crate::domain::use_cases::application::get_applications::GetApplicationsUseCaseResponse;
 use crate::domain::use_cases::application::update_application::UpdateApplicationUseCaseResponse;
-use crate::domain::use_cases::application::{ApplicationUseCaseError, ApplicationUseCaseResponse};
-use crate::domain::utils::query_sort::{Filter, Sorts};
-use crate::domain::value_objects::pagination::Pagination;
+use crate::domain::use_cases::application::ApplicationUseCaseResponse;
+use crate::infrastructure::api::handlers::filter::FilterRequest;
 use serde::{Deserialize, Serialize};
 
 /// Application response
@@ -48,40 +45,7 @@ impl From<CreateApplicationRequest> for CreateApplicationUseCaseRequest {
 // ================ Get applications ================
 
 /// Get applications request
-// TODO: Duplicated code!
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetApplicationsRequest {
-    #[serde(rename(deserialize = "p"))]
-    pub page: Option<u32>,
-
-    #[serde(rename(deserialize = "l"))]
-    pub limit: Option<u32>,
-
-    #[serde(rename(deserialize = "s"))]
-    pub sort: Option<String>,
-}
-
-impl TryFrom<GetApplicationsRequest> for GetApplicationsUseCaseRequest {
-    type Error = ApplicationUseCaseError;
-
-    fn try_from(value: GetApplicationsRequest) -> Result<Self, Self::Error> {
-        let filter = match (value.page, value.limit, value.sort) {
-            (Some(page), Some(limit), sort) => {
-                let pagination = Some(Pagination::new(page, limit));
-                let sorts = sort.map(|sort| Sorts::from(sort.as_str()));
-
-                Some(Filter { pagination, sorts })
-            }
-            (_, _, Some(sort)) => Some(Filter {
-                pagination: None,
-                sorts: Some(Sorts::from(sort.as_str())),
-            }),
-            _ => None,
-        };
-
-        Ok(Self { filter })
-    }
-}
+pub type GetApplicationsRequest = FilterRequest;
 
 /// Get applications response
 #[derive(Debug, Clone, PartialEq, Serialize)]

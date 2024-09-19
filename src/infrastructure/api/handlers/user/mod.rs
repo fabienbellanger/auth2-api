@@ -75,7 +75,9 @@ pub async fn get_all(
     let response = uc
         .user
         .get_users
-        .call(GetUsersUseCaseRequest::try_from(request)?)
+        .call(GetUsersUseCaseRequest {
+            filter: request.try_into()?,
+        })
         .await?;
 
     Ok(ApiSuccess::new(StatusCode::OK, response.into()))

@@ -5,13 +5,12 @@ use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseResponse;
 use crate::domain::use_cases::user::forgotten_password::ForgottenPasswordUseCaseResponse;
 use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCaseResponse;
 use crate::domain::use_cases::user::get_user::GetUserUseCaseResponse;
-use crate::domain::use_cases::user::get_users::{GetUsersUseCaseRequest, GetUsersUseCaseResponse};
+use crate::domain::use_cases::user::get_users::GetUsersUseCaseResponse;
 use crate::domain::use_cases::user::refresh_token::RefreshTokenUseCaseResponse;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
-use crate::domain::utils::query_sort::{Filter, Sorts};
 use crate::domain::value_objects::email::Email;
-use crate::domain::value_objects::pagination::Pagination;
 use crate::domain::value_objects::password::Password;
+use crate::infrastructure::api::handlers::filter::FilterRequest;
 use serde::{Deserialize, Serialize};
 
 /// User response
@@ -98,39 +97,7 @@ impl From<GetAccessTokenUseCaseResponse> for GetAccessTokenResponse {
 // ================ Get users ================
 
 /// Get users request
-#[derive(Debug, Clone, Deserialize)]
-pub struct GetUsersRequest {
-    #[serde(rename(deserialize = "p"))]
-    pub page: Option<u32>,
-
-    #[serde(rename(deserialize = "l"))]
-    pub limit: Option<u32>,
-
-    #[serde(rename(deserialize = "s"))]
-    pub sort: Option<String>,
-}
-
-impl TryFrom<GetUsersRequest> for GetUsersUseCaseRequest {
-    type Error = UserUseCaseError;
-
-    fn try_from(value: GetUsersRequest) -> Result<Self, Self::Error> {
-        let filter = match (value.page, value.limit, value.sort) {
-            (Some(page), Some(limit), sort) => {
-                let pagination = Some(Pagination::new(page, limit));
-                let sorts = sort.map(|sort| Sorts::from(sort.as_str()));
-
-                Some(Filter { pagination, sorts })
-            }
-            (_, _, Some(sort)) => Some(Filter {
-                pagination: None,
-                sorts: Some(Sorts::from(sort.as_str())),
-            }),
-            _ => None,
-        };
-
-        Ok(Self { filter })
-    }
-}
+pub type GetUsersRequest = FilterRequest;
 
 /// Get users response
 #[derive(Debug, Clone, PartialEq, Serialize)]
