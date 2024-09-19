@@ -117,7 +117,7 @@ impl ApplicationRepository for ApplicationMysqlRepository {
         let filter = PaginationSort::from(req.0.filter.unwrap_or_default());
 
         // Sorts and pagination
-        query.push_str(&filter.get_sorts_sql(Some(&["id", "name", "updated_at", "deleted_at"])));
+        query.push_str(&filter.get_sorts_sql(&["id", "name", "updated_at", "deleted_at"]));
         query.push_str(&filter.get_pagination_sql());
 
         let applications = sqlx::query_as::<_, ApplicationModel>(&query)

@@ -98,44 +98,26 @@ impl From<Filter> for PaginationSort {
 }
 
 impl PaginationSort {
-    /// SQL code for pagination
+    /// Generate SQL code for pagination
     pub fn get_pagination_sql(&self) -> String {
         format!(" LIMIT {} OFFSET {}", self.limit, self.offset)
     }
 
-    /// SQL code for sorts (ORDER BY)
-    pub fn get_sorts_sql(&self, valid_fields: Option<&[&str]>) -> String {
-        let mut s = String::new();
-        let mut i = 0;
-
-        for (field, sort) in self.sorts.0.iter() {
-            match &valid_fields {
-                Some(valid_fields) => {
-                    if valid_fields.contains(&field.as_str()) {
-                        if i == 0 {
-                            s.push_str(" ORDER BY ");
-                        } else {
-                            s.push_str(", ");
-                        }
-                        s.push_str(&format!("{field} {sort}"));
-
-                        i += 1;
-                    }
+    /// Generate SQL code for sorts (ORDER BY)
+    pub fn get_sorts_sql(&self, valid_fields: &[&str]) -> String {
+        self.sorts
+            .0
+            .iter()
+            .filter(|(field, _)| valid_fields.contains(&field.as_str()))
+            .enumerate()
+            .map(|(i, (field, sort))| {
+                if i == 0 {
+                    format!(" ORDER BY {field} {sort}")
+                } else {
+                    format!(", {field} {sort}")
                 }
-                None => {
-                    if i == 0 {
-                        s.push_str(" ORDER BY ");
-                    } else {
-                        s.push_str(", ");
-                    }
-                    s.push_str(&format!("{field} {sort}"));
-
-                    i += 1;
-                }
-            }
-        }
-
-        s
+            })
+            .collect::<String>()
     }
 }
 
@@ -208,12 +190,12 @@ mod tests {
             pagination: None,
             sorts: None,
         });
-        assert_eq!(String::new(), pagination_sort.get_sorts_sql(None));
+        assert_eq!(String::new(), pagination_sort.get_sorts_sql(&[]));
     }
 
     #[test]
     fn test_get_sorts_sql_without_valid_fields() {
-        let mut valid_fields: Option<&[&str]> = Some(&[]);
+        let mut valid_fields: &[&str] = &[];
 
         let mut pagination_sort = PaginationSort::from(Filter {
             pagination: Some(Pagination::new(1, 50)),
@@ -227,16 +209,13 @@ mod tests {
         ];
         assert_eq!(String::new(), pagination_sort.get_sorts_sql(valid_fields));
 
-        valid_fields = None;
-        assert_eq!(
-            String::from(" ORDER BY id ASC, name DESC"),
-            pagination_sort.get_sorts_sql(valid_fields)
-        );
+        valid_fields = &[];
+        assert_eq!(String::from(""), pagination_sort.get_sorts_sql(valid_fields));
     }
 
     #[test]
     fn test_get_sorts_sql_with_valid_fields() {
-        let valid_fields: Option<&[&str]> = Some(&["id", "name"]);
+        let valid_fields = &["id", "name"];
 
         let mut pagination_sort = PaginationSort::from(Filter {
             pagination: Some(Pagination::new(1, 50)),
@@ -253,13 +232,13 @@ mod tests {
             pagination_sort.get_sorts_sql(valid_fields)
         );
 
-        let valid_fields: Option<&[&str]> = Some(&["name"]);
+        let valid_fields: &[&str] = &["name"];
         assert_eq!(
             " ORDER BY name DESC".to_owned(),
             pagination_sort.get_sorts_sql(valid_fields)
         );
 
-        let valid_fields: Option<&[&str]> = Some(&["id", "name"]);
+        let valid_fields: &[&str] = &["id", "name"];
         pagination_sort.sorts.0 = vec![
             ("idz".to_owned(), SortDirection::Asc),
             ("name".to_owned(), SortDirection::Desc),
@@ -269,7 +248,7 @@ mod tests {
             pagination_sort.get_sorts_sql(valid_fields)
         );
 
-        let valid_fields: Option<&[&str]> = Some(&["id", "name"]);
+        let valid_fields: &[&str] = &["id", "name"];
         pagination_sort.sorts.0 = vec![
             ("id".to_owned(), SortDirection::Asc),
             ("namee".to_owned(), SortDirection::Desc),
@@ -279,7 +258,7 @@ mod tests {
             pagination_sort.get_sorts_sql(valid_fields)
         );
 
-        let valid_fields: Option<&[&str]> = Some(&["id", "name"]);
+        let valid_fields: &[&str] = &["id", "name"];
         pagination_sort.sorts.0 = vec![
             ("idz".to_owned(), SortDirection::Asc),
             ("namee".to_owned(), SortDirection::Desc),
@@ -289,7 +268,7 @@ mod tests {
 
     #[test]
     fn test_get_sorts_sql_with_valid_fields_and_table_prefix() {
-        let valid_fields: Option<&[&str]> = Some(&["user.id", "role.name"]);
+        let valid_fields: &[&str] = &["user.id", "role.name"];
         let pagination_sort = PaginationSort::from(Filter {
             pagination: Some(Pagination::new(1, 50)),
             sorts: Some(Sorts(vec![

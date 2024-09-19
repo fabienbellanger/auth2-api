@@ -119,14 +119,14 @@ impl UserRepository for UserMysqlRepository {
         let filter = PaginationSort::from(req.0.filter.unwrap_or_default());
 
         // Sorts and pagination
-        query.push_str(&filter.get_sorts_sql(Some(&[
+        query.push_str(&filter.get_sorts_sql(&[
             "id",
             "lastname",
             "firstname",
             "created_at",
             "updated_at",
             "deleted_at",
-        ])));
+        ]));
         query.push_str(&filter.get_pagination_sql());
 
         let users = sqlx::query_as::<_, UserModel>(&query)

@@ -3,11 +3,19 @@
 use crate::domain::repositories::application::dto::GetApplicationsDtoRequest;
 use crate::domain::repositories::application::ApplicationRepository;
 use crate::domain::use_cases::application::{ApplicationUseCaseError, ApplicationUseCaseResponse};
-use crate::domain::utils::query_sort::Filter;
+use crate::domain::utils::query_sort::{Filter, Filters, Sorts};
+use crate::domain::value_objects::pagination::Pagination;
 
 #[derive(Debug, Clone)]
 pub struct GetApplicationsUseCaseRequest {
     pub filter: Option<Filter>,
+}
+
+#[derive(Debug, Clone)]
+pub struct GetApplications2UseCaseRequest {
+    pub pagination: Pagination,
+    pub sorts: Option<Sorts>,
+    pub filters: Option<Filters>,
 }
 
 #[derive(Debug, Clone)]

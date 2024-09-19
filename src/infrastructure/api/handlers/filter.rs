@@ -1,5 +1,8 @@
 //! Filter for pagination and sorting
 
+// TODO: Add filtering (https://www.moesif.com/blog/technical/api-design/REST-API-Design-Filtering-Sorting-and-Pagination/)
+// Try something like this: /applications/test?price=gte:10,lte:200
+
 use crate::domain::utils::query_sort::{Filter, Sorts};
 use crate::domain::value_objects::pagination::Pagination;
 use crate::infrastructure::api::response::ApiError;

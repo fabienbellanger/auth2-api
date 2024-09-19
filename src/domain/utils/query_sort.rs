@@ -1,7 +1,9 @@
 //! Module used for query parameters sorts
 
 use crate::domain::value_objects::pagination::Pagination;
+use std::collections::HashMap;
 use std::fmt::Display;
+use std::str::FromStr;
 
 /// Filter sort field
 pub type SortField = String;
@@ -54,6 +56,47 @@ impl From<&str> for Sorts {
         Self(sorts)
     }
 }
+
+/// Filter operator
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum FilterOperator {
+    Eq,
+    Ne,
+    Gt,
+    Gte,
+    Lt,
+    Lte,
+    In,
+    Nin,
+}
+
+impl FromStr for FilterOperator {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "eq" => Ok(Self::Eq),
+            "ne" => Ok(Self::Ne),
+            "gt" => Ok(Self::Gt),
+            "gte" => Ok(Self::Gte),
+            "lt" => Ok(Self::Lt),
+            "lte" => Ok(Self::Lte),
+            "in" => Ok(Self::In),
+            "nin" => Ok(Self::Nin),
+            err => Err(format!("{err} in not a valid filter operator")),
+        }
+    }
+}
+
+pub type FilterFieldName = String;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct FilterFieldValue {
+    pub operator: FilterOperator,
+    pub value: String,
+}
+
+pub type Filters = HashMap<FilterFieldName, Vec<FilterFieldValue>>;
 
 /// Filter pagination and sorts
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
