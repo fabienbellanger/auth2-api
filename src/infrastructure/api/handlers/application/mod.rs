@@ -30,7 +30,7 @@ pub async fn create(
         .call(CreateApplicationUseCaseRequest::from(request))
         .await?;
 
-    Ok(ApiSuccess::new(StatusCode::OK, response.into()))
+    Ok(ApiSuccess::new(StatusCode::CREATED, response.into()))
 }
 
 /// Get application by ID route: GET /api/v1/applications/:application_id

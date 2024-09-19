@@ -1,0 +1,61 @@
+@base_url = http://localhost:8085/api/v1
+
+@access_token = eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzM4NCJ9.eyJzdWIiOiJkMDU2NTllYi0wMDdmLTQyYmYtOTZhOC02MDA1ZDk4NDBhMjIiLCJhcHBsaWNhdGlvbl9pZCI6IiIsImNsaWVudF9pZCI6IiIsImV4cCI6MTcyNjc3NDg2NiwiaWF0IjoxNzI2NzM4ODY2LCJuYmYiOjE3MjY3Mzg4NjZ9.zibpcKs9F-tSMUW2UmNmqBvNI7uA68jGHtQ99DauPgHZN7EklmeWEpt0HZ3furYWzAAqwRnGmv3filzmRI-cVGZZwjivW-B2xA8SGZsCcPnhKSECOVSP7pp6qM5GUQLT
+@refresh_token = 11114a9c-522b-4c98-93fd-7ccb5b02e64e
+@password_reset_token = 5fba7305-3024-4766-859a-eabeaf72a3df
+
+@user_id = d05659eb-007f-42bf-96a8-6005d9840a22
+@email = user@example.com
+@password = 1A,R;(9h0Y&gYH5=7eY!gg
+
+# ================ User ================
+
+# Get user token
+POST {{base_url}}/token
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+###
+
+# Refresh user token
+POST {{base_url}}/refresh-token/{{refresh_token}}
+Content-Type: application/json
+
+###
+
+# Forgotten password
+POST {{base_url}}/forgotten-password/{{email}}
+Content-Type: application/json
+
+###
+
+# Update password
+PATCH {{base_url}}/update-password
+Content-Type: application/json
+
+{
+  "token": "{{password_reset_token}}",
+  "password": "{{password}}"
+}
+
+###
+
+# ================ Users ================
+
+# Get all users
+GET {{base_url}}/users?p=1&l=10&s=-created_at
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###
+
+# Get user by ID
+GET {{base_url}}/users/{{user_id}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###

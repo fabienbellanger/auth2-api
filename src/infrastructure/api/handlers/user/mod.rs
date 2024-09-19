@@ -38,7 +38,7 @@ pub async fn create(
         .call(CreateUserUseCaseRequest::try_from(request)?)
         .await?;
 
-    Ok(ApiSuccess::new(StatusCode::OK, response.into()))
+    Ok(ApiSuccess::new(StatusCode::CREATED, response.into()))
 }
 
 /// User access token route: POST /api/v1/token
