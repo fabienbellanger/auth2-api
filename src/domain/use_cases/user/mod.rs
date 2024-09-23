@@ -161,4 +161,5 @@ pub struct UserUseCaseResponse {
     pub firstname: String,
     pub created_at: UtcDateTime,
     pub updated_at: UtcDateTime,
+    pub deleted_at: Option<UtcDateTime>,
 }

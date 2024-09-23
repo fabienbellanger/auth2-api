@@ -22,6 +22,8 @@ pub struct UserResponse {
     pub email: String,
     pub created_at: String,
     pub updated_at: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub deleted_at: Option<String>,
 }
 
 impl From<UserUseCaseResponse> for UserResponse {
@@ -33,6 +35,7 @@ impl From<UserUseCaseResponse> for UserResponse {
             email: value.email.value(),
             created_at: value.created_at.to_string(),
             updated_at: value.updated_at.to_string(),
+            deleted_at: value.deleted_at.map(|d| d.to_string()),
         }
     }
 }

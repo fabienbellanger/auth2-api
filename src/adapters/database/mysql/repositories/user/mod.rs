@@ -71,6 +71,7 @@ impl UserRepository for UserMysqlRepository {
             firstname: req.0.firstname,
             created_at: now.clone(),
             updated_at: now,
+            deleted_at: None,
         }))
     }
 

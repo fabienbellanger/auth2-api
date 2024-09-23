@@ -66,6 +66,7 @@ impl ApplicationRepository for ApplicationMysqlRepository {
             name: req.0.name,
             created_at: now.clone(),
             updated_at: now,
+            deleted_at: None,
         }))
     }
 

@@ -63,4 +63,5 @@ pub struct ApplicationUseCaseResponse {
     pub name: String,
     pub created_at: UtcDateTime,
     pub updated_at: UtcDateTime,
+    pub deleted_at: Option<UtcDateTime>,
 }

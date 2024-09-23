@@ -42,6 +42,7 @@ impl UserRepository for UserRepositoryMock {
                 firstname: req.0.firstname,
                 created_at: UtcDateTime::now(),
                 updated_at: UtcDateTime::now(),
+                deleted_at: None,
             }))
         } else {
             Err(UserUseCaseError::DatabaseError("User creation error".to_string()))
@@ -86,6 +87,7 @@ impl UserRepository for UserRepositoryMock {
                 firstname: "John".to_string(),
                 created_at: UtcDateTime::now(),
                 updated_at: UtcDateTime::now(),
+                deleted_at: None,
             })),
             _ => Err(UserUseCaseError::DatabaseError("User not found".to_string())),
         }

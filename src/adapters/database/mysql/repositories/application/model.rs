@@ -24,12 +24,16 @@ impl TryFrom<ApplicationModel> for ApplicationUseCaseResponse {
         let id = Id::from_str(&value.id)?;
         let created_at = UtcDateTime::new(DateTime::<Utc>::from_naive_utc_and_offset(value.created_at, Utc));
         let updated_at = UtcDateTime::new(DateTime::<Utc>::from_naive_utc_and_offset(value.updated_at, Utc));
+        let deleted_at = value
+            .deleted_at
+            .map(|deleted_at| UtcDateTime::new(DateTime::<Utc>::from_naive_utc_and_offset(deleted_at, Utc)));
 
         Ok(Self {
             id,
             name: value.name,
             created_at,
             updated_at,
+            deleted_at,
         })
     }
 }

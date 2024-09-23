@@ -36,6 +36,7 @@ impl ApplicationRepository for ApplicationRepositoryMock {
                 name: VALID_APPLICATION_NAME.to_string(),
                 created_at: now.clone(),
                 updated_at: now,
+                deleted_at: None,
             }))
         } else {
             Err(ApplicationUseCaseError::DatabaseError(
@@ -57,6 +58,7 @@ impl ApplicationRepository for ApplicationRepositoryMock {
                 name: "Test application".to_string(),
                 created_at: now.clone(),
                 updated_at: now,
+                deleted_at: None,
             }))
         } else {
             Err(ApplicationUseCaseError::ApplicationNotFound())
