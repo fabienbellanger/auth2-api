@@ -33,7 +33,6 @@ impl From<ApplicationUseCaseResponse> for ApplicationResponse {
 
 // ================ Application creation ================
 
-/// Create application request
 #[derive(Debug, Clone, Deserialize)]
 pub struct CreateApplicationRequest {
     pub name: String,
@@ -47,10 +46,8 @@ impl From<CreateApplicationRequest> for CreateApplicationUseCaseRequest {
 
 // ================ Get applications ================
 
-/// Get applications request
 pub type GetApplicationsRequest = FilterRequest;
 
-/// Get applications response
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct GetApplicationsResponse {
     pub total: i64,
@@ -68,7 +65,6 @@ impl From<GetApplicationsUseCaseResponse> for GetApplicationsResponse {
 
 // ================ Delete application ================
 
-/// Delete an application response
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct DeleteApplicationResponse();
 
@@ -80,13 +76,11 @@ impl From<DeleteApplicationUseCaseResponse> for DeleteApplicationResponse {
 
 // ================ Update application ================
 
-/// Update an application request
 #[derive(Debug, Clone, Deserialize)]
 pub struct UpdateApplicationRequest {
     pub name: String,
 }
 
-/// Update an application response
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct UpdateApplicationResponse();
 

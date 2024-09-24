@@ -42,7 +42,6 @@ impl From<UserUseCaseResponse> for UserResponse {
 
 // ================ User creation ================
 
-/// Create user request
 #[derive(Debug, Clone, Deserialize)]
 pub struct CreateUserRequest {
     pub email: String,
@@ -70,14 +69,12 @@ impl TryFrom<CreateUserRequest> for CreateUserUseCaseRequest {
 
 // ================ Get access token ================
 
-/// Get access token request
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetAccessTokenRequest {
     pub email: String,
     pub password: String,
 }
 
-/// Get access token response
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct GetAccessTokenResponse {
     pub access_token: String,
@@ -99,10 +96,8 @@ impl From<GetAccessTokenUseCaseResponse> for GetAccessTokenResponse {
 
 // ================ Get users ================
 
-/// Get users request
 pub type GetUsersRequest = FilterRequest;
 
-/// Get users response
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct GetUsersResponse {
     pub total: i64,
@@ -120,7 +115,6 @@ impl From<GetUsersUseCaseResponse> for GetUsersResponse {
 
 // ================ Get user ================
 
-/// Get user response
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct GetUserResponse(UserResponse);
 
@@ -132,7 +126,6 @@ impl From<GetUserUseCaseResponse> for GetUserResponse {
 
 // ================ Delete user ================
 
-/// Delete user response
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct DeleteUserResponse();
 
@@ -144,7 +137,6 @@ impl From<DeleteUserUseCaseResponse> for DeleteUserResponse {
 
 // ================ Refresh token ================
 
-/// Refresh token response
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct RefreshTokenResponse {
     pub access_token: String,
@@ -166,7 +158,6 @@ impl From<RefreshTokenUseCaseResponse> for RefreshTokenResponse {
 
 // ================ Forgotten password ================
 
-/// Forgotten password response
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct ForgottenPasswordResponse {
     pub token: String,
@@ -184,13 +175,11 @@ impl From<ForgottenPasswordUseCaseResponse> for ForgottenPasswordResponse {
 
 // ================ Update user password from token ================
 
-/// Forgotten password response
 #[derive(Debug, Clone, PartialEq, Deserialize)]
 pub struct UpdatePasswordFromTokenRequest {
     pub token: String,
     pub password: String,
 }
 
-/// Forgotten password response
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct UpdatePasswordFromTokenResponse();

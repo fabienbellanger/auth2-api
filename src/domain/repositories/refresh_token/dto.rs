@@ -6,7 +6,6 @@ use crate::domain::entities::user::UserId;
 
 // ================ Refresh token creation ================
 
-/// Create refresh token request
 #[derive(Debug, Clone)]
 pub struct CreateRefreshTokenDtoRequest {
     pub refresh_token: RefreshToken,
@@ -14,17 +13,14 @@ pub struct CreateRefreshTokenDtoRequest {
     pub user_id: UserId,
 }
 
-/// Create refresh token response
 #[derive(Debug, Clone)]
 pub struct CreateRefreshTokenDtoResponse();
 
 // ================ Get refresh token ================
 
-/// Get refresh token request
 #[derive(Debug, Clone)]
 pub struct GetRefreshTokenDtoRequest(pub RefreshTokenId);
 
-/// Get refresh token response
 #[derive(Debug, Clone)]
 pub struct GetRefreshTokenDtoResponse {
     pub user_id: UserId,
@@ -32,11 +28,9 @@ pub struct GetRefreshTokenDtoResponse {
 
 // ================ Delete refresh token ================
 
-/// Delete refresh token request
 #[derive(Debug, Clone)]
 pub struct DeleteRefreshTokenDtoRequest(pub RefreshTokenId);
 
-/// Delete refresh token response
 #[derive(Debug, Clone)]
 pub struct DeleteRefreshTokenDtoResponse();
 
