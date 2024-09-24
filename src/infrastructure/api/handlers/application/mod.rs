@@ -63,6 +63,26 @@ pub async fn get_all(
         .get_applications
         .call(GetApplicationsUseCaseRequest {
             filter: request.try_into()?,
+            deleted: false,
+        })
+        .await?;
+
+    Ok(ApiSuccess::new(StatusCode::OK, response.into()))
+}
+
+/// Get deleted applications route: GET /api/v1/applications/deleted
+#[instrument(skip(uc), name = "get_deleted_applications_handler")]
+pub async fn get_all_deleted(
+    Query(request): Query<GetApplicationsRequest>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> Result<ApiSuccess<GetApplicationsResponse>, ApiError> {
+    let response = uc
+        .application
+        .get_applications
+        .call(GetApplicationsUseCaseRequest {
+            filter: request.try_into()?,
+            deleted: true,
         })
         .await?;
 

@@ -17,6 +17,7 @@ use crate::domain::use_cases::application::{ApplicationUseCaseError, Application
 use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::id::Id;
 use async_trait::async_trait;
+use sqlx::Row;
 use std::sync::Arc;
 
 /// Application MySQL repository
@@ -111,9 +112,13 @@ impl ApplicationRepository for ApplicationMysqlRepository {
             r#"
             SELECT id, name, created_at, updated_at, deleted_at
             FROM applications
-            WHERE deleted_at IS NULL
         "#,
         );
+
+        query.push_str(match req.0.deleted {
+            true => "WHERE deleted_at IS NOT NULL",
+            false => "WHERE deleted_at IS NULL",
+        });
 
         let filter = PaginationSort::from(req.0.filter.unwrap_or_default());
 
@@ -199,9 +204,15 @@ impl ApplicationRepository for ApplicationMysqlRepository {
     #[instrument(skip(self), name = "application_repository_count")]
     async fn count_applications(
         &self,
-        _req: CountApplicationsDtoRequest,
+        req: CountApplicationsDtoRequest,
     ) -> Result<CountApplicationsDtoResponse, ApplicationUseCaseError> {
-        let result = sqlx::query!("SELECT COUNT(*) AS total FROM applications WHERE deleted_at IS NULL")
+        let mut query = String::from("SELECT COUNT(*) AS total FROM applications");
+        query.push_str(match req.deleted {
+            true => " WHERE deleted_at IS NOT NULL",
+            false => " WHERE deleted_at IS NULL",
+        });
+
+        let result = sqlx::query(&query)
             .fetch_one(self.db.pool.clone().as_ref())
             .await
             .map_err(|err| {
@@ -209,6 +220,6 @@ impl ApplicationRepository for ApplicationMysqlRepository {
                 ApplicationUseCaseError::DatabaseError("Failed to count applications".to_string())
             })?;
 
-        Ok(CountApplicationsDtoResponse(result.total))
+        Ok(CountApplicationsDtoResponse(result.try_get("total")?))
     }
 }

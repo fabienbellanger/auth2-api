@@ -17,6 +17,7 @@ use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::id::Id;
 use crate::domain::value_objects::password::Password;
 use async_trait::async_trait;
+use sqlx::Row;
 use std::str::FromStr;
 use std::sync::Arc;
 
@@ -113,9 +114,13 @@ impl UserRepository for UserMysqlRepository {
             r#"
             SELECT id, email, lastname, firstname, created_at, updated_at, deleted_at
             FROM users
-            WHERE deleted_at IS NULL
         "#,
         );
+
+        query.push_str(match req.0.deleted {
+            true => "WHERE deleted_at IS NOT NULL",
+            false => "WHERE deleted_at IS NULL",
+        });
 
         let filter = PaginationSort::from(req.0.filter.unwrap_or_default());
 
@@ -148,9 +153,15 @@ impl UserRepository for UserMysqlRepository {
         Ok(GetUsersDtoResponse(users))
     }
 
-    #[instrument(skip(self, _req), name = "user_repository_count_users")]
-    async fn count_users(&self, _req: CountUsersDtoRequest) -> Result<CountUsersDtoResponse, UserUseCaseError> {
-        let result = sqlx::query!("SELECT COUNT(*) AS total FROM users WHERE deleted_at IS NULL")
+    #[instrument(skip(self), name = "user_repository_count_users")]
+    async fn count_users(&self, req: CountUsersDtoRequest) -> Result<CountUsersDtoResponse, UserUseCaseError> {
+        let mut query = String::from("SELECT COUNT(*) AS total FROM users");
+        query.push_str(match req.deleted {
+            true => " WHERE deleted_at IS NOT NULL",
+            false => " WHERE deleted_at IS NULL",
+        });
+
+        let result = sqlx::query(&query)
             .fetch_one(self.db.pool.clone().as_ref())
             .await
             .map_err(|err| {
@@ -158,7 +169,7 @@ impl UserRepository for UserMysqlRepository {
                 UserUseCaseError::DatabaseError("Failed to count users".to_string())
             })?;
 
-        Ok(CountUsersDtoResponse(result.total))
+        Ok(CountUsersDtoResponse(result.try_get("total")?))
     }
 
     #[instrument(skip(self, req), name = "user_repository_get_user_by_id")]

@@ -210,6 +210,56 @@ paths:
           $ref: '#/components/responses/UnprocessableEntity'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
+
+  /users/deleted:
+    get:
+      summary: ""
+      description: Deleted users list
+      tags:
+        - "Users"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: p
+          schema:
+            type: integer
+            default: 0
+          required: false
+          description: Page number
+          example: 1
+        - in: query
+          name: l
+          schema:
+            type: integer
+            maximum: 500
+          required: false
+          description: Limit of links per page
+          example: 10
+        - in: query
+          name: s
+          schema:
+            type: string
+          required: false
+          description: "Sort with available fields: id | lastname | firstname | created_at | updated_at | deleted_at {+: ASC, -: DESC}."
+          example: +lastname,-firstname
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUsersResponse'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+
   /users/{id}:
     get:
       summary: ""
@@ -344,6 +394,55 @@ paths:
           $ref: '#/components/responses/UnprocessableEntity'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
+
+  /applications/deleted:
+    get:
+      summary: ""
+      description: Deleted applications list
+      tags:
+        - "Applications"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: p
+          schema:
+            type: integer
+            default: 0
+          required: false
+          description: Page number
+          example: 1
+        - in: query
+          name: l
+          schema:
+            type: integer
+            maximum: 500
+          required: false
+          description: Limit of links per page
+          example: 10
+        - in: query
+          name: s
+          schema:
+            type: string
+          required: false
+          description: "Sort with available fields: id | name | created_at | updated_at | deleted_at {+: ASC, -: DESC}."
+          example: +name
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetApplicationsResponse'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: "#/components/responses/InternalServerError"
 
   /applications/{id}:
     get:

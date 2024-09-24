@@ -53,7 +53,10 @@ pub struct DeleteApplicationDtoResponse(pub DeleteApplicationUseCaseResponse);
 
 // ================ Count applications ================
 
-pub type CountApplicationsDtoRequest = ();
+#[derive(Debug, Clone)]
+pub struct CountApplicationsDtoRequest {
+    pub deleted: bool,
+}
 
 #[derive(Debug, Clone)]
 pub struct CountApplicationsDtoResponse(pub i64);

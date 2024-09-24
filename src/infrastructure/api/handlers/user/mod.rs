@@ -77,6 +77,26 @@ pub async fn get_all(
         .get_users
         .call(GetUsersUseCaseRequest {
             filter: request.try_into()?,
+            deleted: false,
+        })
+        .await?;
+
+    Ok(ApiSuccess::new(StatusCode::OK, response.into()))
+}
+
+/// Deleted users list route: GET /api/v1/users/deleted
+#[instrument(skip(uc), name = "get_deleted_users_handler")]
+pub async fn get_all_deleted(
+    Query(request): Query<GetUsersRequest>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> Result<ApiSuccess<GetUsersResponse>, ApiError> {
+    let response = uc
+        .user
+        .get_users
+        .call(GetUsersUseCaseRequest {
+            filter: request.try_into()?,
+            deleted: true,
         })
         .await?;
 

@@ -49,6 +49,7 @@ fn api_users() -> Router<SharedState> {
     Router::new()
         .route("/", post(handlers::user::create))
         .route("/", get(handlers::user::get_all))
+        .route("/deleted", get(handlers::user::get_all_deleted))
         .route("/:user_id", get(handlers::user::get_by_id))
         .route("/:user_id", delete(handlers::user::delete))
 }
@@ -58,6 +59,7 @@ fn api_applications() -> Router<SharedState> {
     Router::new()
         .route("/", post(handlers::application::create))
         .route("/", get(handlers::application::get_all))
+        .route("/deleted", get(handlers::application::get_all_deleted))
         .route("/:application_id", get(handlers::application::get_by_id))
         .route("/:application_id", delete(handlers::application::delete))
         .route("/:application_id", patch(handlers::application::update))

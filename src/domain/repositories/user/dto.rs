@@ -39,7 +39,10 @@ pub struct GetAccessTokenInformationDtoResponse {
 // ================ Get users ================
 
 /// Count users request
-pub type CountUsersDtoRequest = ();
+#[derive(Debug, Clone)]
+pub struct CountUsersDtoRequest {
+    pub deleted: bool,
+}
 
 /// Count users response
 #[derive(Debug, Clone)]

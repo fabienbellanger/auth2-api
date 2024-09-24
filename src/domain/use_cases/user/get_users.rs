@@ -1,6 +1,6 @@
 //! Get all users with pagination use case
 
-use crate::domain::repositories::user::dto::GetUsersDtoRequest;
+use crate::domain::repositories::user::dto::{CountUsersDtoRequest, GetUsersDtoRequest};
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
 use crate::domain::utils::query_sort::Filter;
@@ -8,6 +8,7 @@ use crate::domain::utils::query_sort::Filter;
 #[derive(Debug, Clone)]
 pub struct GetUsersUseCaseRequest {
     pub filter: Option<Filter>,
+    pub deleted: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -32,7 +33,13 @@ impl<U: UserRepository> GetUsersUseCase<U> {
     pub async fn call(&self, request: GetUsersUseCaseRequest) -> Result<GetUsersUseCaseResponse, UserUseCaseError> {
         // TODO: Validation?
 
-        let total = self.user_repository.count_users(()).await?.0;
+        let total = self
+            .user_repository
+            .count_users(CountUsersDtoRequest {
+                deleted: request.deleted,
+            })
+            .await?
+            .0;
         let users = self.user_repository.get_users(GetUsersDtoRequest(request)).await?.0;
 
         Ok(GetUsersUseCaseResponse { users, total })
@@ -56,6 +63,7 @@ mod tests {
                 pagination: Some(Pagination::new(1, 10)),
                 sorts: Some(Sorts::default()),
             }),
+            deleted: false,
         };
 
         let response = use_case.call(request).await;

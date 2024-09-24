@@ -1,6 +1,6 @@
 //! Get all applications with pagination use case
 
-use crate::domain::repositories::application::dto::GetApplicationsDtoRequest;
+use crate::domain::repositories::application::dto::{CountApplicationsDtoRequest, GetApplicationsDtoRequest};
 use crate::domain::repositories::application::ApplicationRepository;
 use crate::domain::use_cases::application::{ApplicationUseCaseError, ApplicationUseCaseResponse};
 use crate::domain::utils::query_sort::{Filter, Filters, Sorts};
@@ -9,6 +9,7 @@ use crate::domain::value_objects::pagination::Pagination;
 #[derive(Debug, Clone)]
 pub struct GetApplicationsUseCaseRequest {
     pub filter: Option<Filter>,
+    pub deleted: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -41,7 +42,13 @@ impl<A: ApplicationRepository> GetApplicationsUseCase<A> {
         &self,
         request: GetApplicationsUseCaseRequest,
     ) -> Result<GetApplicationsUseCaseResponse, ApplicationUseCaseError> {
-        let total = self.application_repository.count_applications(()).await?.0;
+        let total = self
+            .application_repository
+            .count_applications(CountApplicationsDtoRequest {
+                deleted: request.deleted,
+            })
+            .await?
+            .0;
         let applications = self
             .application_repository
             .get_applications(GetApplicationsDtoRequest(request))
