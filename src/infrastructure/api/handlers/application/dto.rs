@@ -3,6 +3,7 @@
 use crate::domain::use_cases::application::create_application::CreateApplicationUseCaseRequest;
 use crate::domain::use_cases::application::delete_application::DeleteApplicationUseCaseResponse;
 use crate::domain::use_cases::application::get_applications::GetApplicationsUseCaseResponse;
+use crate::domain::use_cases::application::restore_application::RestoreApplicationUseCaseResponse;
 use crate::domain::use_cases::application::update_application::UpdateApplicationUseCaseResponse;
 use crate::domain::use_cases::application::ApplicationUseCaseResponse;
 use crate::infrastructure::api::handlers::filter::FilterRequest;
@@ -86,6 +87,17 @@ pub struct UpdateApplicationResponse();
 
 impl From<UpdateApplicationUseCaseResponse> for UpdateApplicationResponse {
     fn from(_: UpdateApplicationUseCaseResponse) -> Self {
+        Self {}
+    }
+}
+
+// ================ Restore application ================
+
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct RestoreApplicationResponse();
+
+impl From<RestoreApplicationUseCaseResponse> for RestoreApplicationResponse {
+    fn from(_: RestoreApplicationUseCaseResponse) -> Self {
         Self {}
     }
 }

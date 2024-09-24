@@ -4,6 +4,7 @@ use crate::domain::use_cases::application::create_application::CreateApplication
 use crate::domain::use_cases::application::delete_application::DeleteApplicationUseCaseRequest;
 use crate::domain::use_cases::application::get_application::GetApplicationByIdUseCaseRequest;
 use crate::domain::use_cases::application::get_applications::GetApplicationsUseCaseRequest;
+use crate::domain::use_cases::application::restore_application::RestoreApplicationUseCaseRequest;
 use crate::domain::use_cases::application::update_application::UpdateApplicationUseCaseRequest;
 use crate::domain::value_objects::id::Id;
 use crate::infrastructure::api::extractors::{ExtractRequestId, Path, Query};
@@ -121,6 +122,24 @@ pub async fn update(
         .call(UpdateApplicationUseCaseRequest {
             id: Id::from_str(&application_id)?,
             name: request.name,
+        })
+        .await?;
+
+    Ok(ApiSuccess::new(StatusCode::NO_CONTENT, response.into()))
+}
+
+/// Restore a deleted application route: PATCH /api/v1/applications/:application_id/restore
+#[instrument(skip(uc), name = "restore_application_handler")]
+pub async fn restore(
+    Path(application_id): Path<String>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> Result<ApiSuccess<RestoreApplicationResponse>, ApiError> {
+    let response = uc
+        .application
+        .restore_application
+        .call(RestoreApplicationUseCaseRequest {
+            id: Id::from_str(&application_id)?,
         })
         .await?;
 

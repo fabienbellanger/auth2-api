@@ -6,11 +6,13 @@ use crate::domain::use_cases::application::delete_application::{
 };
 use crate::domain::use_cases::application::get_application::GetApplicationByIdUseCaseRequest;
 use crate::domain::use_cases::application::get_applications::GetApplicationsUseCaseRequest;
+use crate::domain::use_cases::application::restore_application::{
+    RestoreApplicationUseCaseRequest, RestoreApplicationUseCaseResponse,
+};
 use crate::domain::use_cases::application::update_application::{
     UpdateApplicationUseCaseRequest, UpdateApplicationUseCaseResponse,
 };
 use crate::domain::use_cases::application::ApplicationUseCaseResponse;
-
 // ================ Create application ================
 
 #[derive(Debug, Clone)]
@@ -60,3 +62,11 @@ pub struct CountApplicationsDtoRequest {
 
 #[derive(Debug, Clone)]
 pub struct CountApplicationsDtoResponse(pub i64);
+
+// ================ Restore application ================
+
+#[derive(Debug, Clone)]
+pub struct RestoreApplicationDtoRequest(pub RestoreApplicationUseCaseRequest);
+
+#[derive(Debug, Clone)]
+pub struct RestoreApplicationDtoResponse(pub RestoreApplicationUseCaseResponse);

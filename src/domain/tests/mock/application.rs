@@ -3,7 +3,7 @@
 use crate::domain::repositories::application::dto::{
     CountApplicationsDtoRequest, CountApplicationsDtoResponse, CreateApplicationDtoRequest,
     CreateApplicationDtoResponse, GetApplicationByIdDtoRequest, GetApplicationByIdDtoResponse,
-    GetApplicationsDtoRequest, GetApplicationsDtoResponse,
+    GetApplicationsDtoRequest, GetApplicationsDtoResponse, RestoreApplicationDtoRequest, RestoreApplicationDtoResponse,
 };
 use crate::domain::repositories::application::{dto, ApplicationRepository};
 use crate::domain::use_cases::application::{ApplicationUseCaseError, ApplicationUseCaseResponse};
@@ -94,6 +94,14 @@ impl ApplicationRepository for ApplicationRepositoryMock {
         &self,
         _req: CountApplicationsDtoRequest,
     ) -> Result<CountApplicationsDtoResponse, ApplicationUseCaseError> {
+        todo!()
+    }
+
+    /// Restore deleted application
+    async fn restore(
+        &self,
+        _req: RestoreApplicationDtoRequest,
+    ) -> Result<RestoreApplicationDtoResponse, ApplicationUseCaseError> {
         todo!()
     }
 }

@@ -4,6 +4,7 @@ pub mod create_application;
 pub mod delete_application;
 pub mod get_application;
 pub mod get_applications;
+pub mod restore_application;
 pub mod update_application;
 
 use crate::domain::entities::application::ApplicationId;
@@ -12,6 +13,7 @@ use crate::domain::use_cases::application::create_application::CreateApplication
 use crate::domain::use_cases::application::delete_application::DeleteApplicationUseCase;
 use crate::domain::use_cases::application::get_application::GetApplicationByIdUseCase;
 use crate::domain::use_cases::application::get_applications::GetApplicationsUseCase;
+use crate::domain::use_cases::application::restore_application::RestoreApplicationUseCase;
 use crate::domain::use_cases::application::update_application::UpdateApplicationUseCase;
 use crate::domain::value_objects::datetime::UtcDateTime;
 use thiserror::Error;
@@ -23,6 +25,7 @@ pub struct ApplicationUseCases<A: ApplicationRepository> {
     pub get_applications: GetApplicationsUseCase<A>,
     pub update_application: UpdateApplicationUseCase<A>,
     pub delete_application: DeleteApplicationUseCase<A>,
+    pub restore_application: RestoreApplicationUseCase<A>,
 }
 
 impl<A: ApplicationRepository> ApplicationUseCases<A> {
@@ -34,6 +37,7 @@ impl<A: ApplicationRepository> ApplicationUseCases<A> {
             get_applications: GetApplicationsUseCase::new(application_repository.clone()),
             update_application: UpdateApplicationUseCase::new(application_repository.clone()),
             delete_application: DeleteApplicationUseCase::new(application_repository.clone()),
+            restore_application: RestoreApplicationUseCase::new(application_repository.clone()),
         }
     }
 }

@@ -8,10 +8,12 @@ use crate::domain::repositories::application::dto::{
     CountApplicationsDtoRequest, CountApplicationsDtoResponse, CreateApplicationDtoRequest,
     CreateApplicationDtoResponse, DeleteApplicationDtoRequest, DeleteApplicationDtoResponse,
     GetApplicationByIdDtoRequest, GetApplicationByIdDtoResponse, GetApplicationsDtoRequest, GetApplicationsDtoResponse,
-    UpdateApplicationDtoRequest, UpdateApplicationDtoResponse,
+    RestoreApplicationDtoRequest, RestoreApplicationDtoResponse, UpdateApplicationDtoRequest,
+    UpdateApplicationDtoResponse,
 };
 use crate::domain::repositories::application::ApplicationRepository;
 use crate::domain::use_cases::application::delete_application::DeleteApplicationUseCaseResponse;
+use crate::domain::use_cases::application::restore_application::RestoreApplicationUseCaseResponse;
 use crate::domain::use_cases::application::update_application::UpdateApplicationUseCaseResponse;
 use crate::domain::use_cases::application::{ApplicationUseCaseError, ApplicationUseCaseResponse};
 use crate::domain::value_objects::datetime::UtcDateTime;
@@ -221,5 +223,32 @@ impl ApplicationRepository for ApplicationMysqlRepository {
             })?;
 
         Ok(CountApplicationsDtoResponse(result.try_get("total")?))
+    }
+
+    #[instrument(skip(self), name = "application_repository_restore")]
+    async fn restore(
+        &self,
+        req: RestoreApplicationDtoRequest,
+    ) -> Result<RestoreApplicationDtoResponse, ApplicationUseCaseError> {
+        let result = sqlx::query!(
+            "
+            UPDATE applications
+            SET deleted_at = NULL
+            WHERE id = ?
+                AND deleted_at IS NOT NULL",
+            req.0.id.to_string()
+        )
+        .execute(self.db.pool.clone().as_ref())
+        .await
+        .map_err(|err| {
+            error!(error = %err, "Failed to restore application");
+            ApplicationUseCaseError::DatabaseError("Failed to restore application".to_string())
+        })?;
+
+        if result.rows_affected() == 0 {
+            return Err(ApplicationUseCaseError::ApplicationNotFound())?;
+        }
+
+        Ok(RestoreApplicationDtoResponse(RestoreApplicationUseCaseResponse()))
     }
 }

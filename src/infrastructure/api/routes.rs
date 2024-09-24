@@ -63,6 +63,7 @@ fn api_applications() -> Router<SharedState> {
         .route("/:application_id", get(handlers::application::get_by_id))
         .route("/:application_id", delete(handlers::application::delete))
         .route("/:application_id", patch(handlers::application::update))
+        .route("/:application_id/restore", patch(handlers::application::restore))
 }
 
 /// Scopes API routes
