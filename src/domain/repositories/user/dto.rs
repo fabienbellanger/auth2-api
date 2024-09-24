@@ -6,6 +6,7 @@ use crate::domain::use_cases::user::delete_user::{DeleteUserUseCaseRequest, Dele
 use crate::domain::use_cases::user::forgotten_password::ForgottenPasswordUseCaseRequest;
 use crate::domain::use_cases::user::get_user::GetUserUseCaseRequest;
 use crate::domain::use_cases::user::get_users::GetUsersUseCaseRequest;
+use crate::domain::use_cases::user::restore_user::{RestoreUserUseCaseRequest, RestoreUserUseCaseResponse};
 use crate::domain::use_cases::user::UserUseCaseResponse;
 use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::password::Password;
@@ -79,3 +80,11 @@ pub struct UpdatePasswordDtoRequest {
 
 #[derive(Debug, Clone)]
 pub struct UpdatePasswordDtoResponse();
+
+// ================ Restore a user ================
+
+#[derive(Debug, Clone)]
+pub struct RestoreUserDtoRequest(pub RestoreUserUseCaseRequest);
+
+#[derive(Debug, Clone)]
+pub struct RestoreUserDtoResponse(pub RestoreUserUseCaseResponse);

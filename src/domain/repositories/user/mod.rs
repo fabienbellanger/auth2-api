@@ -6,7 +6,8 @@ use crate::domain::repositories::user::dto::{
     CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse, DeleteUserDtoRequest,
     DeleteUserDtoResponse, GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse,
     GetUserByEmailDtoRequest, GetUserByEmailDtoResponse, GetUserByIdDtoRequest, GetUserByIdDtoResponse,
-    GetUsersDtoRequest, GetUsersDtoResponse, UpdatePasswordDtoRequest, UpdatePasswordDtoResponse,
+    GetUsersDtoRequest, GetUsersDtoResponse, RestoreUserDtoRequest, RestoreUserDtoResponse, UpdatePasswordDtoRequest,
+    UpdatePasswordDtoResponse,
 };
 use crate::domain::use_cases::user::UserUseCaseError;
 use async_trait::async_trait;
@@ -45,4 +46,7 @@ pub trait UserRepository: Clone {
         &self,
         req: UpdatePasswordDtoRequest,
     ) -> Result<UpdatePasswordDtoResponse, UserUseCaseError>;
+
+    /// Restore a user
+    async fn restore_user(&self, req: RestoreUserDtoRequest) -> Result<RestoreUserDtoResponse, UserUseCaseError>;
 }

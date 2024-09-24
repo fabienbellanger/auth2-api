@@ -11,6 +11,7 @@ use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCaseReque
 use crate::domain::use_cases::user::get_user::GetUserUseCaseRequest;
 use crate::domain::use_cases::user::get_users::GetUsersUseCaseRequest;
 use crate::domain::use_cases::user::refresh_token::RefreshTokenUseCaseRequest;
+use crate::domain::use_cases::user::restore_user::RestoreUserUseCaseRequest;
 use crate::domain::use_cases::user::update_password_from_token::UpdatePasswordFromTokenUseCaseRequest;
 use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::id::Id;
@@ -132,6 +133,24 @@ pub async fn delete(
         .user
         .delete_user
         .call(DeleteUserUseCaseRequest {
+            user_id: UserId::from_str(&user_id)?,
+        })
+        .await?;
+
+    Ok(ApiSuccess::new(StatusCode::NO_CONTENT, response.into()))
+}
+
+/// Restore user route: PATCH /api/v1/users/:user_id/restore
+#[instrument(skip(uc), name = "restore_user_handler")]
+pub async fn restore(
+    Path(user_id): Path<String>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> Result<ApiSuccess<RestoreUserResponse>, ApiError> {
+    let response = uc
+        .user
+        .restore_user
+        .call(RestoreUserUseCaseRequest {
             user_id: UserId::from_str(&user_id)?,
         })
         .await?;

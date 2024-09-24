@@ -7,6 +7,7 @@ use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCaseRespo
 use crate::domain::use_cases::user::get_user::GetUserUseCaseResponse;
 use crate::domain::use_cases::user::get_users::GetUsersUseCaseResponse;
 use crate::domain::use_cases::user::refresh_token::RefreshTokenUseCaseResponse;
+use crate::domain::use_cases::user::restore_user::RestoreUserUseCaseResponse;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
 use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::password::Password;
@@ -183,3 +184,14 @@ pub struct UpdatePasswordFromTokenRequest {
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct UpdatePasswordFromTokenResponse();
+
+// ================ Restore user ================
+
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct RestoreUserResponse();
+
+impl From<RestoreUserUseCaseResponse> for RestoreUserResponse {
+    fn from(_value: RestoreUserUseCaseResponse) -> Self {
+        Self()
+    }
+}

@@ -5,10 +5,12 @@ use crate::domain::repositories::user::dto::{
     CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse, DeleteUserDtoRequest,
     DeleteUserDtoResponse, GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse,
     GetUserByEmailDtoRequest, GetUserByEmailDtoResponse, GetUserByIdDtoRequest, GetUserByIdDtoResponse,
-    GetUsersDtoRequest, GetUsersDtoResponse, UpdatePasswordDtoRequest, UpdatePasswordDtoResponse,
+    GetUsersDtoRequest, GetUsersDtoResponse, RestoreUserDtoRequest, RestoreUserDtoResponse, UpdatePasswordDtoRequest,
+    UpdatePasswordDtoResponse,
 };
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseResponse;
+use crate::domain::use_cases::user::restore_user::RestoreUserUseCaseResponse;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
 use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::email::Email;
@@ -118,6 +120,14 @@ impl UserRepository for UserRepositoryMock {
             Ok(UpdatePasswordDtoResponse())
         } else {
             Err(UserUseCaseError::DatabaseError("User not found".to_string()))
+        }
+    }
+
+    /// Restore a user
+    async fn restore_user(&self, req: RestoreUserDtoRequest) -> Result<RestoreUserDtoResponse, UserUseCaseError> {
+        match req.0.user_id.to_string().as_str() {
+            VALID_ID => Ok(RestoreUserDtoResponse(RestoreUserUseCaseResponse())),
+            _ => Err(UserUseCaseError::DatabaseError("User not found".to_string())),
         }
     }
 }

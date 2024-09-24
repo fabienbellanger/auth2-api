@@ -8,10 +8,12 @@ use crate::domain::repositories::user::dto::{
     CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse, DeleteUserDtoRequest,
     DeleteUserDtoResponse, GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse,
     GetUserByEmailDtoRequest, GetUserByEmailDtoResponse, GetUserByIdDtoRequest, GetUserByIdDtoResponse,
-    GetUsersDtoRequest, GetUsersDtoResponse, UpdatePasswordDtoRequest, UpdatePasswordDtoResponse,
+    GetUsersDtoRequest, GetUsersDtoResponse, RestoreUserDtoRequest, RestoreUserDtoResponse, UpdatePasswordDtoRequest,
+    UpdatePasswordDtoResponse,
 };
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseResponse;
+use crate::domain::use_cases::user::restore_user::RestoreUserUseCaseResponse;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
 use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::id::Id;
@@ -285,5 +287,29 @@ impl UserRepository for UserMysqlRepository {
         }
 
         Ok(UpdatePasswordDtoResponse())
+    }
+
+    #[instrument(skip(self, req), name = "user_repository_restore_user")]
+    async fn restore_user(&self, req: RestoreUserDtoRequest) -> Result<RestoreUserDtoResponse, UserUseCaseError> {
+        let result = sqlx::query!(
+            "
+            UPDATE users
+            SET deleted_at = NULL
+            WHERE id = ?
+                AND deleted_at IS NOT NULL",
+            req.0.user_id.to_string()
+        )
+        .execute(self.db.pool.clone().as_ref())
+        .await
+        .map_err(|err| {
+            error!(error = %err, "Failed to restore user");
+            UserUseCaseError::DatabaseError("Failed to restore user".to_string())
+        })?;
+
+        if result.rows_affected() == 0 {
+            return Err(UserUseCaseError::UserNotFound())?;
+        }
+
+        Ok(RestoreUserDtoResponse(RestoreUserUseCaseResponse()))
     }
 }

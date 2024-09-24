@@ -7,6 +7,7 @@ pub mod get_access_token;
 pub mod get_user;
 pub mod get_users;
 pub mod refresh_token;
+pub mod restore_user;
 pub mod update_password_from_token;
 
 use crate::domain::entities::refresh_token::RefreshTokenError;
@@ -21,6 +22,7 @@ use crate::domain::use_cases::user::get_access_token::GetAccessTokenUseCase;
 use crate::domain::use_cases::user::get_user::GetUserUseCase;
 use crate::domain::use_cases::user::get_users::GetUsersUseCase;
 use crate::domain::use_cases::user::refresh_token::RefreshTokenUseCase;
+use crate::domain::use_cases::user::restore_user::RestoreUserUseCase;
 use crate::domain::use_cases::user::update_password_from_token::UpdatePasswordFromTokenUseCase;
 use crate::domain::value_objects::datetime::{UtcDateTime, UtcDateTimeError};
 use crate::domain::value_objects::email::{Email, EmailError};
@@ -39,6 +41,7 @@ pub struct UserUseCases<U: UserRepository, T: RefreshTokenRepository, P: Passwor
     pub refresh_token: RefreshTokenUseCase<T>,
     pub forgotten_password: ForgottenPasswordUseCase<U, P, E>,
     pub update_password_from_token: UpdatePasswordFromTokenUseCase<U, P>,
+    pub restore_user: RestoreUserUseCase<U>,
 }
 
 impl<U: UserRepository, T: RefreshTokenRepository, P: PasswordResetRepository, E: EmailService>
@@ -63,7 +66,11 @@ impl<U: UserRepository, T: RefreshTokenRepository, P: PasswordResetRepository, E
                 password_reset_repository.clone(),
                 email_service,
             ),
-            update_password_from_token: UpdatePasswordFromTokenUseCase::new(user_repository, password_reset_repository),
+            update_password_from_token: UpdatePasswordFromTokenUseCase::new(
+                user_repository.clone(),
+                password_reset_repository.clone(),
+            ),
+            restore_user: RestoreUserUseCase::new(user_repository.clone()),
         }
     }
 }

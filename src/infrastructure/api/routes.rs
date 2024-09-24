@@ -52,6 +52,7 @@ fn api_users() -> Router<SharedState> {
         .route("/deleted", get(handlers::user::get_all_deleted))
         .route("/:user_id", get(handlers::user::get_by_id))
         .route("/:user_id", delete(handlers::user::delete))
+        .route("/:user_id/restore", patch(handlers::user::restore))
 }
 
 /// Applications API routes
