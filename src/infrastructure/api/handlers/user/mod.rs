@@ -77,7 +77,8 @@ pub async fn get_all(
         .user
         .get_users
         .call(GetUsersUseCaseRequest {
-            filter: request.try_into()?,
+            pagination: request.pagination(),
+            sorts: request.sorts(),
             deleted: false,
         })
         .await?;
@@ -96,7 +97,8 @@ pub async fn get_all_deleted(
         .user
         .get_users
         .call(GetUsersUseCaseRequest {
-            filter: request.try_into()?,
+            pagination: request.pagination(),
+            sorts: request.sorts(),
             deleted: true,
         })
         .await?;

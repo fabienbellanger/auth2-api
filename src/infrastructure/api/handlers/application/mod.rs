@@ -63,7 +63,8 @@ pub async fn get_all(
         .application
         .get_applications
         .call(GetApplicationsUseCaseRequest {
-            filter: request.try_into()?,
+            pagination: request.pagination(),
+            sorts: request.sorts(),
             deleted: false,
         })
         .await?;
@@ -82,7 +83,8 @@ pub async fn get_all_deleted(
         .application
         .get_applications
         .call(GetApplicationsUseCaseRequest {
-            filter: request.try_into()?,
+            pagination: request.pagination(),
+            sorts: request.sorts(),
             deleted: true,
         })
         .await?;

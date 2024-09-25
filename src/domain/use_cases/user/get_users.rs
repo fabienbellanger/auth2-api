@@ -3,11 +3,14 @@
 use crate::domain::repositories::user::dto::{CountUsersDtoRequest, GetUsersDtoRequest};
 use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
-use crate::domain::utils::query_sort::Filter;
+use crate::domain::value_objects::pagination::Pagination;
+use crate::domain::value_objects::query_sort::QuerySorts;
 
 #[derive(Debug, Clone)]
 pub struct GetUsersUseCaseRequest {
-    pub filter: Option<Filter>,
+    pub pagination: Pagination,
+    pub sorts: Option<QuerySorts>,
+    // pub filters: Option<Filters>,
     pub deleted: bool,
 }
 
@@ -50,8 +53,8 @@ impl<U: UserRepository> GetUsersUseCase<U> {
 mod tests {
     use super::*;
     use crate::domain::tests::mock::user::UserRepositoryMock;
-    use crate::domain::utils::query_sort::Sorts;
     use crate::domain::value_objects::pagination::Pagination;
+    use crate::domain::value_objects::query_sort::QuerySorts;
 
     #[tokio::test]
     async fn test_get_users_use_case() {
@@ -59,10 +62,8 @@ mod tests {
         let use_case = GetUsersUseCase::new(user_repository);
 
         let request = GetUsersUseCaseRequest {
-            filter: Some(Filter {
-                pagination: Some(Pagination::new(1, 10)),
-                sorts: Some(Sorts::default()),
-            }),
+            pagination: Pagination::new(1, 10),
+            sorts: Some(QuerySorts::default()),
             deleted: false,
         };
 

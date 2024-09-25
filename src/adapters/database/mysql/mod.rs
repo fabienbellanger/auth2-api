@@ -2,8 +2,8 @@
 
 use crate::adapters::database::{DatabaseError, GenericDb};
 use crate::config::Config;
-use crate::domain::utils::query_sort::{Filter, Sorts};
-use crate::domain::value_objects::pagination::PAGINATION_MAX_LIMIT;
+use crate::domain::value_objects::pagination::{Pagination, PAGINATION_MAX_LIMIT};
+use crate::domain::value_objects::query_sort::{QuerySort, QuerySorts};
 use async_trait::async_trait;
 use sqlx::mysql::MySqlPoolOptions;
 use sqlx::{MySql, Pool};
@@ -53,64 +53,53 @@ impl GenericDb for Db {
     }
 }
 
-/// Pagination and sort for MySQL queries
+/// Pagination for MySQL queries
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PaginationSort {
+pub struct MysqlPagination {
     pub page: u32,
     pub limit: u32,
     pub offset: u32,
-    pub sorts: Sorts,
 }
 
-impl From<Filter> for PaginationSort {
-    fn from(filter: Filter) -> Self {
+impl From<Pagination> for MysqlPagination {
+    fn from(pagination: Pagination) -> Self {
         // Page & limit
-        let (page, limit) = match filter.pagination {
-            Some(pagination) => {
-                let page = match pagination.page() >= 1 {
-                    true => pagination.page(),
-                    false => 1,
-                };
-
-                let limit = match (1..=PAGINATION_MAX_LIMIT).contains(&pagination.limit()) {
-                    true => pagination.limit(),
-                    false => PAGINATION_MAX_LIMIT,
-                };
-
-                (page, limit)
-            }
-            None => (1, PAGINATION_MAX_LIMIT),
+        let page = match pagination.page() >= 1 {
+            true => pagination.page(),
+            false => 1,
         };
 
-        // Offset
+        let limit = match (1..=PAGINATION_MAX_LIMIT).contains(&pagination.limit()) {
+            true => pagination.limit(),
+            false => PAGINATION_MAX_LIMIT,
+        };
+
         let offset = (page - 1) * limit;
 
-        // Sorts
-        let sorts = filter.sorts.unwrap_or_default();
-
-        Self {
-            page,
-            limit,
-            offset,
-            sorts,
-        }
+        Self { page, limit, offset }
     }
 }
 
-impl PaginationSort {
+impl MysqlPagination {
     /// Generate SQL code for pagination
-    pub fn get_pagination_sql(&self) -> String {
+    pub fn to_sql(&self) -> String {
         format!(" LIMIT {} OFFSET {}", self.limit, self.offset)
     }
+}
 
+/// Query sorts for MySQL queries
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MysqlQuerySorts(pub QuerySorts);
+
+impl MysqlQuerySorts {
     /// Generate SQL code for sorts (ORDER BY)
-    pub fn get_sorts_sql(&self, valid_fields: &[&str]) -> String {
-        self.sorts
-            .0
+    pub fn to_sql(&self, valid_fields: &[&str]) -> String {
+        self.0
+             .0
             .iter()
-            .filter(|(field, _)| valid_fields.contains(&field.as_str()))
+            .filter(|QuerySort { field, direction: _ }| valid_fields.contains(&field.as_str()))
             .enumerate()
-            .map(|(i, (field, sort))| {
+            .map(|(i, QuerySort { field, direction: sort })| {
                 if i == 0 {
                     format!(" ORDER BY {field} {sort}")
                 } else {
@@ -124,161 +113,104 @@ impl PaginationSort {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::utils::query_sort::SortDirection;
     use crate::domain::value_objects::pagination::Pagination;
+    use crate::domain::value_objects::query_sort::QuerySortDirection;
 
     #[test]
-    fn test_from_filter_to_pagination_sort_pagination() {
-        let pagination_sort = PaginationSort::from(Filter {
-            pagination: None,
-            sorts: None,
-        });
-
-        assert_eq!(pagination_sort.page, 1);
-        assert_eq!(pagination_sort.limit, PAGINATION_MAX_LIMIT);
-        assert_eq!(pagination_sort.offset, 0);
-
-        let pagination_sort = PaginationSort::from(Filter {
-            pagination: Some(Pagination::new(1, 10)),
-            sorts: None,
-        });
-
-        assert_eq!(pagination_sort.page, 1);
+    fn test_from_pagination_mysql_pagination() {
+        let pagination_sort = MysqlPagination::from(Pagination::new(1, 10));
         assert_eq!(pagination_sort.limit, 10);
         assert_eq!(pagination_sort.offset, 0);
 
-        let pagination_sort = PaginationSort::from(Filter {
-            pagination: Some(Pagination::new(1, 1000)),
-            sorts: None,
-        });
-
-        assert_eq!(pagination_sort.page, 1);
+        let pagination_sort = MysqlPagination::from(Pagination::new(1, 1_000));
         assert_eq!(pagination_sort.limit, PAGINATION_MAX_LIMIT);
         assert_eq!(pagination_sort.offset, 0);
 
-        let pagination_sort = PaginationSort::from(Filter {
-            pagination: Some(Pagination::new(2, 1000)),
-            sorts: None,
-        });
-
-        assert_eq!(pagination_sort.page, 2);
+        let pagination_sort = MysqlPagination::from(Pagination::new(2, 1_000));
         assert_eq!(pagination_sort.limit, PAGINATION_MAX_LIMIT);
         assert_eq!(pagination_sort.offset, PAGINATION_MAX_LIMIT);
     }
 
     #[test]
-    fn test_get_pagination_sql() {
-        let pagination_sort = PaginationSort::from(Filter {
-            pagination: Some(Pagination::new(1, 50)),
-            sorts: None,
-        });
-        assert_eq!(String::from(" LIMIT 50 OFFSET 0"), pagination_sort.get_pagination_sql());
+    fn test_mysql_pagination_to_sql() {
+        let pagination = MysqlPagination::from(Pagination::new(1, 50));
+        assert_eq!(String::from(" LIMIT 50 OFFSET 0"), pagination.to_sql());
 
-        let pagination_sort = PaginationSort::from(Filter {
-            pagination: Some(Pagination::new(3, 50)),
-            sorts: None,
-        });
-        assert_eq!(
-            String::from(" LIMIT 50 OFFSET 100"),
-            pagination_sort.get_pagination_sql()
-        );
+        let pagination = MysqlPagination::from(Pagination::new(3, 50));
+        assert_eq!(String::from(" LIMIT 50 OFFSET 100"), pagination.to_sql());
     }
 
     #[test]
-    fn test_get_sorts_sql_without_sort() {
-        let pagination_sort = PaginationSort::from(Filter {
-            pagination: None,
-            sorts: None,
-        });
-        assert_eq!(String::new(), pagination_sort.get_sorts_sql(&[]));
+    fn test_mysql_query_sorts_without_sort() {
+        let mysql_sorts = MysqlQuerySorts(QuerySorts::default());
+        assert_eq!(String::new(), mysql_sorts.to_sql(&[]));
     }
 
     #[test]
-    fn test_get_sorts_sql_without_valid_fields() {
-        let mut valid_fields: &[&str] = &[];
+    fn test_mysql_query_sorts_without_valid_fields() {
+        let valid_fields: &[&str] = &[];
 
-        let mut pagination_sort = PaginationSort::from(Filter {
-            pagination: Some(Pagination::new(1, 50)),
-            sorts: None,
-        });
-        assert_eq!(String::new(), pagination_sort.get_sorts_sql(valid_fields));
+        let mut mysql_sorts = MysqlQuerySorts(QuerySorts::default());
+        assert_eq!(String::new(), mysql_sorts.to_sql(valid_fields));
 
-        pagination_sort.sorts.0 = vec![
-            ("id".to_owned(), SortDirection::Asc),
-            ("name".to_owned(), SortDirection::Desc),
-        ];
-        assert_eq!(String::new(), pagination_sort.get_sorts_sql(valid_fields));
-
-        valid_fields = &[];
-        assert_eq!(String::from(""), pagination_sort.get_sorts_sql(valid_fields));
+        mysql_sorts = MysqlQuerySorts(QuerySorts(vec![
+            QuerySort::new("id".to_owned(), QuerySortDirection::Asc),
+            QuerySort::new("name".to_owned(), QuerySortDirection::Desc),
+        ]));
+        assert_eq!(String::new(), mysql_sorts.to_sql(valid_fields));
     }
 
     #[test]
-    fn test_get_sorts_sql_with_valid_fields() {
+    fn test_mysql_query_sorts_with_valid_fields() {
         let valid_fields = &["id", "name"];
 
-        let mut pagination_sort = PaginationSort::from(Filter {
-            pagination: Some(Pagination::new(1, 50)),
-            sorts: None,
-        });
-        assert_eq!(String::new(), pagination_sort.get_sorts_sql(valid_fields));
+        let mut mysql_sorts = MysqlQuerySorts(QuerySorts::default());
+        assert_eq!(String::new(), mysql_sorts.to_sql(valid_fields));
 
-        pagination_sort.sorts.0 = vec![
-            ("id".to_owned(), SortDirection::Asc),
-            ("name".to_owned(), SortDirection::Desc),
-        ];
+        mysql_sorts = MysqlQuerySorts(QuerySorts(vec![
+            QuerySort::new("id".to_owned(), QuerySortDirection::Asc),
+            QuerySort::new("name".to_owned(), QuerySortDirection::Desc),
+        ]));
         assert_eq!(
             " ORDER BY id ASC, name DESC".to_owned(),
-            pagination_sort.get_sorts_sql(valid_fields)
+            mysql_sorts.to_sql(valid_fields)
         );
 
         let valid_fields: &[&str] = &["name"];
-        assert_eq!(
-            " ORDER BY name DESC".to_owned(),
-            pagination_sort.get_sorts_sql(valid_fields)
-        );
+        assert_eq!(" ORDER BY name DESC".to_owned(), mysql_sorts.to_sql(valid_fields));
 
         let valid_fields: &[&str] = &["id", "name"];
-        pagination_sort.sorts.0 = vec![
-            ("idz".to_owned(), SortDirection::Asc),
-            ("name".to_owned(), SortDirection::Desc),
-        ];
-        assert_eq!(
-            " ORDER BY name DESC".to_owned(),
-            pagination_sort.get_sorts_sql(valid_fields)
-        );
+        mysql_sorts = MysqlQuerySorts(QuerySorts(vec![
+            QuerySort::new("idz".to_owned(), QuerySortDirection::Asc),
+            QuerySort::new("name".to_owned(), QuerySortDirection::Desc),
+        ]));
+        assert_eq!(" ORDER BY name DESC".to_owned(), mysql_sorts.to_sql(valid_fields));
 
         let valid_fields: &[&str] = &["id", "name"];
-        pagination_sort.sorts.0 = vec![
-            ("id".to_owned(), SortDirection::Asc),
-            ("namee".to_owned(), SortDirection::Desc),
-        ];
-        assert_eq!(
-            " ORDER BY id ASC".to_owned(),
-            pagination_sort.get_sorts_sql(valid_fields)
-        );
+        mysql_sorts = MysqlQuerySorts(QuerySorts(vec![
+            QuerySort::new("id".to_owned(), QuerySortDirection::Asc),
+            QuerySort::new("namee".to_owned(), QuerySortDirection::Desc),
+        ]));
+        assert_eq!(" ORDER BY id ASC".to_owned(), mysql_sorts.to_sql(valid_fields));
 
         let valid_fields: &[&str] = &["id", "name"];
-        pagination_sort.sorts.0 = vec![
-            ("idz".to_owned(), SortDirection::Asc),
-            ("namee".to_owned(), SortDirection::Desc),
-        ];
-        assert_eq!("".to_owned(), pagination_sort.get_sorts_sql(valid_fields));
+        mysql_sorts = MysqlQuerySorts(QuerySorts(vec![
+            QuerySort::new("idz".to_owned(), QuerySortDirection::Asc),
+            QuerySort::new("namee".to_owned(), QuerySortDirection::Desc),
+        ]));
+        assert_eq!("".to_owned(), mysql_sorts.to_sql(valid_fields));
     }
 
     #[test]
-    fn test_get_sorts_sql_with_valid_fields_and_table_prefix() {
+    fn test_mysql_query_sorts_with_valid_fields_and_table_prefix() {
         let valid_fields: &[&str] = &["user.id", "role.name"];
-        let pagination_sort = PaginationSort::from(Filter {
-            pagination: Some(Pagination::new(1, 50)),
-            sorts: Some(Sorts(vec![
-                ("user.id".to_owned(), SortDirection::Asc),
-                ("role.name".to_owned(), SortDirection::Desc),
-            ])),
-        });
+        let mysql_sorts = MysqlQuerySorts(QuerySorts(vec![
+            QuerySort::new("user.id".to_owned(), QuerySortDirection::Asc),
+            QuerySort::new("role.name".to_owned(), QuerySortDirection::Desc),
+        ]));
         assert_eq!(
             " ORDER BY user.id ASC, role.name DESC".to_owned(),
-            pagination_sort.get_sorts_sql(valid_fields)
+            mysql_sorts.to_sql(valid_fields)
         );
     }
 }

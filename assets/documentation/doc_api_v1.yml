@@ -148,7 +148,7 @@ paths:
           name: p
           schema:
             type: integer
-            default: 0
+            default: 1
           required: false
           description: Page number
           example: 1
@@ -225,7 +225,7 @@ paths:
           name: p
           schema:
             type: integer
-            default: 0
+            default: 1
           required: false
           description: Page number
           example: 1
@@ -361,7 +361,7 @@ paths:
           name: p
           schema:
             type: integer
-            default: 0
+            default: 1
           required: false
           description: Page number
           example: 1
@@ -438,7 +438,7 @@ paths:
           name: p
           schema:
             type: integer
-            default: 0
+            default: 1
           required: false
           description: Page number
           example: 1

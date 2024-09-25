@@ -3,7 +3,7 @@
 mod model;
 
 use crate::adapters::database::mysql::repositories::application::model::ApplicationModel;
-use crate::adapters::database::mysql::{Db, PaginationSort};
+use crate::adapters::database::mysql::{Db, MysqlPagination, MysqlQuerySorts};
 use crate::domain::repositories::application::dto::{
     CountApplicationsDtoRequest, CountApplicationsDtoResponse, CreateApplicationDtoRequest,
     CreateApplicationDtoResponse, DeleteApplicationDtoRequest, DeleteApplicationDtoResponse,
@@ -122,11 +122,13 @@ impl ApplicationRepository for ApplicationMysqlRepository {
             false => "WHERE deleted_at IS NULL",
         });
 
-        let filter = PaginationSort::from(req.0.filter.unwrap_or_default());
+        // Sorts
+        let sorts = MysqlQuerySorts(req.0.sorts.unwrap_or_default());
+        query.push_str(&sorts.to_sql(&["id", "name", "updated_at", "deleted_at"]));
 
-        // Sorts and pagination
-        query.push_str(&filter.get_sorts_sql(&["id", "name", "updated_at", "deleted_at"]));
-        query.push_str(&filter.get_pagination_sql());
+        // Pagination
+        let pagination = MysqlPagination::from(req.0.pagination);
+        query.push_str(&pagination.to_sql());
 
         let applications = sqlx::query_as::<_, ApplicationModel>(&query)
             .fetch_all(self.db.pool.clone().as_ref())

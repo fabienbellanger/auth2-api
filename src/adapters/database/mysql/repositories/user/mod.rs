@@ -3,7 +3,7 @@
 mod model;
 
 use crate::adapters::database::mysql::repositories::user::model::UserModel;
-use crate::adapters::database::mysql::{Db, PaginationSort};
+use crate::adapters::database::mysql::{Db, MysqlPagination, MysqlQuerySorts};
 use crate::domain::repositories::user::dto::{
     CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse, DeleteUserDtoRequest,
     DeleteUserDtoResponse, GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse,
@@ -124,18 +124,13 @@ impl UserRepository for UserMysqlRepository {
             false => "WHERE deleted_at IS NULL",
         });
 
-        let filter = PaginationSort::from(req.0.filter.unwrap_or_default());
+        // Sorts
+        let sorts = MysqlQuerySorts(req.0.sorts.unwrap_or_default());
+        query.push_str(&sorts.to_sql(&["id", "lastname", "firstname", "created_at", "updated_at", "deleted_at"]));
 
-        // Sorts and pagination
-        query.push_str(&filter.get_sorts_sql(&[
-            "id",
-            "lastname",
-            "firstname",
-            "created_at",
-            "updated_at",
-            "deleted_at",
-        ]));
-        query.push_str(&filter.get_pagination_sql());
+        // Pagination
+        let pagination = MysqlPagination::from(req.0.pagination);
+        query.push_str(&pagination.to_sql());
 
         let users = sqlx::query_as::<_, UserModel>(&query)
             .fetch_all(self.db.pool.clone().as_ref())
