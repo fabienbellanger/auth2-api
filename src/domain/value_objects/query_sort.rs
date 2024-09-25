@@ -1,5 +1,4 @@
 //! Query sorts value object representation
-// TODO: Add tests and improve documentation
 
 use std::fmt::Display;
 
@@ -50,6 +49,27 @@ impl QuerySort {
 pub struct QuerySorts(pub Vec<QuerySort>);
 
 impl From<&str> for QuerySorts {
+    /// Create a new query sorts from a string
+    ///
+    /// # Example
+    /// ```
+    /// use auth2_api::domain::value_objects::query_sort::{QuerySort, QuerySortDirection, QuerySorts};
+    ///
+    /// let sorts = QuerySorts::from("+id,-name");
+    /// assert_eq!(
+    ///     sorts.0,
+    ///     vec![
+    ///         QuerySort {
+    ///             field: "id".to_string(),
+    ///             direction: QuerySortDirection::Asc
+    ///         },
+    ///         QuerySort {
+    ///             field: "name".to_string(),
+    ///             direction: QuerySortDirection::Desc
+    ///         },
+    ///     ]
+    /// );
+    /// ```
     fn from(value: &str) -> Self {
         let mut sorts = Vec::new();
         let parts = value.split(',');
