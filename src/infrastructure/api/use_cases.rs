@@ -3,10 +3,12 @@
 use crate::adapters::database::mysql::repositories::application::ApplicationMysqlRepository;
 use crate::adapters::database::mysql::repositories::password_reset::PasswordResetMysqlRepository;
 use crate::adapters::database::mysql::repositories::refresh_token::RefreshTokenMysqlRepository;
+use crate::adapters::database::mysql::repositories::scope::ScopeMysqlRepository;
 use crate::adapters::database::mysql::repositories::user::UserMysqlRepository;
 use crate::adapters::database::mysql::Db;
 use crate::adapters::email::EmailAdapter;
 use crate::domain::use_cases::application::ApplicationUseCases;
+use crate::domain::use_cases::scope::ScopeUseCases;
 use crate::domain::use_cases::user::UserUseCases;
 use crate::infrastructure::api::response::ApiError;
 
@@ -15,6 +17,7 @@ pub struct AppUseCases {
     pub user:
         UserUseCases<UserMysqlRepository, RefreshTokenMysqlRepository, PasswordResetMysqlRepository, EmailAdapter>,
     pub application: ApplicationUseCases<ApplicationMysqlRepository>,
+    pub scope: ScopeUseCases<ScopeMysqlRepository>,
 }
 
 impl AppUseCases {
@@ -34,9 +37,14 @@ impl AppUseCases {
         let application_repository = ApplicationMysqlRepository::new(db.clone());
         let application_use_case = ApplicationUseCases::new(application_repository);
 
+        // Scope
+        let scope_repository = ScopeMysqlRepository::new(db.clone());
+        let scope_use_case = ScopeUseCases::new(scope_repository);
+
         Ok(Self {
             user: user_use_case,
             application: application_use_case,
+            scope: scope_use_case,
         })
     }
 }

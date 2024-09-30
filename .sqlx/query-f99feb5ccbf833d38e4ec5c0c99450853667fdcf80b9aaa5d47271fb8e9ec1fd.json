@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n            INSERT INTO scopes (id, application_id, created_at, updated_at, deleted_at)\n            VALUES (?, ?, ?, ?, NULL)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 4
+    },
+    "nullable": []
+  },
+  "hash": "f99feb5ccbf833d38e4ec5c0c99450853667fdcf80b9aaa5d47271fb8e9ec1fd"
+}

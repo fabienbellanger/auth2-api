@@ -2,4 +2,5 @@
 
 pub mod application;
 pub mod database;
+pub mod scope;
 pub mod user;

@@ -31,7 +31,7 @@ metrics-exporter-prometheus = "0.15.3"
 
 # Tower
 tower = { version = "0.5.1", features = ["timeout", "util"] }
-tower-http = { version = "0.5.2", features = ["cors", "fs", "request-id", "util"] }
+tower-http = { version = "0.6.1", features = ["cors", "fs", "request-id", "util"] }
 tracing-appender = "0.2.3"
 tracing-subscriber = { version = "0.3.18", features = ["registry", "env-filter", "fmt", "json"] }
 
@@ -39,7 +39,7 @@ tracing-subscriber = { version = "0.3.18", features = ["registry", "env-filter",
 hyper = "1.4.1"
 
 # Axum
-axum = "0.7.6"
+axum = "0.7.7"
 
 # sqlx
 sqlx = { version = "0.8.2", features = ["runtime-tokio-native-tls", "chrono", "mysql", "macros", "bigdecimal", "migrate"] }
@@ -48,7 +48,7 @@ sqlx = { version = "0.8.2", features = ["runtime-tokio-native-tls", "chrono", "m
 lettre = "0.11.9"
 mime = "0.3.17"
 
-async-trait = "0.1.82"
+async-trait = "0.1.83"
 dotenvy = "0.15.7"
 chrono = { version = "0.4.38", features = ["clock", "std", "serde"], default-features = false }
 jsonwebtoken = "9.3.0"
@@ -56,7 +56,6 @@ tokio = { version = "1.40.0", features = ["full"] }
 rand = "0.8.5"
 uuid = { version = "1.10.0", features = ["v4", "serde"] }
 validator = { version = "0.18.1", features = ["derive"] }
-fake = { version = "2.9.2", features = ["chrono"] }
 bytes = "1.7.2"
 clap = { version = "4.5.18", features = ["cargo", "derive"] }
 config = "0.14.0"
@@ -68,5 +67,5 @@ argon2 = "0.5.3"
 passwords = { version = "3.1.16", features = ["common-password"] }
 
 [dev-dependencies]
-fake = { version = "2.9.2", features = ["chrono"] }
+fake = { version = "2.10.0", features = ["chrono"] }
 pretty_assertions = "1.4.1"

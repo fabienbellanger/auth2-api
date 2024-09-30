@@ -27,6 +27,7 @@ use std::sync::Arc;
 pub struct ApplicationMysqlRepository {
     db: Arc<Db>,
 }
+
 impl ApplicationMysqlRepository {
     /// Create a new repository
     pub fn new(db: Db) -> Self {

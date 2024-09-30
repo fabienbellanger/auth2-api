@@ -13,6 +13,7 @@ use crate::domain::use_cases::application::update_application::{
     UpdateApplicationUseCaseRequest, UpdateApplicationUseCaseResponse,
 };
 use crate::domain::use_cases::application::ApplicationUseCaseResponse;
+
 // ================ Create application ================
 
 #[derive(Debug, Clone)]
