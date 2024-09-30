@@ -43,7 +43,10 @@ impl ScopeRepository for ScopeMysqlRepository {
         .await
         .map_err(|err| {
             error!(error = %err, "Failed to create scope");
-            ScopeUseCaseError::DatabaseError("Scope creation error".to_string())
+            match err {
+                sqlx::Error::Database(err) if err.is_unique_violation() => ScopeUseCaseError::IdAlreadyExists(),
+                _ => ScopeUseCaseError::DatabaseError("Scope creation error".to_string()),
+            }
         })?;
 
         Ok(CreateScopeDtoResponse(ScopeUseCaseResponse {

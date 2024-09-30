@@ -37,6 +37,9 @@ pub enum ScopeUseCaseError {
     #[error("Model conversion error")]
     FromModelError(),
 
+    #[error("Scope ID already exists")]
+    IdAlreadyExists(),
+
     #[error("{0}")]
     DatabaseError(String),
 }

@@ -10,19 +10,17 @@ impl From<UserUseCaseError> for ApiError {
             UserUseCaseError::InvalidPassword(msg) => ApiError::BadRequest(msg),
             UserUseCaseError::InvalidUtcDateTime(msg) => ApiError::InternalServerError(msg),
             UserUseCaseError::InvalidArguments(msg) => ApiError::BadRequest(msg),
-            UserUseCaseError::InvalidId() => ApiError::InternalServerError("User creation error".to_string()),
+            UserUseCaseError::SendEmailError(msg) => ApiError::InternalServerError(msg),
             UserUseCaseError::DatabaseError(msg) => ApiError::InternalServerError(msg),
             UserUseCaseError::RefreshTokenCreationError(msg) => ApiError::InternalServerError(msg),
-            UserUseCaseError::IncorrectPassword() => ApiError::Unauthorized("User not found".to_string()),
-            UserUseCaseError::UserNotFound() => ApiError::NotFound("User not found".to_string()),
-            UserUseCaseError::Unauthorized() => ApiError::Unauthorized("Unauthorized".to_string()),
+            UserUseCaseError::InvalidId() => ApiError::InternalServerError(value.to_string()),
+            UserUseCaseError::UserNotFound() => ApiError::NotFound(value.to_string()),
+            UserUseCaseError::Unauthorized() => ApiError::Unauthorized(value.to_string()),
+            UserUseCaseError::ForgottenPasswordNotFound() => ApiError::NotFound(value.to_string()),
+            UserUseCaseError::AccessTokenGenerationError() => ApiError::InternalServerError(value.to_string()),
             UserUseCaseError::InvalidRefreshToken() => ApiError::Unauthorized("Invalid refresh token".to_string()),
-            UserUseCaseError::ForgottenPasswordNotFound() => ApiError::NotFound("No password reset found".to_string()),
             UserUseCaseError::FromModelError() => ApiError::InternalServerError("Internal server error".to_string()),
-            UserUseCaseError::SendEmailError(msg) => ApiError::InternalServerError(msg),
-            UserUseCaseError::AccessTokenGenerationError() => {
-                ApiError::InternalServerError("Get access token error".to_string())
-            }
+            UserUseCaseError::IncorrectPassword() => ApiError::Unauthorized("User not found".to_string()),
         }
     }
 }
