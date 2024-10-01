@@ -1,11 +1,16 @@
 //! Scope MySQL repository
 
-use crate::adapters::database::mysql::Db;
-use crate::domain::repositories::scope::dto::{CreateScopeDtoRequest, CreateScopeDtoResponse};
+use crate::adapters::database::mysql::repositories::scope::model::ScopeModel;
+use crate::adapters::database::mysql::{Db, MysqlPagination, MysqlQuerySorts};
+use crate::domain::repositories::scope::dto::{
+    CountScopesDtoRequest, CountScopesDtoResponse, CreateScopeDtoRequest, CreateScopeDtoResponse, GetScopesDtoRequest,
+    GetScopesDtoResponse,
+};
 use crate::domain::repositories::scope::ScopeRepository;
 use crate::domain::use_cases::scope::{ScopeUseCaseError, ScopeUseCaseResponse};
 use crate::domain::value_objects::datetime::UtcDateTime;
 use async_trait::async_trait;
+use sqlx::Row;
 use std::sync::Arc;
 
 mod model;
@@ -56,5 +61,64 @@ impl ScopeRepository for ScopeMysqlRepository {
             updated_at: now,
             deleted_at: None,
         }))
+    }
+
+    #[instrument(skip(self), name = "scope_repository_get_all")]
+    async fn get_scopes(&self, req: GetScopesDtoRequest) -> Result<GetScopesDtoResponse, ScopeUseCaseError> {
+        let mut query = String::from(
+            r#"
+            SELECT id, application_id, created_at, updated_at, deleted_at
+            FROM scopes
+        "#,
+        );
+
+        query.push_str(match req.0.deleted {
+            true => "WHERE deleted_at IS NOT NULL",
+            false => "WHERE deleted_at IS NULL",
+        });
+
+        // Sorts
+        let sorts = MysqlQuerySorts(req.0.sorts.unwrap_or_default());
+        query.push_str(&sorts.to_sql(&["id", "created_at", "updated_at", "deleted_at"]));
+
+        // Pagination
+        let pagination = MysqlPagination::from(req.0.pagination);
+        query.push_str(&pagination.to_sql());
+
+        let scopes = sqlx::query_as::<_, ScopeModel>(&query)
+            .fetch_all(self.db.pool.clone().as_ref())
+            .await
+            .map_err(|err| {
+                error!(error = %err, "Failed to get scopes");
+                ScopeUseCaseError::DatabaseError("Failed to get scopes".to_string())
+            })?
+            .into_iter()
+            .map(ScopeUseCaseResponse::try_from)
+            .collect::<Result<Vec<ScopeUseCaseResponse>, _>>()
+            .map_err(|err| {
+                error!(error = %err, "Failed to convert scope model to scope use case response");
+                ScopeUseCaseError::FromModelError()
+            })?;
+
+        Ok(GetScopesDtoResponse(scopes))
+    }
+
+    #[instrument(skip(self), name = "scope_repository_count_all")]
+    async fn count_scopes(&self, req: CountScopesDtoRequest) -> Result<CountScopesDtoResponse, ScopeUseCaseError> {
+        let mut query = String::from("SELECT COUNT(*) AS total FROM scopes");
+        query.push_str(match req.deleted {
+            true => " WHERE deleted_at IS NOT NULL",
+            false => " WHERE deleted_at IS NULL",
+        });
+
+        let result = sqlx::query(&query)
+            .fetch_one(self.db.pool.clone().as_ref())
+            .await
+            .map_err(|err| {
+                error!(error = %err, "Failed to count scopes");
+                ScopeUseCaseError::DatabaseError("Failed to count scopes".to_string())
+            })?;
+
+        Ok(CountScopesDtoResponse(result.try_get("total")?))
     }
 }

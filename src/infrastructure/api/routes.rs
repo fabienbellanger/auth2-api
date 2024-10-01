@@ -70,5 +70,8 @@ fn api_applications() -> Router<SharedState> {
 
 /// Scopes API routes
 fn api_scopes() -> Router<SharedState> {
-    Router::new().route("/", post(handlers::scope::create))
+    Router::new()
+        .route("/", post(handlers::scope::create))
+        .route("/", get(handlers::scope::get_all))
+        .route("/deleted", get(handlers::scope::get_all_deleted))
 }

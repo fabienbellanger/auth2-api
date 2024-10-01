@@ -1,17 +1,20 @@
 //! Scope use cases
 
 pub mod create_scope;
+pub mod get_scopes;
 
 use crate::domain::entities::application::ApplicationId;
 use crate::domain::entities::scope::ScopeId;
 use crate::domain::repositories::scope::ScopeRepository;
 use crate::domain::use_cases::scope::create_scope::CreateScopeUseCase;
+use crate::domain::use_cases::scope::get_scopes::GetScopesUseCase;
 use crate::domain::value_objects::datetime::UtcDateTime;
 use thiserror::Error;
 
 #[derive(Debug, Clone)]
 pub struct ScopeUseCases<S: ScopeRepository> {
     pub create_scope: CreateScopeUseCase<S>,
+    pub get_scopes: GetScopesUseCase<S>,
 }
 
 impl<S: ScopeRepository> ScopeUseCases<S> {
@@ -19,6 +22,7 @@ impl<S: ScopeRepository> ScopeUseCases<S> {
     pub fn new(scope_repository: S) -> Self {
         Self {
             create_scope: CreateScopeUseCase::new(scope_repository.clone()),
+            get_scopes: GetScopesUseCase::new(scope_repository.clone()),
         }
     }
 }

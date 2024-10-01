@@ -1,8 +1,10 @@
 //! Scopes handlers DTO
 
 use crate::domain::use_cases::scope::create_scope::CreateScopeUseCaseRequest;
+use crate::domain::use_cases::scope::get_scopes::GetScopesUseCaseResponse;
 use crate::domain::use_cases::scope::{ScopeUseCaseError, ScopeUseCaseResponse};
 use crate::domain::value_objects::id::Id;
+use crate::infrastructure::api::handlers::filter::FilterRequest;
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 
@@ -46,5 +48,24 @@ impl TryFrom<CreateScopeRequest> for CreateScopeUseCaseRequest {
             application_id: Id::from_str(&value.application_id)
                 .map_err(|err| Self::Error::InvalidApplicationId(err.to_string()))?,
         })
+    }
+}
+
+// ================ Get scopes ================
+
+pub type GetScopesRequest = FilterRequest;
+
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct GetScopesResponse {
+    pub total: i64,
+    pub data: Vec<ScopeResponse>,
+}
+
+impl From<GetScopesUseCaseResponse> for GetScopesResponse {
+    fn from(value: GetScopesUseCaseResponse) -> Self {
+        Self {
+            total: value.total,
+            data: value.scopes.into_iter().map(|app| app.into()).collect(),
+        }
     }
 }

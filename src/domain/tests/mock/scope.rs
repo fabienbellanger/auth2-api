@@ -1,6 +1,9 @@
 //! Mock of the scope repository
 
-use crate::domain::repositories::scope::dto::{CreateScopeDtoRequest, CreateScopeDtoResponse};
+use crate::domain::repositories::scope::dto::{
+    CountScopesDtoRequest, CountScopesDtoResponse, CreateScopeDtoRequest, CreateScopeDtoResponse, GetScopesDtoRequest,
+    GetScopesDtoResponse,
+};
 use crate::domain::repositories::scope::ScopeRepository;
 use crate::domain::tests::mock::application::VALID_APPLICATION_ID;
 use crate::domain::use_cases::scope::{ScopeUseCaseError, ScopeUseCaseResponse};
@@ -21,7 +24,7 @@ impl ScopeRepository for ScopeRepositoryMock {
     /// Create scope
     async fn create(&self, req: CreateScopeDtoRequest) -> Result<CreateScopeDtoResponse, ScopeUseCaseError> {
         if req.0.id == INVALID_SCOPE_ID {
-            Err(ScopeUseCaseError::DatabaseError("".to_string()))
+            Err(ScopeUseCaseError::DatabaseError("Scope ID already exists".to_string()))
         } else {
             let now = UtcDateTime::now();
             Ok(CreateScopeDtoResponse(ScopeUseCaseResponse {
@@ -32,5 +35,15 @@ impl ScopeRepository for ScopeRepositoryMock {
                 deleted_at: None,
             }))
         }
+    }
+
+    /// Get all scopes
+    async fn get_scopes(&self, _req: GetScopesDtoRequest) -> Result<GetScopesDtoResponse, ScopeUseCaseError> {
+        todo!()
+    }
+
+    /// Count all scopes
+    async fn count_scopes(&self, _req: CountScopesDtoRequest) -> Result<CountScopesDtoResponse, ScopeUseCaseError> {
+        todo!()
     }
 }

@@ -1,7 +1,7 @@
-openapi: '3.0.2'
+openapi: "3.1.0"
 info:
   title: Auth2 API
-  version: '1.0'
+  version: "1.0"
   description: REST API using Rust Clean Architecture
   contact:
     name: Fabien Bellanger
@@ -29,9 +29,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/GetAccessTokenRequest'
-            example:
-              email: user@example.com
-              password: "1A,R;(9h0Y&gYH5=7eY!gg"
       responses:
         '200':
           description: OK
@@ -119,9 +116,6 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/UpdatePasswordFromTokenRequest"
-            example:
-              token: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-              password: "1A,R;(9h0Y&gYH5=7eY!gg"
       responses:
         '204':
           description: No Content
@@ -149,24 +143,24 @@ paths:
           schema:
             type: integer
             default: 1
+            example: 1
           required: false
           description: Page number
-          example: 1
         - in: query
           name: l
           schema:
             type: integer
             maximum: 500
+            example: 10
           required: false
           description: Limit of links per page
-          example: 10
         - in: query
           name: s
           schema:
             type: string
+            example: +lastname,-firstname
           required: false
           description: "Sort with available fields: id | lastname | firstname | created_at | updated_at | deleted_at {+: ASC, -: DESC}."
-          example: +lastname,-firstname
       responses:
         '200':
           description: OK
@@ -226,24 +220,24 @@ paths:
           schema:
             type: integer
             default: 1
+            example: 1
           required: false
           description: Page number
-          example: 1
         - in: query
           name: l
           schema:
             type: integer
             maximum: 500
+            example: 10
           required: false
           description: Limit of links per page
-          example: 10
         - in: query
           name: s
           schema:
             type: string
+            example: +lastname,-firstname
           required: false
           description: "Sort with available fields: id | lastname | firstname | created_at | updated_at | deleted_at {+: ASC, -: DESC}."
-          example: +lastname,-firstname
       responses:
         '200':
           description: OK
@@ -362,24 +356,24 @@ paths:
           schema:
             type: integer
             default: 1
+            example: 1
           required: false
           description: Page number
-          example: 1
         - in: query
           name: l
           schema:
             type: integer
             maximum: 500
+            example: 10
           required: false
           description: Limit of links per page
-          example: 10
         - in: query
           name: s
           schema:
             type: string
+            example: +name
           required: false
           description: "Sort with available fields: id | name | created_at | updated_at | deleted_at {+: ASC, -: DESC}."
-          example: +name
       responses:
         '200':
           description: OK
@@ -439,24 +433,24 @@ paths:
           schema:
             type: integer
             default: 1
+            example: 1
           required: false
           description: Page number
-          example: 1
         - in: query
           name: l
           schema:
             type: integer
             maximum: 500
+            example: 10
           required: false
           description: Limit of links per page
-          example: 10
         - in: query
           name: s
           schema:
             type: string
+            example: +name
           required: false
           description: "Sort with available fields: id | name | created_at | updated_at | deleted_at {+: ASC, -: DESC}."
-          example: +name
       responses:
         '200':
           description: OK
@@ -593,6 +587,52 @@ paths:
 
 
   /scopes:
+    get:
+      summary: ""
+      description: Scopes list
+      tags:
+        - "Scopes"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: p
+          schema:
+            type: integer
+            default: 1
+            example: 1
+          required: false
+          description: Page number
+        - in: query
+          name: l
+          schema:
+            type: integer
+            maximum: 500
+            example: 10
+          required: false
+          description: Limit of links per page
+        - in: query
+          name: s
+          schema:
+            type: string
+            example: +id
+          required: false
+          description: "Sort with available fields: id | created_at | updated_at | deleted_at {+: ASC, -: DESC}."
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetScopesResponse'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: "#/components/responses/InternalServerError"
     post:
       summary: Scope creation
       description: Scope creation
@@ -621,6 +661,54 @@ paths:
           $ref: '#/components/responses/UnprocessableEntity'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
+  /scopes/deleted:
+    get:
+      summary: ""
+      description: Deleted scopes list
+      tags:
+        - "Scopes"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: p
+          schema:
+            type: integer
+            default: 1
+            example: 1
+          required: false
+          description: Page number
+        - in: query
+          name: l
+          schema:
+            type: integer
+            maximum: 500
+            example: 10
+          required: false
+          description: Limit of links per page
+        - in: query
+          name: s
+          schema:
+            type: string
+            example: +id
+          required: false
+          description: "Sort with available fields: id | created_at | updated_at | deleted_at {+: ASC, -: DESC}."
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetScopesResponse'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: "#/components/responses/InternalServerError"
 
 components:
   securitySchemes:
@@ -697,6 +785,9 @@ components:
         password:
           type: string
           minLength: 8
+      example:
+        email: user@example.com
+        password: 1A,R;(9h0Y&gYH5=7eY!gg
       required:
         - email
         - password
@@ -819,6 +910,9 @@ components:
         password:
           type: string
           minLength: 8
+      example:
+        token: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        password: 1A,R;(9h0Y&gYH5=7eY!gg
       required:
         - token
         - password
@@ -888,3 +982,14 @@ components:
         - application_id
         - created_at
         - updated_at
+    GetScopesResponse:
+      allOf:
+        - $ref: "#/components/schemas/PaginateTotal"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/ScopeResponse"
+          required:
+            - data
