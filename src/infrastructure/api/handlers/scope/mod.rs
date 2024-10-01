@@ -1,10 +1,12 @@
 //! Scopes handlers
 
 use crate::domain::use_cases::scope::create_scope::CreateScopeUseCaseRequest;
+use crate::domain::use_cases::scope::delete_scope::DeleteScopeUseCaseRequest;
 use crate::domain::use_cases::scope::get_scopes::GetScopesUseCaseRequest;
-use crate::infrastructure::api::extractors::{ExtractRequestId, Query};
+use crate::domain::use_cases::scope::restore_scope::RestoreScopeUseCaseRequest;
+use crate::infrastructure::api::extractors::{ExtractRequestId, Path, Query};
 use crate::infrastructure::api::handlers::scope::dto::{
-    CreateScopeRequest, GetScopesRequest, GetScopesResponse, ScopeResponse,
+    CreateScopeRequest, DeleteScopeResponse, GetScopesRequest, GetScopesResponse, RestoreScopeResponse, ScopeResponse,
 };
 use crate::infrastructure::api::response::{ApiError, ApiSuccess};
 use crate::infrastructure::api::use_cases::AppUseCases;
@@ -68,4 +70,36 @@ pub async fn get_all_deleted(
         .await?;
 
     Ok(ApiSuccess::new(StatusCode::OK, response.into()))
+}
+
+/// Delete a scope route: DELETE /api/v1/scopes/:scope_id
+#[instrument(skip(uc), name = "delete_scope_handler")]
+pub async fn delete(
+    Path(scope_id): Path<String>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> Result<ApiSuccess<DeleteScopeResponse>, ApiError> {
+    let response = uc
+        .scope
+        .delete_scope
+        .call(DeleteScopeUseCaseRequest { id: scope_id })
+        .await?;
+
+    Ok(ApiSuccess::new(StatusCode::NO_CONTENT, response.into()))
+}
+
+/// Restore a deleted scope route: PATCH /api/v1/scopes/:scope_id/restore
+#[instrument(skip(uc), name = "restore_scope_handler")]
+pub async fn restore(
+    Path(scope_id): Path<String>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> Result<ApiSuccess<RestoreScopeResponse>, ApiError> {
+    let response = uc
+        .scope
+        .restore_scope
+        .call(RestoreScopeUseCaseRequest { id: scope_id })
+        .await?;
+
+    Ok(ApiSuccess::new(StatusCode::NO_CONTENT, response.into()))
 }

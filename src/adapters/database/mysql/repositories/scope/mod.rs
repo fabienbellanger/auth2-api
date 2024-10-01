@@ -3,10 +3,13 @@
 use crate::adapters::database::mysql::repositories::scope::model::ScopeModel;
 use crate::adapters::database::mysql::{Db, MysqlPagination, MysqlQuerySorts};
 use crate::domain::repositories::scope::dto::{
-    CountScopesDtoRequest, CountScopesDtoResponse, CreateScopeDtoRequest, CreateScopeDtoResponse, GetScopesDtoRequest,
-    GetScopesDtoResponse,
+    CountScopesDtoRequest, CountScopesDtoResponse, CreateScopeDtoRequest, CreateScopeDtoResponse,
+    DeleteScopeDtoRequest, DeleteScopeDtoResponse, GetScopesDtoRequest, GetScopesDtoResponse, RestoreScopeDtoRequest,
+    RestoreScopeDtoResponse,
 };
 use crate::domain::repositories::scope::ScopeRepository;
+use crate::domain::use_cases::scope::delete_scope::DeleteScopeUseCaseResponse;
+use crate::domain::use_cases::scope::restore_scope::RestoreScopeUseCaseResponse;
 use crate::domain::use_cases::scope::{ScopeUseCaseError, ScopeUseCaseResponse};
 use crate::domain::value_objects::datetime::UtcDateTime;
 use async_trait::async_trait;
@@ -120,5 +123,54 @@ impl ScopeRepository for ScopeMysqlRepository {
             })?;
 
         Ok(CountScopesDtoResponse(result.try_get("total")?))
+    }
+
+    #[instrument(skip(self), name = "scope_repository_delete")]
+    async fn delete(&self, req: DeleteScopeDtoRequest) -> Result<DeleteScopeDtoResponse, ScopeUseCaseError> {
+        let result = sqlx::query!(
+            "
+            UPDATE scopes
+            SET deleted_at = ?
+            WHERE id = ?
+                AND deleted_at IS NULL",
+            Some(UtcDateTime::now().value()),
+            req.0.id.to_string()
+        )
+        .execute(self.db.pool.clone().as_ref())
+        .await
+        .map_err(|err| {
+            error!(error = %err, "Failed to delete scope");
+            ScopeUseCaseError::DatabaseError("Failed to delete scope".to_string())
+        })?;
+
+        if result.rows_affected() == 0 {
+            return Err(ScopeUseCaseError::ScopeNotFound())?;
+        }
+
+        Ok(DeleteScopeDtoResponse(DeleteScopeUseCaseResponse()))
+    }
+
+    #[instrument(skip(self), name = "scope_repository_restore")]
+    async fn restore(&self, req: RestoreScopeDtoRequest) -> Result<RestoreScopeDtoResponse, ScopeUseCaseError> {
+        let result = sqlx::query!(
+            "
+            UPDATE scopes
+            SET deleted_at = NULL
+            WHERE id = ?
+                AND deleted_at IS NOT NULL",
+            req.0.id.to_string()
+        )
+        .execute(self.db.pool.clone().as_ref())
+        .await
+        .map_err(|err| {
+            error!(error = %err, "Failed to restore scope");
+            ScopeUseCaseError::DatabaseError("Failed to restore scope".to_string())
+        })?;
+
+        if result.rows_affected() == 0 {
+            return Err(ScopeUseCaseError::ScopeNotFound())?;
+        }
+
+        Ok(RestoreScopeDtoResponse(RestoreScopeUseCaseResponse()))
     }
 }

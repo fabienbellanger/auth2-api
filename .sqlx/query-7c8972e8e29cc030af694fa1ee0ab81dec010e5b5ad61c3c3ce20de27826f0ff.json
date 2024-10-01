@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n            UPDATE scopes\n            SET deleted_at = ?\n            WHERE id = ?\n                AND deleted_at IS NULL",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "7c8972e8e29cc030af694fa1ee0ab81dec010e5b5ad61c3c3ce20de27826f0ff"
+}

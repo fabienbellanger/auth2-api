@@ -1,7 +1,9 @@
 //! DTO for scope repository
 
 use crate::domain::use_cases::scope::create_scope::CreateScopeUseCaseRequest;
+use crate::domain::use_cases::scope::delete_scope::{DeleteScopeUseCaseRequest, DeleteScopeUseCaseResponse};
 use crate::domain::use_cases::scope::get_scopes::GetScopesUseCaseRequest;
+use crate::domain::use_cases::scope::restore_scope::{RestoreScopeUseCaseRequest, RestoreScopeUseCaseResponse};
 use crate::domain::use_cases::scope::ScopeUseCaseResponse;
 
 // ================ Create application ================
@@ -29,3 +31,19 @@ pub struct CountScopesDtoRequest {
 
 #[derive(Debug, Clone)]
 pub struct CountScopesDtoResponse(pub i64);
+
+// ================ Delete scope ================
+
+#[derive(Debug, Clone)]
+pub struct DeleteScopeDtoRequest(pub DeleteScopeUseCaseRequest);
+
+#[derive(Debug, Clone)]
+pub struct DeleteScopeDtoResponse(pub DeleteScopeUseCaseResponse);
+
+// ================ Restore scope ================
+
+#[derive(Debug, Clone)]
+pub struct RestoreScopeDtoRequest(pub RestoreScopeUseCaseRequest);
+
+#[derive(Debug, Clone)]
+pub struct RestoreScopeDtoResponse(pub RestoreScopeUseCaseResponse);

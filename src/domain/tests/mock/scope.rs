@@ -1,8 +1,9 @@
 //! Mock of the scope repository
 
 use crate::domain::repositories::scope::dto::{
-    CountScopesDtoRequest, CountScopesDtoResponse, CreateScopeDtoRequest, CreateScopeDtoResponse, GetScopesDtoRequest,
-    GetScopesDtoResponse,
+    CountScopesDtoRequest, CountScopesDtoResponse, CreateScopeDtoRequest, CreateScopeDtoResponse,
+    DeleteScopeDtoRequest, DeleteScopeDtoResponse, GetScopesDtoRequest, GetScopesDtoResponse, RestoreScopeDtoRequest,
+    RestoreScopeDtoResponse,
 };
 use crate::domain::repositories::scope::ScopeRepository;
 use crate::domain::tests::mock::application::VALID_APPLICATION_ID;
@@ -44,6 +45,16 @@ impl ScopeRepository for ScopeRepositoryMock {
 
     /// Count all scopes
     async fn count_scopes(&self, _req: CountScopesDtoRequest) -> Result<CountScopesDtoResponse, ScopeUseCaseError> {
+        todo!()
+    }
+
+    /// Delete scope
+    async fn delete(&self, _req: DeleteScopeDtoRequest) -> Result<DeleteScopeDtoResponse, ScopeUseCaseError> {
+        todo!()
+    }
+
+    /// Restore deleted scope
+    async fn restore(&self, _req: RestoreScopeDtoRequest) -> Result<RestoreScopeDtoResponse, ScopeUseCaseError> {
         todo!()
     }
 }

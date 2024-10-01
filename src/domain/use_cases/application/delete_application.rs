@@ -25,7 +25,7 @@ impl<A: ApplicationRepository> DeleteApplicationUseCase<A> {
     }
 
     /// Delete an application
-    #[instrument(skip(self), name = "update_application_use_case")]
+    #[instrument(skip(self), name = "delete_application_use_case")]
     pub async fn call(
         &self,
         request: DeleteApplicationUseCaseRequest,

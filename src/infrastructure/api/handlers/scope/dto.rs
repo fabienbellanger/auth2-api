@@ -1,7 +1,9 @@
 //! Scopes handlers DTO
 
 use crate::domain::use_cases::scope::create_scope::CreateScopeUseCaseRequest;
+use crate::domain::use_cases::scope::delete_scope::DeleteScopeUseCaseResponse;
 use crate::domain::use_cases::scope::get_scopes::GetScopesUseCaseResponse;
+use crate::domain::use_cases::scope::restore_scope::RestoreScopeUseCaseResponse;
 use crate::domain::use_cases::scope::{ScopeUseCaseError, ScopeUseCaseResponse};
 use crate::domain::value_objects::id::Id;
 use crate::infrastructure::api::handlers::filter::FilterRequest;
@@ -67,5 +69,27 @@ impl From<GetScopesUseCaseResponse> for GetScopesResponse {
             total: value.total,
             data: value.scopes.into_iter().map(|app| app.into()).collect(),
         }
+    }
+}
+
+// ================ Delete scope ================
+
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct DeleteScopeResponse();
+
+impl From<DeleteScopeUseCaseResponse> for DeleteScopeResponse {
+    fn from(_: DeleteScopeUseCaseResponse) -> Self {
+        Self {}
+    }
+}
+
+// ================ Restore scope ================
+
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct RestoreScopeResponse();
+
+impl From<RestoreScopeUseCaseResponse> for RestoreScopeResponse {
+    fn from(_: RestoreScopeUseCaseResponse) -> Self {
+        Self {}
     }
 }

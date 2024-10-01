@@ -44,6 +44,7 @@ paths:
           $ref: '#/components/responses/UnprocessableEntity'
         '500':
           $ref: "#/components/responses/InternalServerError"
+
   /refresh-token/{token}:
     post:
       description: Refresh user token
@@ -72,6 +73,7 @@ paths:
           $ref: '#/components/responses/UnprocessableEntity'
         '500':
           $ref: "#/components/responses/InternalServerError"
+
   /forgotten-password/{email}:
     post:
       security:
@@ -105,6 +107,7 @@ paths:
           $ref: "#/components/responses/MethodNotAllowed"
         '500':
           $ref: "#/components/responses/InternalServerError"
+
   /update-password:
     patch:
       summary: "Update password"
@@ -129,6 +132,7 @@ paths:
           $ref: "#/components/responses/MethodNotAllowed"
         '500':
           $ref: "#/components/responses/InternalServerError"
+
   /users:
     get:
       summary: ""
@@ -204,7 +208,6 @@ paths:
           $ref: '#/components/responses/UnprocessableEntity'
         '500':
           $ref: '#/components/responses/InternalServerError'
-
 
   /users/deleted:
     get:
@@ -418,7 +421,6 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-
   /applications/deleted:
     get:
       summary: ""
@@ -585,7 +587,6 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-
   /scopes:
     get:
       summary: ""
@@ -653,6 +654,62 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ScopeResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /scopes/{id}:
+    delete:
+      summary: Delete scope
+      description: Delete a scope by ID
+      tags:
+        - "Scopes"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            example: user:read
+          required: true
+          description: Scope ID
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /scopes/{id}/restore:
+    delete:
+      summary: Restore scope
+      description: Restore a scope by ID
+      tags:
+        - "Scopes"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            example: user:read
+          required: true
+          description: Scope ID
+      responses:
+        '204':
+          description: No Content
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
