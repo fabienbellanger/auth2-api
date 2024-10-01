@@ -692,7 +692,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   /scopes/{id}/restore:
-    delete:
+    patch:
       summary: Restore scope
       description: Restore a scope by ID
       tags:

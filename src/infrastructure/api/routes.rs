@@ -75,5 +75,5 @@ fn api_scopes() -> Router<SharedState> {
         .route("/", get(handlers::scope::get_all))
         .route("/deleted", get(handlers::scope::get_all_deleted))
         .route("/:scope_id", delete(handlers::scope::delete))
-        .route("/:scope_id/restore", delete(handlers::scope::restore))
+        .route("/:scope_id/restore", patch(handlers::scope::restore))
 }
