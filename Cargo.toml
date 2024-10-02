@@ -57,7 +57,7 @@ rand = "0.8.5"
 uuid = { version = "1.10.0", features = ["v4", "serde"] }
 validator = { version = "0.18.1", features = ["derive"] }
 bytes = "1.7.2"
-clap = { version = "4.5.18", features = ["cargo", "derive"] }
+clap = { version = "4.5.19", features = ["cargo", "derive"] }
 config = "0.14.0"
 futures = "0.3.30"
 tera = "1.20.0"
