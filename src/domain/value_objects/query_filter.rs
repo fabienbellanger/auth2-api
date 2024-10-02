@@ -6,6 +6,7 @@
 // TODO: Add tests and improve documentation
 
 use std::collections::HashMap;
+use std::hash::Hash;
 use std::str::FromStr;
 
 /// Query filter operator
@@ -55,39 +56,39 @@ impl FromStr for QueryFilterOperator {
 }
 
 /// Query filter field name (Ex.: "name", "email", "created_at")
-pub type QueryFilterFieldName = String;
+pub trait QueryFilterFieldName: PartialEq + Eq + Hash {}
 
 /// Query filter field value containing the operator and the value
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct QueryFilterFieldValue {
+pub struct QueryFilterFieldValue<V> {
     pub operator: QueryFilterOperator,
-    pub value: String,
+    pub value: V,
 }
 
-impl QueryFilterFieldValue {
+impl<V> QueryFilterFieldValue<V> {
     /// Create a new filter field value
-    pub fn new(operator: QueryFilterOperator, value: String) -> Self {
+    pub fn new(operator: QueryFilterOperator, value: V) -> Self {
         Self { operator, value }
     }
 }
 
 /// List of query filter field values for a single field
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct QueryFilterFieldValues(Vec<QueryFilterFieldValue>);
+pub struct QueryFilterFieldValues<V>(Vec<QueryFilterFieldValue<V>>);
 
-impl QueryFilterFieldValues {
+impl<V> QueryFilterFieldValues<V> {
     /// Create a new filter field values
-    pub fn new(values: Vec<QueryFilterFieldValue>) -> Self {
+    pub fn new(values: Vec<QueryFilterFieldValue<V>>) -> Self {
         Self(values)
     }
 
     /// Get the filter field values
-    pub fn value(&self) -> &Vec<QueryFilterFieldValue> {
+    pub fn value(&self) -> &Vec<QueryFilterFieldValue<V>> {
         &self.0
     }
 }
 
-impl FromStr for QueryFilterFieldValues {
+impl<V> FromStr for QueryFilterFieldValues<V> {
     type Err = String; // TODO: Change to a custom error type
 
     fn from_str(_s: &str) -> Result<Self, Self::Err> {
@@ -96,16 +97,16 @@ impl FromStr for QueryFilterFieldValues {
 }
 
 /// Query filters value object
-pub struct QueryFilters(HashMap<QueryFilterFieldName, QueryFilterFieldValue>);
+pub struct QueryFilters<F: QueryFilterFieldName, V>(HashMap<F, QueryFilterFieldValues<V>>);
 
-impl QueryFilters {
+impl<F: QueryFilterFieldName, V> QueryFilters<F, V> {
     /// Create a new query filters value object
-    pub fn new(filters: HashMap<QueryFilterFieldName, QueryFilterFieldValue>) -> Self {
+    pub fn new(filters: HashMap<F, QueryFilterFieldValues<V>>) -> Self {
         Self(filters)
     }
 
     /// Get the query filters
-    pub fn value(&self) -> &HashMap<QueryFilterFieldName, QueryFilterFieldValue> {
+    pub fn value(&self) -> &HashMap<F, QueryFilterFieldValues<V>> {
         &self.0
     }
 }

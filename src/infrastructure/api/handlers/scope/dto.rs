@@ -55,7 +55,7 @@ impl TryFrom<CreateScopeRequest> for CreateScopeUseCaseRequest {
 
 // ================ Get scopes ================
 
-pub type GetScopesRequest = FilterRequest;
+pub type GetScopesFilterRequest = FilterRequest;
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct GetScopesResponse {

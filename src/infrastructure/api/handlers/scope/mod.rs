@@ -6,7 +6,8 @@ use crate::domain::use_cases::scope::get_scopes::GetScopesUseCaseRequest;
 use crate::domain::use_cases::scope::restore_scope::RestoreScopeUseCaseRequest;
 use crate::infrastructure::api::extractors::{ExtractRequestId, Path, Query};
 use crate::infrastructure::api::handlers::scope::dto::{
-    CreateScopeRequest, DeleteScopeResponse, GetScopesRequest, GetScopesResponse, RestoreScopeResponse, ScopeResponse,
+    CreateScopeRequest, DeleteScopeResponse, GetScopesFilterRequest, GetScopesResponse, RestoreScopeResponse,
+    ScopeResponse,
 };
 use crate::infrastructure::api::response::{ApiError, ApiSuccess};
 use crate::infrastructure::api::use_cases::AppUseCases;
@@ -35,7 +36,7 @@ pub async fn create(
 /// Get scopes route: GET /api/v1/scopes
 #[instrument(skip(uc), name = "get_scopes_handler")]
 pub async fn get_all(
-    Query(request): Query<GetScopesRequest>,
+    Query(request): Query<GetScopesFilterRequest>,
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> Result<ApiSuccess<GetScopesResponse>, ApiError> {
@@ -55,7 +56,7 @@ pub async fn get_all(
 /// Get scopes route: GET /api/v1/scopes/deleted
 #[instrument(skip(uc), name = "get_deleted_scopes_handler")]
 pub async fn get_all_deleted(
-    Query(request): Query<GetScopesRequest>,
+    Query(request): Query<GetScopesFilterRequest>,
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> Result<ApiSuccess<GetScopesResponse>, ApiError> {
