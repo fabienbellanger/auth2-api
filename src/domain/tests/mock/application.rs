@@ -2,10 +2,14 @@
 
 use crate::domain::repositories::application::dto::{
     CountApplicationsDtoRequest, CountApplicationsDtoResponse, CreateApplicationDtoRequest,
-    CreateApplicationDtoResponse, GetApplicationByIdDtoRequest, GetApplicationByIdDtoResponse,
-    GetApplicationsDtoRequest, GetApplicationsDtoResponse, RestoreApplicationDtoRequest, RestoreApplicationDtoResponse,
+    CreateApplicationDtoResponse, DeleteApplicationDtoRequest, DeleteApplicationDtoResponse,
+    GetApplicationByIdDtoRequest, GetApplicationByIdDtoResponse, GetApplicationsDtoRequest, GetApplicationsDtoResponse,
+    RestoreApplicationDtoRequest, RestoreApplicationDtoResponse, UpdateApplicationDtoRequest,
+    UpdateApplicationDtoResponse,
 };
-use crate::domain::repositories::application::{dto, ApplicationRepository};
+use crate::domain::repositories::application::ApplicationRepository;
+use crate::domain::use_cases::application::delete_application::DeleteApplicationUseCaseResponse;
+use crate::domain::use_cases::application::restore_application::RestoreApplicationUseCaseResponse;
 use crate::domain::use_cases::application::{ApplicationUseCaseError, ApplicationUseCaseResponse};
 use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::id::Id;
@@ -76,17 +80,23 @@ impl ApplicationRepository for ApplicationRepositoryMock {
     /// Update application
     async fn update(
         &self,
-        _req: dto::UpdateApplicationDtoRequest,
-    ) -> Result<dto::UpdateApplicationDtoResponse, ApplicationUseCaseError> {
+        _req: UpdateApplicationDtoRequest,
+    ) -> Result<UpdateApplicationDtoResponse, ApplicationUseCaseError> {
         todo!()
     }
 
     /// Delete application
     async fn delete(
         &self,
-        _req: dto::DeleteApplicationDtoRequest,
-    ) -> Result<dto::DeleteApplicationDtoResponse, ApplicationUseCaseError> {
-        todo!()
+        req: DeleteApplicationDtoRequest,
+    ) -> Result<DeleteApplicationDtoResponse, ApplicationUseCaseError> {
+        if req.0.id == Id::from_str(VALID_APPLICATION_ID).unwrap() {
+            Ok(DeleteApplicationDtoResponse(DeleteApplicationUseCaseResponse()))
+        } else {
+            Err(ApplicationUseCaseError::DatabaseError(
+                "Failed to delete application".to_string(),
+            ))
+        }
     }
 
     /// Count all applications
@@ -100,8 +110,14 @@ impl ApplicationRepository for ApplicationRepositoryMock {
     /// Restore deleted application
     async fn restore(
         &self,
-        _req: RestoreApplicationDtoRequest,
+        req: RestoreApplicationDtoRequest,
     ) -> Result<RestoreApplicationDtoResponse, ApplicationUseCaseError> {
-        todo!()
+        if req.0.id == Id::from_str(VALID_APPLICATION_ID).unwrap() {
+            Ok(RestoreApplicationDtoResponse(RestoreApplicationUseCaseResponse()))
+        } else {
+            Err(ApplicationUseCaseError::DatabaseError(
+                "Failed to restore application".to_string(),
+            ))
+        }
     }
 }

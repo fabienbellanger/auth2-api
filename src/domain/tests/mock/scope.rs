@@ -7,6 +7,8 @@ use crate::domain::repositories::scope::dto::{
 };
 use crate::domain::repositories::scope::ScopeRepository;
 use crate::domain::tests::mock::application::VALID_APPLICATION_ID;
+use crate::domain::use_cases::scope::delete_scope::DeleteScopeUseCaseResponse;
+use crate::domain::use_cases::scope::restore_scope::RestoreScopeUseCaseResponse;
 use crate::domain::use_cases::scope::{ScopeUseCaseError, ScopeUseCaseResponse};
 use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::id::Id;
@@ -49,12 +51,20 @@ impl ScopeRepository for ScopeRepositoryMock {
     }
 
     /// Delete scope
-    async fn delete(&self, _req: DeleteScopeDtoRequest) -> Result<DeleteScopeDtoResponse, ScopeUseCaseError> {
-        todo!()
+    async fn delete(&self, req: DeleteScopeDtoRequest) -> Result<DeleteScopeDtoResponse, ScopeUseCaseError> {
+        if req.0.id == VALID_SCOPE_ID {
+            Ok(DeleteScopeDtoResponse(DeleteScopeUseCaseResponse()))
+        } else {
+            Err(ScopeUseCaseError::DatabaseError("Failed to delete scope".to_string()))
+        }
     }
 
     /// Restore deleted scope
-    async fn restore(&self, _req: RestoreScopeDtoRequest) -> Result<RestoreScopeDtoResponse, ScopeUseCaseError> {
-        todo!()
+    async fn restore(&self, req: RestoreScopeDtoRequest) -> Result<RestoreScopeDtoResponse, ScopeUseCaseError> {
+        if req.0.id == VALID_SCOPE_ID {
+            Ok(RestoreScopeDtoResponse(RestoreScopeUseCaseResponse()))
+        } else {
+            Err(ScopeUseCaseError::DatabaseError("Failed to restore scope".to_string()))
+        }
     }
 }

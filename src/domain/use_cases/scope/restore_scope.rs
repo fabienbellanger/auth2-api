@@ -38,5 +38,38 @@ impl<A: ScopeRepository> RestoreScopeUseCase<A> {
 
 #[cfg(test)]
 mod tests {
-    // TODO
+    use super::*;
+    use crate::domain::tests::mock::scope::{ScopeRepositoryMock, INVALID_SCOPE_ID, VALID_SCOPE_ID};
+
+    #[tokio::test]
+    async fn test_restore_scope_use_case() {
+        let scope_repository = ScopeRepositoryMock {};
+        let use_case = RestoreScopeUseCase::new(scope_repository);
+
+        let request = RestoreScopeUseCaseRequest {
+            id: VALID_SCOPE_ID.to_string(),
+        };
+
+        let response = use_case.call(request).await;
+        assert!(response.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_restore_scope_use_case_with_error() {
+        let scope_repository = ScopeRepositoryMock {};
+        let use_case = RestoreScopeUseCase::new(scope_repository);
+
+        let request = RestoreScopeUseCaseRequest {
+            id: INVALID_SCOPE_ID.to_string(),
+        };
+
+        let response = use_case.call(request).await;
+        assert!(response.is_err());
+        if let Err(err) = response {
+            assert_eq!(
+                err,
+                ScopeUseCaseError::DatabaseError("Failed to restore scope".to_string())
+            );
+        }
+    }
 }
