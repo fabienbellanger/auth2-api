@@ -57,6 +57,11 @@ impl TryFrom<CreateScopeRequest> for CreateScopeUseCaseRequest {
 
 pub type GetScopesFilterRequest = FilterRequest;
 
+#[derive(Debug, Clone, Deserialize)]
+pub struct GetScopesCustomFilterRequest {
+    pub application_id: Option<String>,
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct GetScopesResponse {
     pub total: i64,

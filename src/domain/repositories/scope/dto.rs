@@ -27,6 +27,7 @@ pub struct GetScopesDtoResponse(pub Vec<ScopeUseCaseResponse>);
 #[derive(Debug, Clone)]
 pub struct CountScopesDtoRequest {
     pub deleted: bool,
+    pub application_id: Option<String>,
 }
 
 #[derive(Debug, Clone)]

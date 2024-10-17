@@ -80,6 +80,10 @@ impl ScopeRepository for ScopeMysqlRepository {
             false => "WHERE deleted_at IS NULL",
         });
 
+        if let Some(application_id) = req.0.application_id {
+            query.push_str(&format!(r#" AND application_id = "{application_id}""#));
+        }
+
         // Sorts
         let sorts = MysqlQuerySorts(req.0.sorts.unwrap_or_default());
         query.push_str(&sorts.to_sql(&["id", "created_at", "updated_at", "deleted_at"]));
@@ -113,6 +117,10 @@ impl ScopeRepository for ScopeMysqlRepository {
             true => " WHERE deleted_at IS NOT NULL",
             false => " WHERE deleted_at IS NULL",
         });
+
+        if let Some(application_id) = req.application_id {
+            query.push_str(&format!(r#" AND application_id = "{application_id}""#));
+        }
 
         let result = sqlx::query(&query)
             .fetch_one(self.db.pool.clone().as_ref())

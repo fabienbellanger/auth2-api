@@ -619,6 +619,13 @@ paths:
             example: +id
           required: false
           description: "Sort with available fields: id | created_at | updated_at | deleted_at {+: ASC, -: DESC}."
+        - in: query
+          name: application_id
+          schema:
+            type: string
+            format: uuid
+          required: false
+          description: "Application ID"
       responses:
         '200':
           description: OK
@@ -751,6 +758,13 @@ paths:
             example: +id
           required: false
           description: "Sort with available fields: id | created_at | updated_at | deleted_at {+: ASC, -: DESC}."
+        - in: query
+          name: application_id
+          schema:
+            type: string
+            format: uuid
+          required: false
+          description: "Application ID"
       responses:
         '200':
           description: OK

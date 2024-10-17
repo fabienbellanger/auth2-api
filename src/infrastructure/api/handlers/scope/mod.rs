@@ -4,6 +4,7 @@ use crate::domain::use_cases::scope::create_scope::CreateScopeUseCaseRequest;
 use crate::domain::use_cases::scope::delete_scope::DeleteScopeUseCaseRequest;
 use crate::domain::use_cases::scope::get_scopes::GetScopesUseCaseRequest;
 use crate::domain::use_cases::scope::restore_scope::RestoreScopeUseCaseRequest;
+use crate::domain::value_objects::id::Id;
 use crate::infrastructure::api::extractors::{ExtractRequestId, Path, Query};
 use crate::infrastructure::api::handlers::scope::dto::{
     CreateScopeRequest, DeleteScopeResponse, GetScopesFilterRequest, GetScopesResponse, RestoreScopeResponse,
@@ -13,6 +14,8 @@ use crate::infrastructure::api::response::{ApiError, ApiSuccess};
 use crate::infrastructure::api::use_cases::AppUseCases;
 use axum::http::StatusCode;
 use axum::{Extension, Json};
+use dto::GetScopesCustomFilterRequest;
+use std::str::FromStr;
 
 mod dto;
 mod error;
@@ -37,9 +40,15 @@ pub async fn create(
 #[instrument(skip(uc), name = "get_scopes_handler")]
 pub async fn get_all(
     Query(request): Query<GetScopesFilterRequest>,
+    Query(filter): Query<GetScopesCustomFilterRequest>,
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> Result<ApiSuccess<GetScopesResponse>, ApiError> {
+    let application_id = match filter.application_id {
+        Some(id) => Some(Id::from_str(&id)?),
+        None => None,
+    };
+
     let response = uc
         .scope
         .get_scopes
@@ -47,6 +56,7 @@ pub async fn get_all(
             pagination: request.pagination(),
             sorts: request.sorts(),
             deleted: false,
+            application_id,
         })
         .await?;
 
@@ -57,9 +67,15 @@ pub async fn get_all(
 #[instrument(skip(uc), name = "get_deleted_scopes_handler")]
 pub async fn get_all_deleted(
     Query(request): Query<GetScopesFilterRequest>,
+    Query(filter): Query<GetScopesCustomFilterRequest>,
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> Result<ApiSuccess<GetScopesResponse>, ApiError> {
+    let application_id = match filter.application_id {
+        Some(id) => Some(Id::from_str(&id)?),
+        None => None,
+    };
+
     let response = uc
         .scope
         .get_scopes
@@ -67,6 +83,7 @@ pub async fn get_all_deleted(
             pagination: request.pagination(),
             sorts: request.sorts(),
             deleted: true,
+            application_id,
         })
         .await?;
 

@@ -1,5 +1,6 @@
 //! Get all scopes use case
 
+use crate::domain::entities::application::ApplicationId;
 use crate::domain::repositories::scope::dto::{CountScopesDtoRequest, GetScopesDtoRequest};
 use crate::domain::repositories::scope::ScopeRepository;
 use crate::domain::use_cases::scope::{ScopeUseCaseError, ScopeUseCaseResponse};
@@ -12,6 +13,7 @@ pub struct GetScopesUseCaseRequest {
     pub pagination: Pagination,
     pub sorts: Option<QuerySorts>,
     pub deleted: bool,
+    pub application_id: Option<ApplicationId>,
 }
 
 #[derive(Debug, Clone)]
@@ -38,6 +40,7 @@ impl<S: ScopeRepository> GetScopesUseCase<S> {
             .scope_repository
             .count_scopes(CountScopesDtoRequest {
                 deleted: request.deleted,
+                application_id: request.application_id.clone().map(|id| id.to_string()),
             })
             .await?
             .0;
