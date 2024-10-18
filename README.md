@@ -66,6 +66,37 @@ Scopes list:
 - `admin`
 - `users`
 
+## Code coverage
+
+Tool used: [tarpaulin](https://github.com/xd009642/tarpaulin)
+
+```shell
+cargo install cargo-tarpaulin
+```
+
+```shell
+cargo tarpaulin --all-features
+
+```
+
+_Results:_
+
+- [2024-10-14] `17.66% coverage, 295/1670 lines covered`
+
+## MSRV
+
+Tool used: [cargo-msrv](https://github.com/foresterre/cargo-msrv)
+
+```shell
+cargo install cargo-msrv
+```
+
+```shell
+cargo msrv find
+cargo msrv verify
+
+```
+
 ## Deployment
 
 ### Build project
@@ -146,7 +177,7 @@ WantedBy=multi-user.target
 #### Commands list with `systemctl`
 
 | Command                                    | Description        |
-|--------------------------------------------|--------------------|
+| ------------------------------------------ | ------------------ |
 | `systemctl start <service name>.service`   | To launch          |
 | `systemctl enable <service name>.service`  | To enable on boot  |
 | `systemctl disable <service name>.service` | To disable on boot |
@@ -216,6 +247,6 @@ rm ./keys/private.ec.key
 - [ ] Update user password: check if the new password is different from the old one
 - [ ] Build in different targets (Linux on Mac)
 - [ ] Add OpenTelemetry metrics
-    - [Distributed Tracing in Rust](https://medium.com/netwo/distributed-tracing-in-rust-b8eb2af3aff4)
-    - [OpenTelemetry vs Prometheus](https://signoz.io/blog/opentelemetry-vs-prometheus/)
-    - [OpenTelemetry for Rust Developers](https://www.youtube.com/watch?v=JNZoo_8XeaE)
+  - [Distributed Tracing in Rust](https://medium.com/netwo/distributed-tracing-in-rust-b8eb2af3aff4)
+  - [OpenTelemetry vs Prometheus](https://signoz.io/blog/opentelemetry-vs-prometheus/)
+  - [OpenTelemetry for Rust Developers](https://www.youtube.com/watch?v=JNZoo_8XeaE)

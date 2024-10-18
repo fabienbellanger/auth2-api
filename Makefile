@@ -7,6 +7,8 @@
 	lint-audit \
 	audit-fix \
 	test \
+	find-msrv \
+	verify-msrv \
 	clean \
 	prepare \
 	build \
@@ -71,12 +73,20 @@ audit-fix:
 test:
 	$(CARGO) test -- --test-threads=1 --nocapture
 
+## find-msrv: Find minimum supported Rust version
+find-msrv:
+	$(CARGO) msrv find
+
+## verify-msrv: Verify minimum supported Rust version
+verify-msrv:
+	$(CARGO) msrv verify
+
 ## clean: Remove target directory
 clean:
 	$(CARGO) clean
 
-## prepare: Run lint, test and sqlx-prepare
-prepare: lint test sqlx-prepare
+## prepare: Run lint, test, verify-msrv and sqlx-prepare
+prepare: lint test verify-msrv sqlx-prepare
 
 ## build: Build application in release mode
 build: lint-audit test
