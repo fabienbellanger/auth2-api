@@ -66,12 +66,12 @@ fn api_applications() -> Router<SharedState> {
         .route("/:application_id", delete(handlers::application::delete))
         .route("/:application_id", patch(handlers::application::update))
         .route("/:application_id/restore", patch(handlers::application::restore))
+        .route("/:application_id/scopes", post(handlers::scope::create))
 }
 
 /// Scopes API routes
 fn api_scopes() -> Router<SharedState> {
     Router::new()
-        .route("/", post(handlers::scope::create))
         .route("/", get(handlers::scope::get_all))
         .route("/deleted", get(handlers::scope::get_all_deleted))
         .route("/:scope_id", delete(handlers::scope::delete))

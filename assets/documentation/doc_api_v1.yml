@@ -587,6 +587,44 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /applications/{id}/scopes:
+    post:
+      summary: Scope creation
+      description: Scope creation
+      tags:
+        - "Applications"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Application ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateScopeRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScopeResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /scopes:
     get:
       summary: ""
@@ -641,34 +679,6 @@ paths:
           $ref: '#/components/responses/UnprocessableEntity'
         '500':
           $ref: "#/components/responses/InternalServerError"
-    post:
-      summary: Scope creation
-      description: Scope creation
-      tags:
-        - "Scopes"
-      security:
-        - bearerAuth: [ ]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateUpdateScopeRequest'
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ScopeResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '422':
-          $ref: '#/components/responses/UnprocessableEntity'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
 
   /scopes/{id}:
     delete:
@@ -1029,12 +1039,8 @@ components:
       properties:
         id:
           type: string
-        application_id:
-          type: string
-          format: uuid
       required:
         - id
-        - application_id
     ScopeResponse:
       type: object
       properties:

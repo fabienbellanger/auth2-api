@@ -8,6 +8,7 @@
 	audit-fix \
 	test \
 	clean \
+	prepare \
 	build \
 	build-no-audit \
 	sqlx-prepare \
@@ -73,6 +74,9 @@ test:
 ## clean: Remove target directory
 clean:
 	$(CARGO) clean
+
+## prepare: Run lint, test and sqlx-prepare
+prepare: lint test sqlx-prepare
 
 ## build: Build application in release mode
 build: lint-audit test

@@ -120,8 +120,8 @@ impl UserRepository for UserMysqlRepository {
         );
 
         query.push_str(match req.0.deleted {
-            true => "WHERE deleted_at IS NOT NULL",
-            false => "WHERE deleted_at IS NULL",
+            true => " WHERE deleted_at IS NOT NULL",
+            false => " WHERE deleted_at IS NULL",
         });
 
         // Sorts

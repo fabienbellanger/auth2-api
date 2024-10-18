@@ -20,9 +20,10 @@ use std::str::FromStr;
 mod dto;
 mod error;
 
-/// Scope creation route: POST /api/v1/scopes
+/// Scope creation route: POST /api/v1/applications/:application_id/scopes
 #[instrument(skip(uc), name = "create_scopes_handler")]
 pub async fn create(
+    Path(application_id): Path<String>,
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
     Json(request): Json<CreateScopeRequest>,
@@ -30,7 +31,10 @@ pub async fn create(
     let response = uc
         .scope
         .create_scope
-        .call(CreateScopeUseCaseRequest::try_from(request)?)
+        .call(CreateScopeUseCaseRequest {
+            application_id: Id::from_str(&application_id)?,
+            id: request.id,
+        })
         .await?;
 
     Ok(ApiSuccess::new(StatusCode::CREATED, response.into()))

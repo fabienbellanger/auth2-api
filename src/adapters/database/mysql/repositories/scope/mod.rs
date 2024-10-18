@@ -76,12 +76,12 @@ impl ScopeRepository for ScopeMysqlRepository {
         );
 
         query.push_str(match req.0.deleted {
-            true => "WHERE deleted_at IS NOT NULL",
-            false => "WHERE deleted_at IS NULL",
+            true => " WHERE deleted_at IS NOT NULL",
+            false => " WHERE deleted_at IS NULL",
         });
 
-        if let Some(application_id) = req.0.application_id {
-            query.push_str(&format!(r#" AND application_id = "{application_id}""#));
+        if req.0.application_id.is_some() {
+            query.push_str(" AND application_id = ?");
         }
 
         // Sorts
@@ -92,7 +92,11 @@ impl ScopeRepository for ScopeMysqlRepository {
         let pagination = MysqlPagination::from(req.0.pagination);
         query.push_str(&pagination.to_sql());
 
-        let scopes = sqlx::query_as::<_, ScopeModel>(&query)
+        let mut query = sqlx::query_as::<_, ScopeModel>(&query);
+        if let Some(application_id) = req.0.application_id {
+            query = query.bind(application_id.to_string());
+        }
+        let scopes = query
             .fetch_all(self.db.pool.clone().as_ref())
             .await
             .map_err(|err| {
@@ -118,17 +122,18 @@ impl ScopeRepository for ScopeMysqlRepository {
             false => " WHERE deleted_at IS NULL",
         });
 
-        if let Some(application_id) = req.application_id {
-            query.push_str(&format!(r#" AND application_id = "{application_id}""#));
+        if req.application_id.is_some() {
+            query.push_str(" AND application_id = ?");
         }
 
-        let result = sqlx::query(&query)
-            .fetch_one(self.db.pool.clone().as_ref())
-            .await
-            .map_err(|err| {
-                error!(error = %err, "Failed to count scopes");
-                ScopeUseCaseError::DatabaseError("Failed to count scopes".to_string())
-            })?;
+        let mut query = sqlx::query(&query);
+        if let Some(application_id) = req.application_id {
+            query = query.bind(application_id.to_string());
+        }
+        let result = query.fetch_one(self.db.pool.clone().as_ref()).await.map_err(|err| {
+            error!(error = %err, "Failed to count scopes");
+            ScopeUseCaseError::DatabaseError("Failed to count scopes".to_string())
+        })?;
 
         Ok(CountScopesDtoResponse(result.try_get("total")?))
     }
