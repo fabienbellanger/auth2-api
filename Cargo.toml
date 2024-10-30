@@ -66,6 +66,7 @@ http-auth-basic = "0.3.5"
 http-body-util = "0.1.2"
 argon2 = "0.5.3"
 passwords = { version = "3.1.16", features = ["common-password"] }
+regex = "1.11.1"
 
 [dev-dependencies]
 fake = { version = "3.0.0", features = ["chrono"] }

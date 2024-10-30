@@ -12,6 +12,7 @@ use crate::domain::use_cases::scope::restore_scope::RestoreScopeUseCaseResponse;
 use crate::domain::use_cases::scope::{ScopeUseCaseError, ScopeUseCaseResponse};
 use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::id::Id;
+use crate::domain::value_objects::scope_id::ScopeId;
 use async_trait::async_trait;
 use std::str::FromStr;
 
@@ -26,12 +27,12 @@ pub struct ScopeRepositoryMock {}
 impl ScopeRepository for ScopeRepositoryMock {
     /// Create scope
     async fn create(&self, req: CreateScopeDtoRequest) -> Result<CreateScopeDtoResponse, ScopeUseCaseError> {
-        if req.0.id == INVALID_SCOPE_ID {
+        if req.0.id == ScopeId::new(INVALID_SCOPE_ID).unwrap() {
             Err(ScopeUseCaseError::DatabaseError("Scope ID already exists".to_string()))
         } else {
             let now = UtcDateTime::now();
             Ok(CreateScopeDtoResponse(ScopeUseCaseResponse {
-                id: VALID_SCOPE_ID.to_string(),
+                id: ScopeId::new(VALID_SCOPE_ID).unwrap(),
                 application_id: Id::from_str(VALID_APPLICATION_ID).unwrap(),
                 created_at: now.clone(),
                 updated_at: now,
@@ -52,7 +53,7 @@ impl ScopeRepository for ScopeRepositoryMock {
 
     /// Delete scope
     async fn delete(&self, req: DeleteScopeDtoRequest) -> Result<DeleteScopeDtoResponse, ScopeUseCaseError> {
-        if req.0.id == VALID_SCOPE_ID {
+        if req.0.id == ScopeId::new(VALID_SCOPE_ID).unwrap() {
             Ok(DeleteScopeDtoResponse(DeleteScopeUseCaseResponse()))
         } else {
             Err(ScopeUseCaseError::DatabaseError("Failed to delete scope".to_string()))
@@ -61,7 +62,7 @@ impl ScopeRepository for ScopeRepositoryMock {
 
     /// Restore deleted scope
     async fn restore(&self, req: RestoreScopeDtoRequest) -> Result<RestoreScopeDtoResponse, ScopeUseCaseError> {
-        if req.0.id == VALID_SCOPE_ID {
+        if req.0.id == ScopeId::new(VALID_SCOPE_ID).unwrap() {
             Ok(RestoreScopeDtoResponse(RestoreScopeUseCaseResponse()))
         } else {
             Err(ScopeUseCaseError::DatabaseError("Failed to restore scope".to_string()))

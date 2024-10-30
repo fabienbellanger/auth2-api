@@ -6,6 +6,7 @@ use crate::domain::services::security::jwt::JwtError;
 use crate::domain::value_objects::email::EmailError;
 use crate::domain::value_objects::id::IdError;
 use crate::domain::value_objects::password::PasswordError;
+use crate::domain::value_objects::scope_id::ScopeIdError;
 use crate::infrastructure::api::response::ApiError;
 use axum::BoxError;
 use tower::timeout::error::Elapsed;
@@ -51,6 +52,12 @@ impl From<EmailError> for ApiError {
 
 impl From<PasswordError> for ApiError {
     fn from(value: PasswordError) -> Self {
+        Self::BadRequest(value.to_string())
+    }
+}
+
+impl From<ScopeIdError> for ApiError {
+    fn from(value: ScopeIdError) -> Self {
         Self::BadRequest(value.to_string())
     }
 }

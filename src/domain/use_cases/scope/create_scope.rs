@@ -1,15 +1,13 @@
 //! Create scope use case
 
 use crate::domain::entities::application::ApplicationId;
-use crate::domain::entities::scope::ScopeId;
 use crate::domain::repositories::scope::dto::CreateScopeDtoRequest;
 use crate::domain::repositories::scope::ScopeRepository;
 use crate::domain::use_cases::scope::{ScopeUseCaseError, ScopeUseCaseResponse};
-use validator::Validate;
+use crate::domain::value_objects::scope_id::ScopeId;
 
-#[derive(Debug, Clone, Validate)]
+#[derive(Debug, Clone)]
 pub struct CreateScopeUseCaseRequest {
-    #[validate(length(min = 4))]
     pub id: ScopeId,
     pub application_id: ApplicationId,
 }
@@ -28,10 +26,6 @@ impl<S: ScopeRepository> CreateScopeUseCase<S> {
     /// Create a new scope
     #[instrument(skip(self), name = "create_scope_use_case")]
     pub async fn call(&self, request: CreateScopeUseCaseRequest) -> Result<ScopeUseCaseResponse, ScopeUseCaseError> {
-        if let Err(err) = request.validate() {
-            return Err(ScopeUseCaseError::InvalidId(err.to_string()));
-        }
-
         let scope = self.scope_repository.create(CreateScopeDtoRequest(request)).await?;
 
         Ok(scope.0)
@@ -53,27 +47,12 @@ mod tests {
 
         let result = create_scope
             .call(CreateScopeUseCaseRequest {
-                id: VALID_SCOPE_ID.to_string(),
+                id: ScopeId::new(VALID_SCOPE_ID).unwrap(),
                 application_id: Id::from_str(VALID_APPLICATION_ID).unwrap(),
             })
             .await;
 
         assert!(result.is_ok());
-    }
-
-    #[tokio::test]
-    async fn test_create_scope_invalid_id() {
-        let repository = ScopeRepositoryMock {};
-        let create_scope = CreateScopeUseCase::new(repository);
-
-        let result = create_scope
-            .call(CreateScopeUseCaseRequest {
-                id: "one".to_string(),
-                application_id: Id::from_str(VALID_APPLICATION_ID).unwrap(),
-            })
-            .await;
-
-        assert!(result.is_err());
     }
 
     #[tokio::test]
@@ -83,7 +62,7 @@ mod tests {
 
         let result = create_scope
             .call(CreateScopeUseCaseRequest {
-                id: INVALID_SCOPE_ID.to_string(),
+                id: ScopeId::new(INVALID_SCOPE_ID).unwrap(),
                 application_id: Id::from_str(VALID_APPLICATION_ID).unwrap(),
             })
             .await;

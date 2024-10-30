@@ -2,9 +2,7 @@
 
 use crate::domain::entities::application::Application;
 use crate::domain::value_objects::datetime::UtcDateTime;
-
-/// Scope ID
-pub type ScopeId = String;
+use crate::domain::value_objects::scope_id::ScopeId;
 
 /// Scope entity
 #[derive(Debug, Clone)]
@@ -18,7 +16,7 @@ pub struct Scope {
 
 impl Scope {
     /// Create a new scope
-    pub fn new(id: String, application: &Application) -> Self {
+    pub fn new(id: ScopeId, application: &Application) -> Self {
         Self {
             id,
             application: application.clone(),

@@ -6,13 +6,13 @@ pub mod get_scopes;
 pub mod restore_scope;
 
 use crate::domain::entities::application::ApplicationId;
-use crate::domain::entities::scope::ScopeId;
 use crate::domain::repositories::scope::ScopeRepository;
 use crate::domain::use_cases::scope::create_scope::CreateScopeUseCase;
 use crate::domain::use_cases::scope::delete_scope::DeleteScopeUseCase;
 use crate::domain::use_cases::scope::get_scopes::GetScopesUseCase;
 use crate::domain::use_cases::scope::restore_scope::RestoreScopeUseCase;
 use crate::domain::value_objects::datetime::UtcDateTime;
+use crate::domain::value_objects::scope_id::ScopeId;
 use thiserror::Error;
 
 #[derive(Debug, Clone)]

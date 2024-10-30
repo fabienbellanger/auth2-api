@@ -178,6 +178,7 @@ dependencies = [
  "passwords",
  "pretty_assertions",
  "rand",
+ "regex",
  "serde",
  "serde_json",
  "serde_urlencoded",

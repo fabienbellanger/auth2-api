@@ -8,3 +8,4 @@ pub mod pagination;
 pub mod password;
 pub mod query_filter;
 pub mod query_sort;
+pub mod scope_id;

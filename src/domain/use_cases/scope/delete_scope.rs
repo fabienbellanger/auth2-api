@@ -1,9 +1,9 @@
 //! Delete scope use case
 
-use crate::domain::entities::scope::ScopeId;
 use crate::domain::repositories::scope::dto::DeleteScopeDtoRequest;
 use crate::domain::repositories::scope::ScopeRepository;
 use crate::domain::use_cases::scope::ScopeUseCaseError;
+use crate::domain::value_objects::scope_id::ScopeId;
 
 #[derive(Debug, Clone)]
 pub struct DeleteScopeUseCaseRequest {
@@ -47,7 +47,7 @@ mod tests {
         let use_case = DeleteScopeUseCase::new(scope_repository);
 
         let request = DeleteScopeUseCaseRequest {
-            id: VALID_SCOPE_ID.to_string(),
+            id: ScopeId::new(VALID_SCOPE_ID).unwrap(),
         };
 
         let response = use_case.call(request).await;
@@ -60,7 +60,7 @@ mod tests {
         let use_case = DeleteScopeUseCase::new(scope_repository);
 
         let request = DeleteScopeUseCaseRequest {
-            id: INVALID_SCOPE_ID.to_string(),
+            id: ScopeId::new(INVALID_SCOPE_ID).unwrap(),
         };
 
         let response = use_case.call(request).await;

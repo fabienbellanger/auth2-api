@@ -5,6 +5,7 @@ use crate::domain::use_cases::scope::delete_scope::DeleteScopeUseCaseRequest;
 use crate::domain::use_cases::scope::get_scopes::GetScopesUseCaseRequest;
 use crate::domain::use_cases::scope::restore_scope::RestoreScopeUseCaseRequest;
 use crate::domain::value_objects::id::Id;
+use crate::domain::value_objects::scope_id::ScopeId;
 use crate::infrastructure::api::extractors::{ExtractRequestId, Path, Query};
 use crate::infrastructure::api::handlers::scope::dto::{
     CreateScopeRequest, DeleteScopeResponse, GetScopesFilterRequest, GetScopesResponse, RestoreScopeResponse,
@@ -33,7 +34,7 @@ pub async fn create(
         .create_scope
         .call(CreateScopeUseCaseRequest {
             application_id: Id::from_str(&application_id)?,
-            id: request.id,
+            id: ScopeId::new(&request.id)?,
         })
         .await?;
 
@@ -104,7 +105,9 @@ pub async fn delete(
     let response = uc
         .scope
         .delete_scope
-        .call(DeleteScopeUseCaseRequest { id: scope_id })
+        .call(DeleteScopeUseCaseRequest {
+            id: ScopeId::new(&scope_id)?,
+        })
         .await?;
 
     Ok(ApiSuccess::new(StatusCode::NO_CONTENT, response.into()))
@@ -120,7 +123,9 @@ pub async fn restore(
     let response = uc
         .scope
         .restore_scope
-        .call(RestoreScopeUseCaseRequest { id: scope_id })
+        .call(RestoreScopeUseCaseRequest {
+            id: ScopeId::new(&scope_id)?,
+        })
         .await?;
 
     Ok(ApiSuccess::new(StatusCode::NO_CONTENT, response.into()))
