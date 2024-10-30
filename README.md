@@ -75,7 +75,7 @@ cargo install cargo-tarpaulin
 ```
 
 ```shell
-cargo tarpaulin --all-features
+cargo tarpaulin --all-features --tests
 
 ```
 
@@ -94,7 +94,6 @@ cargo install cargo-msrv
 ```shell
 cargo msrv find
 cargo msrv verify
-
 ```
 
 ## Deployment

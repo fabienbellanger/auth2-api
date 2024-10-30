@@ -15,12 +15,12 @@ path = "src/bin/main.rs"
 [dependencies]
 
 # Serde
-serde = { version = "1.0.210", features = ["derive"] }
-serde_json = "1.0.129"
+serde = { version = "1.0.214", features = ["derive"] }
+serde_json = "1.0.132"
 serde_urlencoded = "0.7.1"
 
 # Errors
-thiserror = "1.0.64"
+thiserror = "1.0.65"
 
 # Logs
 log = "0.4.22"
@@ -46,20 +46,20 @@ axum = "0.7.7"
 sqlx = { version = "0.8.2", features = ["runtime-tokio-native-tls", "chrono", "mysql", "macros", "bigdecimal", "migrate"] }
 
 # Email
-lettre = "0.11.9"
+lettre = "0.11.10"
 mime = "0.3.17"
 
 async-trait = "0.1.83"
 dotenvy = "0.15.7"
 chrono = { version = "0.4.38", features = ["clock", "std", "serde"], default-features = false }
 jsonwebtoken = "9.3.0"
-tokio = { version = "1.40.0", features = ["full"] }
+tokio = { version = "1.41.0", features = ["full"] }
 rand = "0.8.5"
 uuid = { version = "1.11.0", features = ["v4", "serde"] }
 validator = { version = "0.18.1", features = ["derive"] }
-bytes = "1.7.2"
+bytes = "1.8.0"
 clap = { version = "4.5.20", features = ["cargo", "derive"] }
-config = "0.14.0"
+config = "0.14.1"
 futures = "0.3.31"
 tera = "1.20.0"
 http-auth-basic = "0.3.5"
@@ -68,5 +68,5 @@ argon2 = "0.5.3"
 passwords = { version = "3.1.16", features = ["common-password"] }
 
 [dev-dependencies]
-fake = { version = "2.10.0", features = ["chrono"] }
+fake = { version = "3.0.0", features = ["chrono"] }
 pretty_assertions = "1.4.1"
