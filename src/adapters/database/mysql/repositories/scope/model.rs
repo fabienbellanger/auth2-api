@@ -31,7 +31,7 @@ impl TryFrom<ScopeModel> for ScopeUseCaseResponse {
 
     fn try_from(value: ScopeModel) -> Result<Self, Self::Error> {
         let id = ScopeId::new(value.id.as_str())
-            .map_err(|err| ScopeModelError::InvalidScopeId(format!("`{}` is not a valid scope ID: {err}", value.id)))?;
+            .map_err(|_| ScopeModelError::InvalidScopeId(format!("Invalid scope ID: `{}`", value.id)))?;
         let application_id = Id::from_str(&value.application_id).map_err(|err| {
             ScopeModelError::InvalidApplicationId(format!(
                 "`{}` is not a valid application ID: {err}",

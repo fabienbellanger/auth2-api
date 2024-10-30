@@ -27,9 +27,8 @@ impl TryFrom<ApplicationModel> for ApplicationUseCaseResponse {
     type Error = ApplicationModelError;
 
     fn try_from(value: ApplicationModel) -> Result<Self, Self::Error> {
-        let id = Id::from_str(&value.id).map_err(|err| {
-            ApplicationModelError::InvalidId(format!("`{}` is not a valid application ID: {err}", value.id))
-        })?;
+        let id = Id::from_str(&value.id)
+            .map_err(|_| ApplicationModelError::InvalidId(format!("Invalid application ID: `{}`", value.id)))?;
         let created_at = UtcDateTime::new(DateTime::<Utc>::from_naive_utc_and_offset(value.created_at, Utc));
         let updated_at = UtcDateTime::new(DateTime::<Utc>::from_naive_utc_and_offset(value.updated_at, Utc));
         let deleted_at = value
