@@ -1,8 +1,12 @@
+# Rust
 /target
 
+# Configuration
 .env
 keys
 
+# IDE
 .idea
-.vscode
 .run
+.vscode/*
+!.vscode/launch.json

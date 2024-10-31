@@ -8,7 +8,7 @@ use std::{
 use thiserror::Error;
 
 /// Scope ID regex validation
-/// Only lowercase letters, numbers, and `:.-` are allowed and must have at least 4 characters
+/// Only lowercase letters and `:.-` are allowed and the ID must have at least 4 characters
 static SCOPE_ID_REGEX: LazyLock<Result<Regex, ScopeIdError>> =
     LazyLock::new(|| Regex::new(r"^[a-z:.-]{4,}$").map_err(|_| ScopeIdError::RegexError()));
 
