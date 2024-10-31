@@ -1,6 +1,6 @@
 @base_url = http://localhost:8085/api/v1
 
-@access_token = eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzM4NCJ9.eyJzdWIiOiJkMDU2NTllYi0wMDdmLTQyYmYtOTZhOC02MDA1ZDk4NDBhMjIiLCJhcHBsaWNhdGlvbl9pZCI6IiIsImNsaWVudF9pZCI6IiIsImV4cCI6MTcyNjc3NDg2NiwiaWF0IjoxNzI2NzM4ODY2LCJuYmYiOjE3MjY3Mzg4NjZ9.zibpcKs9F-tSMUW2UmNmqBvNI7uA68jGHtQ99DauPgHZN7EklmeWEpt0HZ3furYWzAAqwRnGmv3filzmRI-cVGZZwjivW-B2xA8SGZsCcPnhKSECOVSP7pp6qM5GUQLT
+@access_token = eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzM4NCJ9.eyJzdWIiOiJkMDU2NTllYi0wMDdmLTQyYmYtOTZhOC02MDA1ZDk4NDBhMjIiLCJhcHBsaWNhdGlvbl9pZCI6IiIsImNsaWVudF9pZCI6IiIsImV4cCI6MTczMDQwNDU3OSwiaWF0IjoxNzMwMzY4NTc5LCJuYmYiOjE3MzAzNjg1Nzl9.ZuVsBiX1rypsMBxBmjicfIMUaKc54T40i2gTyftncaqKXXnBpDkjk82aI2eg9mYDaM9-ZocSO-xMVF4jjPM6fRIbRh2SHYP7DKO3nmyf9O-TtAsV9d70xQL0tNK8SdGZ
 @refresh_token = 11114a9c-522b-4c98-93fd-7ccb5b02e64e
 @password_reset_token = 5fba7305-3024-4766-859a-eabeaf72a3df
 
@@ -46,15 +46,50 @@ Content-Type: application/json
 
 # ================ Users ================
 
-# Get all users
+# List all users
 GET {{base_url}}/users?p=1&l=10&s=-created_at
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
 ###
 
+# List all deleted users
+GET {{base_url}}/users/deleted?p=1&l=10&s=-created_at
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###
+
+# Create a new user
+POST {{base_url}}/users
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "lastname": "Test",
+  "firstname": "Test",
+  "email": "test@test.com",
+  "password": "Aa1234568!;kgHGh1487=d454$d4"
+}
+
+###
+
 # Get user by ID
 GET {{base_url}}/users/{{user_id}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###
+
+# Delete a user
+DELETE {{base_url}}/users/{{user_id}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###
+
+# Restore a deleted user
+PATCH {{base_url}}/users/{{user_id}}/restore
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 

@@ -7,12 +7,10 @@ use std::{
 };
 use thiserror::Error;
 
-/// Minimum length of scope ID
-const MIN_LENGTH: usize = 4;
-
 /// Scope ID regex validation
+/// Only lowercase letters, numbers, and `:.-` are allowed and must have at least 4 characters
 static SCOPE_ID_REGEX: LazyLock<Result<Regex, ScopeIdError>> =
-    LazyLock::new(|| Regex::new(r"^[a-zA-Z0-9:-]+$").map_err(|_| ScopeIdError::RegexError()));
+    LazyLock::new(|| Regex::new(r"^[a-z:.-]{4,}$").map_err(|_| ScopeIdError::RegexError()));
 
 #[derive(Debug, Clone, PartialEq, Error)]
 pub enum ScopeIdError {
@@ -35,13 +33,16 @@ impl ScopeId {
     /// ```rust
     /// use auth2_api::domain::value_objects::scope_id::ScopeId;
     ///
-    /// let scope_id = ScopeId::new("lorem:read");
+    /// let scope_id = ScopeId::new("test.lorem-ipsum:read");
     /// assert!(scope_id.is_ok());
     ///
     /// let invalid_scope_id = ScopeId::new("lor");
     /// assert!(invalid_scope_id.is_err());
     ///
-    /// let invalid_scope_id = ScopeId::new("lorem@read");
+    /// let invalid_scope_id = ScopeId::new("lorem.ipsum@read");
+    /// assert!(invalid_scope_id.is_err());
+    ///
+    /// let invalid_scope_id = ScopeId::new("Lorem.ipsum:read");
     /// assert!(invalid_scope_id.is_err());
     /// ```
     pub fn new(value: &str) -> Result<Self, ScopeIdError> {
@@ -49,12 +50,10 @@ impl ScopeId {
             value: value.to_string(),
         };
 
-        if id.value.len() < MIN_LENGTH {
-            return Err(ScopeIdError::Invalid(format!(
-                "Scope ID must have at least {MIN_LENGTH} characters"
-            )));
-        } else if !SCOPE_ID_REGEX.clone()?.is_match(&id.value) {
-            return Err(ScopeIdError::Invalid("Invalid scope ID (a-zA-Z0-9:-)".to_string()));
+        if !SCOPE_ID_REGEX.clone()?.is_match(&id.value) {
+            return Err(ScopeIdError::Invalid(
+                "Invalid scope ID (`a-z:.-` with at least 4 characters)".to_string(),
+            ));
         }
 
         Ok(id)
