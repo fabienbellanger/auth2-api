@@ -1,10 +1,10 @@
 //! DTO for external link repository
 
-// ================ Create external link ================
-
 use crate::domain::use_cases::external_link::{
     create_external_link::CreateExternalLinkUseCaseRequest, ExternalLinkUseCaseResponse,
 };
+
+// ================ Create external link ================
 
 #[derive(Debug, Clone)]
 pub struct CreateExternalLinkDtoRequest(pub CreateExternalLinkUseCaseRequest);
