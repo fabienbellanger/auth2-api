@@ -44,7 +44,9 @@ jobs:
           toolchain: ${{ env.RUST_VERSION }}
 
       - name: Fmt
-        run: cargo fmt
+        run: |
+          rustup component add rustfmt
+          cargo fmt
 
       - name: Clippy
         run: cargo clippy
