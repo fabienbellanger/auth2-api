@@ -49,7 +49,9 @@ jobs:
           cargo fmt
 
       - name: Clippy
-        run: cargo clippy
+        run: |
+          rustup component add clippy
+          cargo clippy
 
       - name: Run tests
         run: DATABASE_URL=mysql://root:root@127.0.0.1:3306/auth2_api cargo test --verbose
