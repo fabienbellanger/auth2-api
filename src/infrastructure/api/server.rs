@@ -15,6 +15,7 @@ use crate::infrastructure::api::response::ApiError;
 use crate::infrastructure::api::use_cases::AppUseCases;
 use axum::{error_handling::HandleErrorLayer, middleware, Extension, Router};
 use std::time::Duration;
+use tera::Tera;
 use tokio::net::TcpListener;
 use tokio::signal;
 use tower::ServiceBuilder;
@@ -75,6 +76,12 @@ async fn get_app(settings: &Config) -> Result<Router, ApiError> {
 
     // Routing - Web
     app = app.nest("/", routes::web(settings));
+
+    // Templates
+    let mut tera = Tera::new("templates/**/*")
+        .map_err(|err| ApiError::InternalServerError(format!("error during template render: {}", err)))?;
+    tera.autoescape_on(vec![".html", ".txt"]);
+    app = app.layer(Extension(tera));
 
     // Database
     let db = Db::new(settings).await?;
