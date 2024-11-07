@@ -39,9 +39,10 @@ jobs:
           echo "RUST_VERSION=$RUST_VERSION" >> $GITHUB_ENV
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ env.RUST_VERSION }}
+          override: true
 
       - name: Fmt
         run: |
