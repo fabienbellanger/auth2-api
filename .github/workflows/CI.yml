@@ -32,13 +32,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Extract Rust version from Cargo.toml
-        id: rust-version
-        run: echo "::set-output name=rust-version::$(grep '^rust-version' Cargo.toml | sed -E 's/rust-version = \"([^\"]+)\"/\\1/')"
+        run: echo "RUST_VERSION=$(grep '^rust-version' Cargo.toml | sed -E 's/rust-version = \"([^\"]+)\"/\\1/')" >> $GITHUB_ENV
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: ${{ steps.rust-version.outputs.rust-version }}
+          toolchain: ${{ env.RUST_VERSION }}
       - name: Fmt
         run: cargo fmt
       - name: Clippy
