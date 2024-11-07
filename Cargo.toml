@@ -5,7 +5,7 @@ edition = "2021"
 name = "auth2-api"
 readme = "./README.md"
 repository = "https://github.com/fabienbellanger/auth2-api"
-rust-version = "1.80"
+rust-version = "1.81"
 version = "0.1.0"
 
 [[bin]]
