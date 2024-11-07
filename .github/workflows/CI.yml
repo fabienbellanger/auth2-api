@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 env:
   CARGO_TERM_COLOR: always
@@ -31,6 +31,14 @@ jobs:
           - 1025:25
     steps:
       - uses: actions/checkout@v3
+      - name: Extract Rust version from Cargo.toml
+        id: rust-version
+        run: echo "::set-output name=rust-version::$(grep '^rust-version' Cargo.toml | sed -E 's/rust-version = \"([^\"]+)\"/\\1/')"
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ steps.rust-version.outputs.rust-version }}
       - name: Fmt
         run: cargo fmt
       - name: Clippy
