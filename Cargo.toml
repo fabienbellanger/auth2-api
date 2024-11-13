@@ -15,12 +15,12 @@ path = "src/bin/main.rs"
 [dependencies]
 
 # Serde
-serde = { version = "1.0.214", features = ["derive"] }
+serde = { version = "1.0.215", features = ["derive"] }
 serde_json = "1.0.132"
 serde_urlencoded = "0.7.1"
 
 # Errors
-thiserror = "2.0.0"
+thiserror = "2.0.3"
 
 # Logs
 log = "0.4.22"
@@ -53,7 +53,7 @@ async-trait = "0.1.83"
 dotenvy = "0.15.7"
 chrono = { version = "0.4.38", features = ["clock", "std", "serde"], default-features = false }
 jsonwebtoken = "9.3.0"
-tokio = { version = "1.41.0", features = ["full"] }
+tokio = { version = "1.41.1", features = ["full"] }
 rand = "0.8.5"
 uuid = { version = "1.11.0", features = ["v4", "serde"] }
 validator = { version = "0.19.0", features = ["derive"] }
@@ -69,5 +69,5 @@ passwords = { version = "3.1.16", features = ["common-password"] }
 regex = "1.11.1"
 
 [dev-dependencies]
-fake = { version = "3.0.0", features = ["chrono"] }
+fake = { version = "3.0.1", features = ["chrono"] }
 pretty_assertions = "1.4.1"
