@@ -2,7 +2,9 @@
 
 use crate::domain::{
     repositories::external_link::{
-        dto::{CreateExternalLinkDtoRequest, CreateExternalLinkDtoResponse},
+        dto::{
+            CountExternalLinksDtoRequest, CountExternalLinksDtoResponse, CreateExternalLinkDtoRequest, CreateExternalLinkDtoResponse, DeleteExternalLinkDtoRequest, DeleteExternalLinkDtoResponse, GetExternalLinkByIdDtoRequest, GetExternalLinkByIdDtoResponse, GetExternalLinksDtoRequest, GetExternalLinksDtoResponse, RestoreExternalLinkDtoRequest, RestoreExternalLinkDtoResponse, UpdateExternalLinkDtoRequest, UpdateExternalLinkDtoResponse
+        },
         ExternalLinkRepository,
     },
     use_cases::external_link::{ExternalLinkUseCaseError, ExternalLinkUseCaseResponse},
@@ -42,5 +44,53 @@ impl ExternalLinkRepository for ExternalLinkRepositoryMock {
                 "error during external link creation".to_string(),
             ))
         }
+    }
+
+    /// Count all external links
+    async fn count_external_links(
+        &self,
+        _req: CountExternalLinksDtoRequest,
+    ) -> Result<CountExternalLinksDtoResponse, ExternalLinkUseCaseError> {
+        todo!()
+    }
+
+    /// Get all external links
+    async fn get_external_links(
+        &self,
+        _req: GetExternalLinksDtoRequest,
+    ) -> Result<GetExternalLinksDtoResponse, ExternalLinkUseCaseError> {
+        todo!()
+    }
+
+    /// Get external link by ID
+    async fn get_by_id(
+        &self,
+        _req: GetExternalLinkByIdDtoRequest,
+    ) -> Result<GetExternalLinkByIdDtoResponse, ExternalLinkUseCaseError> {
+        todo!()
+    }
+
+    /// Update external link
+    async fn update(
+        &self,
+        _req: UpdateExternalLinkDtoRequest,
+    ) -> Result<UpdateExternalLinkDtoResponse, ExternalLinkUseCaseError> {
+        todo!()
+    }
+
+    /// Delete external link
+    async fn delete(
+        &self,
+        _req: DeleteExternalLinkDtoRequest,
+    ) -> Result<DeleteExternalLinkDtoResponse, ExternalLinkUseCaseError> {
+        todo!()
+    }
+
+    /// Restore deleted external link
+    async fn restore(
+        &self,
+        _req: RestoreExternalLinkDtoRequest,
+    ) -> Result<RestoreExternalLinkDtoResponse, ExternalLinkUseCaseError> {
+        todo!()
     }
 }

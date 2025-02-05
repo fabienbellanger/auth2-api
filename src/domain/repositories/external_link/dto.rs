@@ -1,7 +1,7 @@
 //! DTO for external link repository
 
 use crate::domain::use_cases::external_link::{
-    create_external_link::CreateExternalLinkUseCaseRequest, ExternalLinkUseCaseResponse,
+    create_external_link::CreateExternalLinkUseCaseRequest, delete_external_link::{DeleteExternalLinkUseCaseRequest, DeleteExternalLinkUseCaseResponse}, get_external_link::GetExternalLinkByIdUseCaseRequest, get_external_links::GetExternalLinksUseCaseRequest, restore_external_link::{RestoreExternalLinkUseCaseRequest, RestoreExternalLinkUseCaseResponse}, update_external_link::{UpdateExternalLinkUseCaseRequest, UpdateExternalLinkUseCaseResponse}, ExternalLinkUseCaseResponse
 };
 
 // ================ Create external link ================
@@ -11,14 +11,16 @@ pub struct CreateExternalLinkDtoRequest(pub CreateExternalLinkUseCaseRequest);
 
 #[derive(Debug, Clone)]
 pub struct CreateExternalLinkDtoResponse(pub ExternalLinkUseCaseResponse);
-/*
-// ================ Get external link by ID ================
+
+// ================ Count external links ================
 
 #[derive(Debug, Clone)]
-pub struct GetExternalLinkByIdDtoRequest(pub GetExternalLinkByIdUseCaseRequest);
+pub struct CountExternalLinksDtoRequest {
+    pub deleted: bool,
+}
 
 #[derive(Debug, Clone)]
-pub struct GetExternalLinkByIdDtoResponse(pub ExternalLinkUseCaseResponse);
+pub struct CountExternalLinksDtoResponse(pub i64);
 
 // ================ Get all external links ================
 
@@ -27,6 +29,14 @@ pub struct GetExternalLinksDtoRequest(pub GetExternalLinksUseCaseRequest);
 
 #[derive(Debug, Clone)]
 pub struct GetExternalLinksDtoResponse(pub Vec<ExternalLinkUseCaseResponse>);
+
+// ================ Get external link by ID ================
+
+#[derive(Debug, Clone)]
+pub struct GetExternalLinkByIdDtoRequest(pub GetExternalLinkByIdUseCaseRequest);
+
+#[derive(Debug, Clone)]
+pub struct GetExternalLinkByIdDtoResponse(pub ExternalLinkUseCaseResponse);
 
 // ================ Update external link ================
 
@@ -44,16 +54,6 @@ pub struct DeleteExternalLinkDtoRequest(pub DeleteExternalLinkUseCaseRequest);
 #[derive(Debug, Clone)]
 pub struct DeleteExternalLinkDtoResponse(pub DeleteExternalLinkUseCaseResponse);
 
-// ================ Count external links ================
-
-#[derive(Debug, Clone)]
-pub struct CountExternalLinksDtoRequest {
-    pub deleted: bool,
-}
-
-#[derive(Debug, Clone)]
-pub struct CountExternalLinksDtoResponse(pub i64);
-
 // ================ Restore external link ================
 
 #[derive(Debug, Clone)]
@@ -61,4 +61,3 @@ pub struct RestoreExternalLinkDtoRequest(pub RestoreExternalLinkUseCaseRequest);
 
 #[derive(Debug, Clone)]
 pub struct RestoreExternalLinkDtoResponse(pub RestoreExternalLinkUseCaseResponse);
-*/

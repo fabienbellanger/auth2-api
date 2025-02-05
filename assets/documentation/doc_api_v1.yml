@@ -590,7 +590,7 @@ paths:
       summary: Scope creation
       description: Scope creation
       tags:
-        - "Applications"
+        - "Scopes"
       security:
         - bearerAuth: [ ]
       parameters:
