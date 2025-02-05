@@ -76,8 +76,6 @@ paths:
 
   /forgotten-password/{email}:
     post:
-      security:
-        - bearerAuth: [ ]
       summary: Forgotten password
       description: Forgotten password request
       tags:

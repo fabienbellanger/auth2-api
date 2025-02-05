@@ -78,7 +78,7 @@ impl UserRepository for UserMysqlRepository {
         }))
     }
 
-    #[instrument(skip(self), name = "user_repository_get_user_by_email")]
+    #[instrument(skip(self), name = "user_repository_access_token_information")]
     async fn get_access_token_information(
         &self,
         req: GetAccessTokenInformationDtoRequest,

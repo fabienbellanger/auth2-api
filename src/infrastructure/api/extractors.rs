@@ -7,14 +7,13 @@ use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::infrastructure::api::response::ApiError;
 use axum::extract::path::ErrorKind;
 use axum::extract::rejection::PathRejection;
+use axum::extract::FromRequestParts;
 use axum::http::{header, header::HeaderValue, request::Parts, HeaderMap, StatusCode};
-use axum::{async_trait, extract::FromRequestParts};
 use serde::de::DeserializeOwned;
 
 /// Request ID extractor from HTTP headers
 pub struct ExtractRequestId(pub HeaderValue);
 
-#[async_trait]
 impl<S> FromRequestParts<S> for ExtractRequestId
 where
     S: Send + Sync,
@@ -52,7 +51,7 @@ impl PayloadExtractor<HeaderMap> for Payload {
 // /// JWT extractor from HTTP headers
 // pub struct ExtractJWT(pub Option<String>);
 //
-// #[async_trait]
+//
 // impl<S> FromRequestParts<S> for ExtractJWT
 // where
 //     S: Send + Sync,
@@ -78,7 +77,6 @@ impl PayloadExtractor<HeaderMap> for Payload {
 // We define our own `Path` extractor that customizes the error from `axum::extract::Path`
 pub struct Path<T>(pub T);
 
-#[async_trait]
 impl<S, T> FromRequestParts<S> for Path<T>
 where
     // these trait bounds are copied from `impl FromRequest for axum::extract::path::Path`
@@ -140,7 +138,6 @@ where
 // We define our own `Query` extractor that customizes the error from `axum::extract::Query`
 pub struct Query<T>(pub T);
 
-#[async_trait]
 impl<T, S> FromRequestParts<S> for Query<T>
 where
     T: DeserializeOwned,

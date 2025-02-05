@@ -17,7 +17,7 @@ pub enum CliError {
     ServerError(String),
 
     /// Config error
-    #[error("Database error: {0}")]
+    #[error("Config error: {0}")]
     ConfigError(String),
 
     /// Database error

@@ -75,7 +75,7 @@ async fn get_app(settings: &Config) -> Result<Router, ApiError> {
         .layer(cors);
 
     // Routing - Web
-    app = app.nest("/", routes::web(settings));
+    app = app.merge(routes::web(settings));
 
     // Templates
     let mut tera = Tera::new("templates/**/*")

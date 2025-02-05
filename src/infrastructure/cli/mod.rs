@@ -91,7 +91,7 @@ enum Commands {
 pub async fn start() -> Result<(), CliError> {
     let args = Cli::parse();
     match &args.commands {
-        Commands::Serve => start_server().await.map_err(|err| err.into()),
+        Commands::Serve => start_server().await.map_err(CliError::from),
         Commands::Register {
             lastname,
             firstname,

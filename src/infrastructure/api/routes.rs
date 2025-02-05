@@ -30,11 +30,11 @@ pub fn api(state: SharedState) -> Router<SharedState> {
     Router::new()
         // Public routes
         .route("/token", post(handlers::user::get_access_token))
-        .route("/refresh-token/:token", post(handlers::user::refresh_token))
-        .route("/forgotten-password/:email", post(handlers::user::forgotten_password))
+        .route("/refresh-token/{token}", post(handlers::user::refresh_token))
+        .route("/forgotten-password/{email}", post(handlers::user::forgotten_password))
         .route("/update-password", patch(handlers::user::update_password_from_token))
         // Private routes
-        .nest("/", api_protected(state))
+        .merge(api_protected(state))
 }
 
 /// Protected API routes
@@ -51,9 +51,9 @@ fn api_users() -> Router<SharedState> {
         .route("/", post(handlers::user::create))
         .route("/", get(handlers::user::get_all))
         .route("/deleted", get(handlers::user::get_all_deleted))
-        .route("/:user_id", get(handlers::user::get_by_id))
-        .route("/:user_id", delete(handlers::user::delete))
-        .route("/:user_id/restore", patch(handlers::user::restore))
+        .route("/{user_id}", get(handlers::user::get_by_id))
+        .route("/{user_id}", delete(handlers::user::delete))
+        .route("/{user_id}/restore", patch(handlers::user::restore))
 }
 
 /// Applications API routes
@@ -62,11 +62,11 @@ fn api_applications() -> Router<SharedState> {
         .route("/", post(handlers::application::create))
         .route("/", get(handlers::application::get_all))
         .route("/deleted", get(handlers::application::get_all_deleted))
-        .route("/:application_id", get(handlers::application::get_by_id))
-        .route("/:application_id", delete(handlers::application::delete))
-        .route("/:application_id", patch(handlers::application::update))
-        .route("/:application_id/restore", patch(handlers::application::restore))
-        .route("/:application_id/scopes", post(handlers::scope::create))
+        .route("/{application_id}", get(handlers::application::get_by_id))
+        .route("/{application_id}", delete(handlers::application::delete))
+        .route("/{application_id}", patch(handlers::application::update))
+        .route("/{application_id}/restore", patch(handlers::application::restore))
+        .route("/{application_id}/scopes", post(handlers::scope::create))
 }
 
 /// Scopes API routes
@@ -74,6 +74,6 @@ fn api_scopes() -> Router<SharedState> {
     Router::new()
         .route("/", get(handlers::scope::get_all))
         .route("/deleted", get(handlers::scope::get_all_deleted))
-        .route("/:scope_id", delete(handlers::scope::delete))
-        .route("/:scope_id/restore", patch(handlers::scope::restore))
+        .route("/{scope_id}", delete(handlers::scope::delete))
+        .route("/{scope_id}/restore", patch(handlers::scope::restore))
 }
