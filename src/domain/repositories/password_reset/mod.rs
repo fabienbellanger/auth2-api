@@ -1,13 +1,13 @@
 //! Password reset repository
 
+pub mod dto;
+
 use crate::domain::repositories::password_reset::dto::{
     CreateUpdatePasswordResetDtoRequest, CreateUpdatePasswordResetDtoResponse, DeletePasswordResetDtoRequest,
     DeletePasswordResetDtoResponse, GetUserIdFromTokenDtoRequest, GetUserIdFromTokenDtoResponse,
 };
 use crate::domain::use_cases::user::UserUseCaseError;
 use async_trait::async_trait;
-
-pub mod dto;
 
 #[async_trait]
 pub trait PasswordResetRepository: Clone {

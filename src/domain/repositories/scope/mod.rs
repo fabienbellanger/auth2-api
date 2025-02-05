@@ -1,5 +1,7 @@
 //! Scope repository
 
+pub mod dto;
+
 use crate::domain::repositories::scope::dto::{
     CountScopesDtoRequest, CountScopesDtoResponse, CreateScopeDtoRequest, CreateScopeDtoResponse,
     DeleteScopeDtoRequest, DeleteScopeDtoResponse, GetScopesDtoRequest, GetScopesDtoResponse, RestoreScopeDtoRequest,
@@ -7,8 +9,6 @@ use crate::domain::repositories::scope::dto::{
 };
 use crate::domain::use_cases::scope::ScopeUseCaseError;
 use async_trait::async_trait;
-
-pub mod dto;
 
 #[async_trait]
 pub trait ScopeRepository: Clone {

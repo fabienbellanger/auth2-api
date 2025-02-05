@@ -1,5 +1,7 @@
 //! External link repository
 
+pub mod dto;
+
 use crate::domain::use_cases::external_link::ExternalLinkUseCaseError;
 use async_trait::async_trait;
 use dto::{
@@ -9,8 +11,6 @@ use dto::{
     GetExternalLinksDtoResponse, RestoreExternalLinkDtoRequest, RestoreExternalLinkDtoResponse,
     UpdateExternalLinkDtoRequest, UpdateExternalLinkDtoResponse,
 };
-
-pub mod dto;
 
 #[async_trait]
 pub trait ExternalLinkRepository: Clone {

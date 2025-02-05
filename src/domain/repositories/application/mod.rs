@@ -1,5 +1,7 @@
 //! Application repository
 
+pub mod dto;
+
 use crate::domain::repositories::application::dto::{
     CountApplicationsDtoRequest, CountApplicationsDtoResponse, CreateApplicationDtoRequest,
     CreateApplicationDtoResponse, DeleteApplicationDtoRequest, DeleteApplicationDtoResponse,
@@ -9,8 +11,6 @@ use crate::domain::repositories::application::dto::{
 };
 use crate::domain::use_cases::application::ApplicationUseCaseError;
 use async_trait::async_trait;
-
-pub mod dto;
 
 #[async_trait]
 pub trait ApplicationRepository: Clone {
