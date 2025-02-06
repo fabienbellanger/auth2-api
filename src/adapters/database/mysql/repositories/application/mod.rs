@@ -43,7 +43,7 @@ impl ApplicationRepository for ApplicationMysqlRepository {
         req: CreateApplicationDtoRequest,
     ) -> Result<CreateApplicationDtoResponse, ApplicationUseCaseError> {
         let application_id = Id::new().map_err(|err| {
-            error!(error = %err, "Failed to create user ID");
+            error!(error = %err, "Failed to create application ID");
             ApplicationUseCaseError::InvalidId()
         })?;
         let now = UtcDateTime::now();

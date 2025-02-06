@@ -46,6 +46,12 @@ impl<L: ExternalLinkRepository> ExternalLinkUseCases<L> {
 
 #[derive(Debug, Clone, PartialEq, Error)]
 pub enum ExternalLinkUseCaseError {
+    #[error("External link not found")]
+    ExternalLinkNotFound(),
+
+    #[error("Invalid external link id")]
+    InvalidId(),
+
     #[error("Model conversion error")]
     FromModelError(),
 

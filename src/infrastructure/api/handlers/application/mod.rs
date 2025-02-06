@@ -1,5 +1,8 @@
 //! Applications handlers
 
+mod dto;
+mod error;
+
 use crate::domain::use_cases::application::create_application::CreateApplicationUseCaseRequest;
 use crate::domain::use_cases::application::delete_application::DeleteApplicationUseCaseRequest;
 use crate::domain::use_cases::application::get_application::GetApplicationByIdUseCaseRequest;
@@ -14,9 +17,6 @@ use crate::infrastructure::api::use_cases::AppUseCases;
 use axum::http::StatusCode;
 use axum::{Extension, Json};
 use std::str::FromStr;
-
-mod dto;
-mod error;
 
 /// Application creation route: POST /api/v1/applications
 #[instrument(skip(uc), name = "create_application_handler")]
