@@ -54,7 +54,7 @@ pub enum ExternalLinkUseCaseError {
 }
 
 /// External link use case generic response
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct ExternalLinkUseCaseResponse {
     pub id: ExternalLinkId,
     pub name: String,

@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS `scopes`
     PRIMARY KEY (`id`),
     INDEX `idx_scopes_deleted_at` (`deleted_at`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
+  DEFAULT CHARSET = utf8mb4
+  DEFAULT COLLATE = utf8mb4_general_ci;
 
 ALTER TABLE `scopes`
     ADD CONSTRAINT `fk_scopes_application_id`

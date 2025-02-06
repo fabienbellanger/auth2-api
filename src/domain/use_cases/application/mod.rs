@@ -61,7 +61,7 @@ pub enum ApplicationUseCaseError {
 }
 
 /// Application use case generic response
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct ApplicationUseCaseResponse {
     pub id: ApplicationId,
     pub name: String,

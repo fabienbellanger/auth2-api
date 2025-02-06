@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS `password_resets`
     PRIMARY KEY (`user_id`),
     KEY `idx_password_resets_expired_at` (`expired_at`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
+  DEFAULT CHARSET = utf8mb4
+  DEFAULT COLLATE = utf8mb4_general_ci;
 
 ALTER TABLE `password_resets`
     ADD CONSTRAINT `fk_password_resets_user_id`

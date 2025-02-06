@@ -16,4 +16,5 @@ CREATE TABLE
     KEY `idx_users_password` (`password`),
     KEY `idx_users_deleted_at` (`deleted_at`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
+  DEFAULT CHARSET = utf8mb4
+  DEFAULT COLLATE = utf8mb4_general_ci;

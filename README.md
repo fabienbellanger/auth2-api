@@ -71,17 +71,18 @@ Scopes list:
 Tool used: [tarpaulin](https://github.com/xd009642/tarpaulin)
 
 ```shell
-cargo install cargo-tarpaulin
+cargo tarpaulin --ignore-tests --line --count --include-files src/**/* --exclude-files src/bin/*
 ```
 
-```shell
-cargo tarpaulin --all-features --tests
+To generation HTML file [`tarpaulin-report.html`](tarpaulin-report.html):
 
+```shell
+cargo tarpaulin --ignore-tests --line --count --include-files src/**/* --exclude-files src/bin/* --out Html
 ```
 
 _Results:_
 
-- [2024-10-14] `17.66% coverage, 295/1670 lines covered`
+- [2025-02-06] `19.76% coverage, 347/1756 lines covered`
 
 ## MSRV
 

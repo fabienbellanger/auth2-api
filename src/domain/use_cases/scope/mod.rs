@@ -57,7 +57,7 @@ pub enum ScopeUseCaseError {
 }
 
 /// Scope use case generic response
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct ScopeUseCaseResponse {
     pub id: ScopeId,
     pub application_id: ApplicationId,

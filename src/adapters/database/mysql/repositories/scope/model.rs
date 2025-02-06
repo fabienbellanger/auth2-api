@@ -53,3 +53,30 @@ impl TryFrom<ScopeModel> for ScopeUseCaseResponse {
         })
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::domain::entities::application::ApplicationId;
+
+    #[test]
+    fn test_try_from_scope_model_for_use_case_response() {
+        let application_id = uuid::Uuid::new_v4().to_string();
+        let model = ScopeModel {
+            id: "user:read".to_string(),
+            application_id: application_id.to_string(),
+            created_at: DateTime::from_timestamp(0, 0).unwrap().naive_utc(),
+            updated_at: DateTime::from_timestamp(0, 0).unwrap().naive_utc(),
+            deleted_at: None,
+        };
+        let expected = ScopeUseCaseResponse {
+            id: ScopeId::new("user:read").unwrap(),
+            application_id: ApplicationId::from_str(application_id.to_string().as_str()).unwrap(),
+            created_at: UtcDateTime::new(DateTime::from_timestamp(0, 0).unwrap()),
+            updated_at: UtcDateTime::new(DateTime::from_timestamp(0, 0).unwrap()),
+            deleted_at: None,
+        };
+
+        assert_eq!(ScopeUseCaseResponse::try_from(model).unwrap(), expected);
+    }
+}

@@ -160,7 +160,7 @@ impl From<EmailServiceError> for UserUseCaseError {
 }
 
 /// User use case generic response
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct UserUseCaseResponse {
     pub id: UserId,
     pub email: Email,

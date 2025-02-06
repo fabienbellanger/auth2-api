@@ -54,3 +54,34 @@ impl TryFrom<UserModel> for UserUseCaseResponse {
         })
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::domain::entities::user::UserId;
+
+    #[test]
+    fn test_try_from_user_model_for_use_case_response() {
+        let id = uuid::Uuid::new_v4().to_string();
+        let model = UserModel {
+            id: id.to_string(),
+            lastname: "lastname".to_string(),
+            firstname: "firstname".to_string(),
+            email: "test@test.com".to_string(),
+            created_at: DateTime::from_timestamp(0, 0).unwrap().naive_utc(),
+            updated_at: DateTime::from_timestamp(0, 0).unwrap().naive_utc(),
+            deleted_at: None,
+        };
+        let expected = UserUseCaseResponse {
+            id: UserId::from_str(id.to_string().as_str()).unwrap(),
+            lastname: "lastname".to_string(),
+            firstname: "firstname".to_string(),
+            email: Email::new("test@test.com").unwrap(),
+            created_at: UtcDateTime::new(DateTime::from_timestamp(0, 0).unwrap()),
+            updated_at: UtcDateTime::new(DateTime::from_timestamp(0, 0).unwrap()),
+            deleted_at: None,
+        };
+
+        assert_eq!(UserUseCaseResponse::try_from(model).unwrap(), expected);
+    }
+}

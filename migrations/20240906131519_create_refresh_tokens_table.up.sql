@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS `refresh_tokens`
     INDEX `idx_refresh_tokens_access_token` (`access_token`),
     INDEX `idx_refresh_tokens_expired_at` (`expired_at`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
+  DEFAULT CHARSET = utf8mb4
+  DEFAULT COLLATE = utf8mb4_general_ci;
 
 ALTER TABLE `refresh_tokens`
     ADD CONSTRAINT `fk_refresh_tokens_user_id`
