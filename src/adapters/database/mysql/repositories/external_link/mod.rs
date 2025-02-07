@@ -122,7 +122,7 @@ impl ExternalLinkRepository for ExternalLinkMysqlRepository {
 
         // Sorts
         let sorts = MysqlQuerySorts(req.0.sorts.unwrap_or_default());
-        query.push_str(&sorts.to_sql(&["id", "name", "updated_at", "deleted_at"]));
+        query.push_str(&sorts.to_sql(&["name", "created_at", "updated_at", "deleted_at"]));
 
         // Pagination
         let pagination = MysqlPagination::from(req.0.pagination);

@@ -789,6 +789,248 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
 
+  /external-links:
+    get:
+      summary: ""
+      description: External links list
+      tags:
+        - "External links"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: p
+          schema:
+            type: integer
+            default: 1
+            example: 1
+          required: false
+          description: Page number
+        - in: query
+          name: l
+          schema:
+            type: integer
+            maximum: 500
+            example: 10
+          required: false
+          description: Limit of links per page
+        - in: query
+          name: s
+          schema:
+            type: string
+            example: +name
+          required: false
+          description: "Sort with available fields: name | created_at | updated_at | deleted_at {+: ASC, -: DESC}."
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetExternalLinksResponse'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: External link creation
+      description: External link creation
+      tags:
+        - "External links"
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateExternalLinkRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExternalLinkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /external-links/deleted:
+    get:
+      summary: ""
+      description: Deleted external links list
+      tags:
+        - "External links"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: p
+          schema:
+            type: integer
+            default: 1
+            example: 1
+          required: false
+          description: Page number
+        - in: query
+          name: l
+          schema:
+            type: integer
+            maximum: 500
+            example: 10
+          required: false
+          description: Limit of links per page
+        - in: query
+          name: s
+          schema:
+            type: string
+            example: +name
+          required: false
+          description: "Sort with available fields: name | created_at | updated_at | deleted_at {+: ASC, -: DESC}."
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetExternalLinksResponse'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+
+  /external-links/{id}:
+    get:
+      summary: Get external link
+      description: Get external link by ID
+      tags:
+        - "External links"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: External link ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExternalLinkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Delete external link
+      description: Delete an external link by ID
+      tags:
+        - "External links"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: External link ID
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      summary: Update external link
+      description: Update an external link by ID
+      tags:
+        - "External links"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: External link ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateExternalLinkRequest'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /external-links/{id}/restore:
+    patch:
+      summary: Restore deleted external link
+      description: Restore deleted external link
+      tags:
+        - "External links"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: External link ID
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
 components:
   securitySchemes:
     bearerAuth:
@@ -1066,5 +1308,42 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/ScopeResponse"
+          required:
+            - data
+    CreateUpdateExternalLinkRequest:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+    ExternalLinkResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - created_at
+        - updated_at
+    GetExternalLinksResponse:
+      allOf:
+        - $ref: "#/components/schemas/PaginateTotal"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/ExternalLinkResponse"
           required:
             - data

@@ -1,13 +1,11 @@
 //! Create external link use case
 
 use super::{ExternalLinkUseCaseError, ExternalLinkUseCaseResponse};
-use crate::domain::entities::external_link::ExternalLinkId;
 use crate::domain::repositories::external_link::dto::CreateExternalLinkDtoRequest;
 use crate::domain::repositories::external_link::ExternalLinkRepository;
 
 #[derive(Debug, Clone)]
 pub struct CreateExternalLinkUseCaseRequest {
-    pub id: ExternalLinkId,
     pub name: String,
 }
 
@@ -42,11 +40,7 @@ impl<L: ExternalLinkRepository> CreateExternalLinkUseCase<L> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::{
-        tests::mock::external_link::{ExternalLinkRepositoryMock, VALID_EXTERNAL_LINK_ID, VALID_EXTERNAL_LINK_NAME},
-        value_objects::id::Id,
-    };
-    use std::str::FromStr;
+    use crate::domain::tests::mock::external_link::{ExternalLinkRepositoryMock, VALID_EXTERNAL_LINK_NAME};
 
     #[tokio::test]
     async fn test_create_external_link() {
@@ -55,7 +49,6 @@ mod tests {
 
         let result = create_external_link
             .call(CreateExternalLinkUseCaseRequest {
-                id: Id::from_str(VALID_EXTERNAL_LINK_ID).unwrap(),
                 name: VALID_EXTERNAL_LINK_NAME.to_string(),
             })
             .await;

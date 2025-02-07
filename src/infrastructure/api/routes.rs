@@ -43,6 +43,7 @@ fn api_protected(state: SharedState) -> Router<SharedState> {
         .nest("/users", api_users().layer(auth!(state.clone())))
         .nest("/applications", api_applications().layer(auth!(state.clone())))
         .nest("/scopes", api_scopes().layer(auth!(state.clone())))
+        .nest("/external-links", api_external_links().layer(auth!(state.clone())))
 }
 
 /// Users API routes
@@ -63,8 +64,8 @@ fn api_applications() -> Router<SharedState> {
         .route("/", get(handlers::application::get_all))
         .route("/deleted", get(handlers::application::get_all_deleted))
         .route("/{application_id}", get(handlers::application::get_by_id))
-        .route("/{application_id}", delete(handlers::application::delete))
         .route("/{application_id}", patch(handlers::application::update))
+        .route("/{application_id}", delete(handlers::application::delete))
         .route("/{application_id}/restore", patch(handlers::application::restore))
         .route("/{application_id}/scopes", post(handlers::scope::create))
 }
@@ -76,4 +77,16 @@ fn api_scopes() -> Router<SharedState> {
         .route("/deleted", get(handlers::scope::get_all_deleted))
         .route("/{scope_id}", delete(handlers::scope::delete))
         .route("/{scope_id}/restore", patch(handlers::scope::restore))
+}
+
+/// External links API routes
+fn api_external_links() -> Router<SharedState> {
+    Router::new()
+        .route("/", post(handlers::external_link::create))
+        .route("/", get(handlers::external_link::get_all))
+        .route("/deleted", get(handlers::external_link::get_all_deleted))
+        .route("/{external_link_id}", get(handlers::external_link::get_by_id))
+        .route("/{external_link_id}", patch(handlers::external_link::update))
+        .route("/{external_link_id}", delete(handlers::external_link::delete))
+        .route("/{external_link_id}/restore", patch(handlers::external_link::restore))
 }

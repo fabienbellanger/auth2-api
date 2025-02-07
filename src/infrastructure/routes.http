@@ -1,12 +1,14 @@
 @base_url = http://localhost:8085/api/v1
 
-@access_token = eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzM4NCJ9.eyJzdWIiOiJkMDU2NTllYi0wMDdmLTQyYmYtOTZhOC02MDA1ZDk4NDBhMjIiLCJhcHBsaWNhdGlvbl9pZCI6IiIsImNsaWVudF9pZCI6IiIsImV4cCI6MTczMDQwNDU3OSwiaWF0IjoxNzMwMzY4NTc5LCJuYmYiOjE3MzAzNjg1Nzl9.ZuVsBiX1rypsMBxBmjicfIMUaKc54T40i2gTyftncaqKXXnBpDkjk82aI2eg9mYDaM9-ZocSO-xMVF4jjPM6fRIbRh2SHYP7DKO3nmyf9O-TtAsV9d70xQL0tNK8SdGZ
+@access_token = eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzM4NCJ9.eyJzdWIiOiIwNWY5YmNhYy1jMTI2LTRkYjMtOWJlNC1hMTRiOTY4OTVmOWYiLCJhcHBsaWNhdGlvbl9pZCI6IiIsImNsaWVudF9pZCI6IiIsImV4cCI6MTczODk1NTM5NywiaWF0IjoxNzM4OTE5Mzk3LCJuYmYiOjE3Mzg5MTkzOTd9.nGYnalTjrK3E7sJ_iFzx50dpN7qW4lkZVDyIvHVFdqqr4a2JdxbuneEIZFnD_9r602nyMD-Vo9opGhCtjWcX_AsOC-6oRZs5jArE4S1jJAf1_nAtJtlf9jEHJgIzi5FV
 @refresh_token = 11114a9c-522b-4c98-93fd-7ccb5b02e64e
 @password_reset_token = 5fba7305-3024-4766-859a-eabeaf72a3df
 
 @user_id = d05659eb-007f-42bf-96a8-6005d9840a22
 @email = user@example.com
 @password = 1A,R;(9h0Y&gYH5=7eY!gg
+
+@external_link_id = 1dbcac6c-9a18-4df4-b78d-283a96454cda
 
 # ================ User ================
 
@@ -90,6 +92,54 @@ Authorization: Bearer {{access_token}}
 
 # Restore a deleted user
 PATCH {{base_url}}/users/{{user_id}}/restore
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###
+
+# ================ External links ================
+
+# Create a new external link
+POST {{base_url}}/external-links
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "name": "Groupement POS"
+}
+
+###
+
+# List all external links
+GET {{base_url}}/external-links?p=1&l=10&s=+name,-created_at
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###
+
+# List all deleted external links
+GET {{base_url}}/external-links/deleted?p=1&l=10&s=-created_at
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###
+
+# Get external link by ID
+GET {{base_url}}/external-links/{{external_link_id}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###
+
+# Delete an external link
+DELETE {{base_url}}/external-links/{{external_link_id}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###
+
+# Restore a deleted external link
+PATCH {{base_url}}/external-links/{{external_link_id}}/restore
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
