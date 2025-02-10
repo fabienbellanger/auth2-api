@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n            UPDATE external_links\n            SET name = ?, updated_at = ?\n            WHERE id = ?\n                AND deleted_at IS NULL",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 3
+    },
+    "nullable": []
+  },
+  "hash": "c564e267ab354e34b04865dbc2e6995aab24f3139bffd9811bd468a3bd12847d"
+}

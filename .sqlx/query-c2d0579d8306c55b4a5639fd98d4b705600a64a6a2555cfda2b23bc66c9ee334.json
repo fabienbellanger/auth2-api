@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n            INSERT INTO external_links (id, name, created_at, updated_at, deleted_at)\n            VALUES (?, ?, ?, ?, NULL)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 4
+    },
+    "nullable": []
+  },
+  "hash": "c2d0579d8306c55b4a5639fd98d4b705600a64a6a2555cfda2b23bc66c9ee334"
+}
