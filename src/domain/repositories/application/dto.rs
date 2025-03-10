@@ -1,5 +1,6 @@
 //! DTO for application repository
 
+use crate::domain::use_cases::application::ApplicationUseCaseResponse;
 use crate::domain::use_cases::application::create_application::CreateApplicationUseCaseRequest;
 use crate::domain::use_cases::application::delete_application::{
     DeleteApplicationUseCaseRequest, DeleteApplicationUseCaseResponse,
@@ -12,7 +13,6 @@ use crate::domain::use_cases::application::restore_application::{
 use crate::domain::use_cases::application::update_application::{
     UpdateApplicationUseCaseRequest, UpdateApplicationUseCaseResponse,
 };
-use crate::domain::use_cases::application::ApplicationUseCaseResponse;
 
 // ================ Create application ================
 

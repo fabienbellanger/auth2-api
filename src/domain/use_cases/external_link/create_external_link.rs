@@ -1,8 +1,8 @@
 //! Create external link use case
 
 use super::{ExternalLinkUseCaseError, ExternalLinkUseCaseResponse};
-use crate::domain::repositories::external_link::dto::CreateExternalLinkDtoRequest;
 use crate::domain::repositories::external_link::ExternalLinkRepository;
+use crate::domain::repositories::external_link::dto::CreateExternalLinkDtoRequest;
 
 #[derive(Debug, Clone)]
 pub struct CreateExternalLinkUseCaseRequest {

@@ -5,7 +5,7 @@ use crate::domain::services::security::payload::{Payload, PayloadData};
 use crate::domain::value_objects::datetime::UtcDateTime;
 use chrono::Utc;
 use jsonwebtoken::errors::ErrorKind::ExpiredSignature;
-use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Validation};
+use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Validation, decode, encode};
 use std::fmt::{Debug, Formatter};
 use std::ops::Add;
 use thiserror::Error;

@@ -1,11 +1,11 @@
 //! Mock of the scope repository
 
+use crate::domain::repositories::scope::ScopeRepository;
 use crate::domain::repositories::scope::dto::{
     CountScopesDtoRequest, CountScopesDtoResponse, CreateScopeDtoRequest, CreateScopeDtoResponse,
     DeleteScopeDtoRequest, DeleteScopeDtoResponse, GetScopesDtoRequest, GetScopesDtoResponse, RestoreScopeDtoRequest,
     RestoreScopeDtoResponse,
 };
-use crate::domain::repositories::scope::ScopeRepository;
 use crate::domain::tests::mock::application::VALID_APPLICATION_ID;
 use crate::domain::use_cases::scope::delete_scope::DeleteScopeUseCaseResponse;
 use crate::domain::use_cases::scope::restore_scope::RestoreScopeUseCaseResponse;

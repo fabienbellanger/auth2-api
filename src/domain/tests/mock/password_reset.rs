@@ -1,10 +1,10 @@
 //! Mock of the password reset repository
 
+use crate::domain::repositories::password_reset::PasswordResetRepository;
 use crate::domain::repositories::password_reset::dto::{
     CreateUpdatePasswordResetDtoRequest, CreateUpdatePasswordResetDtoResponse, DeletePasswordResetDtoRequest,
     DeletePasswordResetDtoResponse, GetUserIdFromTokenDtoRequest, GetUserIdFromTokenDtoResponse,
 };
-use crate::domain::repositories::password_reset::PasswordResetRepository;
 use crate::domain::use_cases::user::UserUseCaseError;
 use crate::domain::value_objects::id::Id;
 use async_trait::async_trait;

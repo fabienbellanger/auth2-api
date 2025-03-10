@@ -2,8 +2,8 @@
 //!
 //! Attention: argon2 is slow!
 
-use argon2::password_hash::rand_core::OsRng;
 use argon2::password_hash::SaltString;
+use argon2::password_hash::rand_core::OsRng;
 use argon2::{Algorithm, Argon2, Params, PasswordHash, PasswordHasher, PasswordVerifier, Version};
 use passwords::{analyzer, scorer};
 use std::fmt::{Display, Formatter};

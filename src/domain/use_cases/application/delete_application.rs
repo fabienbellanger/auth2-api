@@ -1,8 +1,8 @@
 //! Delete application use case
 
 use crate::domain::entities::application::ApplicationId;
-use crate::domain::repositories::application::dto::DeleteApplicationDtoRequest;
 use crate::domain::repositories::application::ApplicationRepository;
+use crate::domain::repositories::application::dto::DeleteApplicationDtoRequest;
 use crate::domain::use_cases::application::ApplicationUseCaseError;
 
 #[derive(Debug, Clone)]

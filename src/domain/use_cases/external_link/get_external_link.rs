@@ -2,8 +2,8 @@
 
 use super::{ExternalLinkUseCaseError, ExternalLinkUseCaseResponse};
 use crate::domain::entities::external_link::ExternalLinkId;
-use crate::domain::repositories::external_link::dto::GetExternalLinkByIdDtoRequest;
 use crate::domain::repositories::external_link::ExternalLinkRepository;
+use crate::domain::repositories::external_link::dto::GetExternalLinkByIdDtoRequest;
 
 #[derive(Debug, Clone)]
 pub struct GetExternalLinkByIdUseCaseRequest {

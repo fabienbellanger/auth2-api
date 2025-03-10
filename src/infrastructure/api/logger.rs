@@ -1,7 +1,7 @@
 //! Logger module for customize `Tracing` logs
 
 use crate::infrastructure::api::response::ApiError;
-use tracing_subscriber::{fmt::format::JsonFields, prelude::*, EnvFilter, Registry};
+use tracing_subscriber::{EnvFilter, Registry, fmt::format::JsonFields, prelude::*};
 // Examples:
 // - https://github.com/gsson/mini-web-rs
 // - https://github.com/shanesveller/axum-rest-example

@@ -1,7 +1,7 @@
 //! Delete scope use case
 
-use crate::domain::repositories::scope::dto::DeleteScopeDtoRequest;
 use crate::domain::repositories::scope::ScopeRepository;
+use crate::domain::repositories::scope::dto::DeleteScopeDtoRequest;
 use crate::domain::use_cases::scope::ScopeUseCaseError;
 use crate::domain::value_objects::scope_id::ScopeId;
 
@@ -39,7 +39,7 @@ impl<A: ScopeRepository> DeleteScopeUseCase<A> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::tests::mock::scope::{ScopeRepositoryMock, INVALID_SCOPE_ID, VALID_SCOPE_ID};
+    use crate::domain::tests::mock::scope::{INVALID_SCOPE_ID, ScopeRepositoryMock, VALID_SCOPE_ID};
 
     #[tokio::test]
     async fn test_delete_scope_use_case() {

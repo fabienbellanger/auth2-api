@@ -1,8 +1,8 @@
 //! Restore restored application use case
 
 use crate::domain::entities::application::ApplicationId;
-use crate::domain::repositories::application::dto::RestoreApplicationDtoRequest;
 use crate::domain::repositories::application::ApplicationRepository;
+use crate::domain::repositories::application::dto::RestoreApplicationDtoRequest;
 use crate::domain::use_cases::application::ApplicationUseCaseError;
 
 #[derive(Debug, Clone)]

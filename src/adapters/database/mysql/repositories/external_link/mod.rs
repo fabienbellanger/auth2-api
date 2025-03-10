@@ -6,6 +6,7 @@ use crate::{
     adapters::database::mysql::{Db, MysqlPagination, MysqlQuerySorts},
     domain::{
         repositories::external_link::{
+            ExternalLinkRepository,
             dto::{
                 CountExternalLinksDtoRequest, CountExternalLinksDtoResponse, CreateExternalLinkDtoRequest,
                 CreateExternalLinkDtoResponse, DeleteExternalLinkDtoRequest, DeleteExternalLinkDtoResponse,
@@ -13,13 +14,12 @@ use crate::{
                 GetExternalLinksDtoResponse, RestoreExternalLinkDtoRequest, RestoreExternalLinkDtoResponse,
                 UpdateExternalLinkDtoRequest, UpdateExternalLinkDtoResponse,
             },
-            ExternalLinkRepository,
         },
         use_cases::external_link::{
+            ExternalLinkUseCaseError, ExternalLinkUseCaseResponse,
             delete_external_link::DeleteExternalLinkUseCaseResponse,
             restore_external_link::RestoreExternalLinkUseCaseResponse,
-            update_external_link::UpdateExternalLinkUseCaseResponse, ExternalLinkUseCaseError,
-            ExternalLinkUseCaseResponse,
+            update_external_link::UpdateExternalLinkUseCaseResponse,
         },
         value_objects::{datetime::UtcDateTime, id::Id},
     },

@@ -1,13 +1,13 @@
 //! DTO for user repository
 
 use crate::domain::entities::user::UserId;
+use crate::domain::use_cases::user::UserUseCaseResponse;
 use crate::domain::use_cases::user::create_user::CreateUserUseCaseRequest;
 use crate::domain::use_cases::user::delete_user::{DeleteUserUseCaseRequest, DeleteUserUseCaseResponse};
 use crate::domain::use_cases::user::forgotten_password::ForgottenPasswordUseCaseRequest;
 use crate::domain::use_cases::user::get_user::GetUserUseCaseRequest;
 use crate::domain::use_cases::user::get_users::GetUsersUseCaseRequest;
 use crate::domain::use_cases::user::restore_user::{RestoreUserUseCaseRequest, RestoreUserUseCaseResponse};
-use crate::domain::use_cases::user::UserUseCaseResponse;
 use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::password::Password;
 

@@ -2,6 +2,7 @@
 
 use crate::domain::{
     repositories::external_link::{
+        ExternalLinkRepository,
         dto::{
             CountExternalLinksDtoRequest, CountExternalLinksDtoResponse, CreateExternalLinkDtoRequest,
             CreateExternalLinkDtoResponse, DeleteExternalLinkDtoRequest, DeleteExternalLinkDtoResponse,
@@ -9,7 +10,6 @@ use crate::domain::{
             GetExternalLinksDtoResponse, RestoreExternalLinkDtoRequest, RestoreExternalLinkDtoResponse,
             UpdateExternalLinkDtoRequest, UpdateExternalLinkDtoResponse,
         },
-        ExternalLinkRepository,
     },
     use_cases::external_link::{ExternalLinkUseCaseError, ExternalLinkUseCaseResponse},
     value_objects::{datetime::UtcDateTime, id::Id},

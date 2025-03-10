@@ -2,10 +2,10 @@
 
 use crate::{
     domain::use_cases::external_link::{
-        create_external_link::CreateExternalLinkUseCaseRequest,
+        ExternalLinkUseCaseResponse, create_external_link::CreateExternalLinkUseCaseRequest,
         delete_external_link::DeleteExternalLinkUseCaseResponse, get_external_links::GetExternalLinksUseCaseResponse,
         restore_external_link::RestoreExternalLinkUseCaseResponse,
-        update_external_link::UpdateExternalLinkUseCaseResponse, ExternalLinkUseCaseResponse,
+        update_external_link::UpdateExternalLinkUseCaseResponse,
     },
     infrastructure::api::handlers::filter::FilterRequest,
 };

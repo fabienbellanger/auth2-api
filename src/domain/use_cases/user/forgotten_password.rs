@@ -1,12 +1,12 @@
 //! Forgotten password use case
 
 use crate::domain::entities::password_reset::PasswordReset;
-use crate::domain::repositories::password_reset::dto::CreateUpdatePasswordResetDtoRequest;
 use crate::domain::repositories::password_reset::PasswordResetRepository;
-use crate::domain::repositories::user::dto::GetUserByEmailDtoRequest;
+use crate::domain::repositories::password_reset::dto::CreateUpdatePasswordResetDtoRequest;
 use crate::domain::repositories::user::UserRepository;
-use crate::domain::services::email::forgotten_password::ForgottenPasswordEmailRequest;
+use crate::domain::repositories::user::dto::GetUserByEmailDtoRequest;
 use crate::domain::services::email::EmailService;
+use crate::domain::services::email::forgotten_password::ForgottenPasswordEmailRequest;
 use crate::domain::use_cases::user::UserUseCaseError;
 use crate::domain::value_objects::email::Email;
 

@@ -1,7 +1,7 @@
 //! Create an application use case
 
-use crate::domain::repositories::application::dto::CreateApplicationDtoRequest;
 use crate::domain::repositories::application::ApplicationRepository;
+use crate::domain::repositories::application::dto::CreateApplicationDtoRequest;
 use crate::domain::use_cases::application::{ApplicationUseCaseError, ApplicationUseCaseResponse};
 use validator::Validate;
 

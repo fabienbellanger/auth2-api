@@ -2,10 +2,10 @@
 
 use crate::domain::entities::access_token::AccessToken;
 use crate::domain::entities::refresh_token::RefreshToken;
-use crate::domain::repositories::refresh_token::dto::CreateRefreshTokenDtoRequest;
 use crate::domain::repositories::refresh_token::RefreshTokenRepository;
-use crate::domain::repositories::user::dto::GetAccessTokenInformationDtoRequest;
+use crate::domain::repositories::refresh_token::dto::CreateRefreshTokenDtoRequest;
 use crate::domain::repositories::user::UserRepository;
+use crate::domain::repositories::user::dto::GetAccessTokenInformationDtoRequest;
 use crate::domain::services::security::jwt::Jwt;
 use crate::domain::services::security::payload::PayloadData;
 use crate::domain::use_cases::user::UserUseCaseError;
@@ -109,7 +109,7 @@ mod tests {
     use super::*;
     use crate::domain::tests::mock::refresh_token::RefreshTokenRepositoryMock;
     use crate::domain::tests::mock::user::{
-        UserRepositoryMock, EMAIL_NOT_FOUND, INVALID_EMAIL, INVALID_PASSWORD, VALID_EMAIL, VALID_PASSWORD,
+        EMAIL_NOT_FOUND, INVALID_EMAIL, INVALID_PASSWORD, UserRepositoryMock, VALID_EMAIL, VALID_PASSWORD,
     };
     use crate::domain::use_cases::user::UserUseCaseError;
 

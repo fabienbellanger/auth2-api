@@ -1,11 +1,11 @@
 //! Mock of the refresh token repository
 
+use crate::domain::repositories::refresh_token::RefreshTokenRepository;
 use crate::domain::repositories::refresh_token::dto::{
     CreateRefreshTokenDtoRequest, CreateRefreshTokenDtoResponse, DeleteExpiredRefreshTokensDtoRequest,
     DeleteExpiredRefreshTokensDtoResponse, DeleteRefreshTokenDtoRequest, DeleteRefreshTokenDtoResponse,
     GetRefreshTokenDtoRequest, GetRefreshTokenDtoResponse,
 };
-use crate::domain::repositories::refresh_token::RefreshTokenRepository;
 use crate::domain::use_cases::user::UserUseCaseError;
 use crate::domain::value_objects::id::Id;
 use async_trait::async_trait;

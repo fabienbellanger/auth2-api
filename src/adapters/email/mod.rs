@@ -2,15 +2,15 @@
 
 pub mod forgotten_password;
 
+use crate::APP_NAME;
 use crate::adapters::email::forgotten_password::ForgottenPassword;
 use crate::domain::entities::email::{EmailConfig, EmailMessage};
 use crate::domain::services::email::forgotten_password::{
     ForgottenPasswordEmailRequest, ForgottenPasswordEmailResponse,
 };
 use crate::domain::services::email::{EmailService, EmailServiceError, EmailTransport};
-use crate::APP_NAME;
 use lettre::address::AddressError;
-use lettre::message::{header, MultiPart, SinglePart};
+use lettre::message::{MultiPart, SinglePart, header};
 use lettre::{SmtpTransport, Transport};
 use std::time::Duration;
 

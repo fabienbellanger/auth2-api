@@ -1,6 +1,7 @@
 //! Mock of the user repository
 
 use crate::domain::entities::user::UserId;
+use crate::domain::repositories::user::UserRepository;
 use crate::domain::repositories::user::dto::{
     CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse, DeleteUserDtoRequest,
     DeleteUserDtoResponse, GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse,
@@ -8,7 +9,6 @@ use crate::domain::repositories::user::dto::{
     GetUsersDtoRequest, GetUsersDtoResponse, RestoreUserDtoRequest, RestoreUserDtoResponse, UpdatePasswordDtoRequest,
     UpdatePasswordDtoResponse,
 };
-use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseResponse;
 use crate::domain::use_cases::user::restore_user::RestoreUserUseCaseResponse;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};

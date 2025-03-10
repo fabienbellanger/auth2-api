@@ -23,6 +23,9 @@ pub struct Config {
     /// Log file name
     pub logs_file: String,
 
+    /// Number of threads worker
+    pub worker_threads: usize,
+
     /// Database URL
     pub database_url: String,
     /// Database auto migration enabled

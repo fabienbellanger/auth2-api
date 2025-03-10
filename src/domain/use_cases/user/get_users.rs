@@ -1,7 +1,7 @@
 //! Get all users with pagination use case
 
-use crate::domain::repositories::user::dto::{CountUsersDtoRequest, GetUsersDtoRequest};
 use crate::domain::repositories::user::UserRepository;
+use crate::domain::repositories::user::dto::{CountUsersDtoRequest, GetUsersDtoRequest};
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
 use crate::domain::value_objects::pagination::Pagination;
 use crate::domain::value_objects::query_sort::QuerySorts;

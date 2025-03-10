@@ -1,8 +1,8 @@
 //! Get all scopes use case
 
 use crate::domain::entities::application::ApplicationId;
-use crate::domain::repositories::scope::dto::{CountScopesDtoRequest, GetScopesDtoRequest};
 use crate::domain::repositories::scope::ScopeRepository;
+use crate::domain::repositories::scope::dto::{CountScopesDtoRequest, GetScopesDtoRequest};
 use crate::domain::use_cases::scope::{ScopeUseCaseError, ScopeUseCaseResponse};
 use crate::domain::value_objects::pagination::Pagination;
 use crate::domain::value_objects::query_sort::QuerySorts;

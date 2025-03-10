@@ -3,7 +3,7 @@
 use super::ExternalLinkUseCaseError;
 use crate::domain::{
     entities::external_link::ExternalLinkId,
-    repositories::external_link::{dto::UpdateExternalLinkDtoRequest, ExternalLinkRepository},
+    repositories::external_link::{ExternalLinkRepository, dto::UpdateExternalLinkDtoRequest},
 };
 
 #[derive(Debug, Clone)]

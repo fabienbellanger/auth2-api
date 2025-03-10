@@ -3,7 +3,7 @@
 use super::body_from_parts;
 use axum::{
     body::Body,
-    http::{header, HeaderValue, Request},
+    http::{HeaderValue, Request, header},
     response::Response,
 };
 use futures::future::BoxFuture;
@@ -50,7 +50,6 @@ pub struct BasicAuthMiddleware<S> {
 impl<S> Service<Request<Body>> for BasicAuthMiddleware<S>
 where
     S: Service<Request<Body>, Response = Response> + Send + 'static,
-
     S::Future: Send + 'static,
 {
     type Response = S::Response;

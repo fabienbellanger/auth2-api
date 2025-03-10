@@ -1,9 +1,9 @@
 //! Scopes handlers DTO
 
+use crate::domain::use_cases::scope::ScopeUseCaseResponse;
 use crate::domain::use_cases::scope::delete_scope::DeleteScopeUseCaseResponse;
 use crate::domain::use_cases::scope::get_scopes::GetScopesUseCaseResponse;
 use crate::domain::use_cases::scope::restore_scope::RestoreScopeUseCaseResponse;
-use crate::domain::use_cases::scope::ScopeUseCaseResponse;
 use crate::infrastructure::api::handlers::filter::FilterRequest;
 use serde::{Deserialize, Serialize};
 

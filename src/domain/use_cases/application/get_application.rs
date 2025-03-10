@@ -1,8 +1,8 @@
 //! Get an application by its ID use case
 
 use crate::domain::entities::application::ApplicationId;
-use crate::domain::repositories::application::dto::GetApplicationByIdDtoRequest;
 use crate::domain::repositories::application::ApplicationRepository;
+use crate::domain::repositories::application::dto::GetApplicationByIdDtoRequest;
 use crate::domain::use_cases::application::{ApplicationUseCaseError, ApplicationUseCaseResponse};
 
 #[derive(Debug, Clone)]

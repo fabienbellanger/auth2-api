@@ -6,7 +6,7 @@ use crate::domain::repositories::refresh_token::dto::{CreateRefreshTokenDtoReque
 use crate::domain::services::security::payload::PayloadData;
 use crate::domain::{
     entities::{access_token::AccessToken, refresh_token::RefreshToken},
-    repositories::refresh_token::{dto::GetRefreshTokenDtoRequest, RefreshTokenRepository},
+    repositories::refresh_token::{RefreshTokenRepository, dto::GetRefreshTokenDtoRequest},
     services::security::jwt::Jwt,
 };
 
@@ -82,7 +82,7 @@ impl<T: RefreshTokenRepository> RefreshTokenUseCase<T> {
 mod tests {
     use super::*;
     use crate::domain::tests::mock::refresh_token::{
-        RefreshTokenRepositoryMock, INVALID_REFRESH_TOKEN_ID, VALID_REFRESH_TOKEN_ID,
+        INVALID_REFRESH_TOKEN_ID, RefreshTokenRepositoryMock, VALID_REFRESH_TOKEN_ID,
     };
     use crate::domain::value_objects::id::Id;
     use std::str::FromStr;

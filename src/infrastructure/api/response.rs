@@ -1,8 +1,8 @@
 //! API response module
 
+use axum::Json;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
-use axum::Json;
 use serde::Serialize;
 use thiserror::Error;
 
@@ -15,7 +15,7 @@ where
     T: Serialize + PartialEq,
 {
     fn eq(&self, other: &Self) -> bool {
-        self.0 == other.0 && self.1 .0 == other.1 .0
+        self.0 == other.0 && self.1.0 == other.1.0
     }
 }
 

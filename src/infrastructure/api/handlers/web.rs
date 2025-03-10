@@ -1,8 +1,8 @@
 //! Web handler
 
 use crate::infrastructure::api::response::ApiError;
-use axum::response::Html;
 use axum::Extension;
+use axum::response::Html;
 use tera::{Context, Tera};
 
 /// Health check route: GET "/health"

@@ -1,5 +1,6 @@
 //! Mock of the application repository
 
+use crate::domain::repositories::application::ApplicationRepository;
 use crate::domain::repositories::application::dto::{
     CountApplicationsDtoRequest, CountApplicationsDtoResponse, CreateApplicationDtoRequest,
     CreateApplicationDtoResponse, DeleteApplicationDtoRequest, DeleteApplicationDtoResponse,
@@ -7,7 +8,6 @@ use crate::domain::repositories::application::dto::{
     RestoreApplicationDtoRequest, RestoreApplicationDtoResponse, UpdateApplicationDtoRequest,
     UpdateApplicationDtoResponse,
 };
-use crate::domain::repositories::application::ApplicationRepository;
 use crate::domain::use_cases::application::delete_application::DeleteApplicationUseCaseResponse;
 use crate::domain::use_cases::application::restore_application::RestoreApplicationUseCaseResponse;
 use crate::domain::use_cases::application::{ApplicationUseCaseError, ApplicationUseCaseResponse};

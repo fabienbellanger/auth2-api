@@ -2,8 +2,8 @@
 
 //! User refresh token use case
 
-use crate::domain::repositories::refresh_token::dto::DeleteExpiredRefreshTokensDtoRequest;
 use crate::domain::repositories::refresh_token::RefreshTokenRepository;
+use crate::domain::repositories::refresh_token::dto::DeleteExpiredRefreshTokensDtoRequest;
 use crate::domain::use_cases::user::UserUseCaseError;
 
 #[derive(Debug, Clone)]

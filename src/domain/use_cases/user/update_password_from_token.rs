@@ -1,10 +1,10 @@
 //! Update user password from forgotten password request
 
 use crate::domain::entities::password_reset::PasswordResetTokenValue;
-use crate::domain::repositories::password_reset::dto::{DeletePasswordResetDtoRequest, GetUserIdFromTokenDtoRequest};
 use crate::domain::repositories::password_reset::PasswordResetRepository;
-use crate::domain::repositories::user::dto::UpdatePasswordDtoRequest;
+use crate::domain::repositories::password_reset::dto::{DeletePasswordResetDtoRequest, GetUserIdFromTokenDtoRequest};
 use crate::domain::repositories::user::UserRepository;
+use crate::domain::repositories::user::dto::UpdatePasswordDtoRequest;
 use crate::domain::use_cases::user::UserUseCaseError;
 use crate::domain::value_objects::password::Password;
 
@@ -67,7 +67,7 @@ impl<U: UserRepository, P: PasswordResetRepository> UpdatePasswordFromTokenUseCa
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::tests::mock::password_reset::{PasswordResetRepositoryMock, INVALID_TOKEN, VALID_TOKEN};
+    use crate::domain::tests::mock::password_reset::{INVALID_TOKEN, PasswordResetRepositoryMock, VALID_TOKEN};
     use crate::domain::tests::mock::user::UserRepositoryMock;
 
     #[tokio::test]

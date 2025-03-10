@@ -1,10 +1,10 @@
 //! DTO for scope repository
 
+use crate::domain::use_cases::scope::ScopeUseCaseResponse;
 use crate::domain::use_cases::scope::create_scope::CreateScopeUseCaseRequest;
 use crate::domain::use_cases::scope::delete_scope::{DeleteScopeUseCaseRequest, DeleteScopeUseCaseResponse};
 use crate::domain::use_cases::scope::get_scopes::GetScopesUseCaseRequest;
 use crate::domain::use_cases::scope::restore_scope::{RestoreScopeUseCaseRequest, RestoreScopeUseCaseResponse};
-use crate::domain::use_cases::scope::ScopeUseCaseResponse;
 
 // ================ Create application ================
 

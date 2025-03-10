@@ -1,8 +1,8 @@
 //! Create external link use case
 
 use super::{ExternalLinkUseCaseError, ExternalLinkUseCaseResponse};
-use crate::domain::repositories::external_link::dto::{CountExternalLinksDtoRequest, GetExternalLinksDtoRequest};
 use crate::domain::repositories::external_link::ExternalLinkRepository;
+use crate::domain::repositories::external_link::dto::{CountExternalLinksDtoRequest, GetExternalLinksDtoRequest};
 use crate::domain::value_objects::pagination::Pagination;
 use crate::domain::value_objects::query_sort::QuerySorts;
 

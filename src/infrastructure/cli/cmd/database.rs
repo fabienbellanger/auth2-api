@@ -1,8 +1,8 @@
 //! Database commands
 
-use crate::adapters::database::mysql::repositories::refresh_token::RefreshTokenMysqlRepository;
-use crate::adapters::database::mysql::Db;
 use crate::adapters::database::GenericDb;
+use crate::adapters::database::mysql::Db;
+use crate::adapters::database::mysql::repositories::refresh_token::RefreshTokenMysqlRepository;
 use crate::config::Config;
 use crate::domain::use_cases::database::clean_expired_refresh_tokens::{
     CleanExpiredRefreshTokens, CleanExpiredRefreshTokensUseCaseRequest,

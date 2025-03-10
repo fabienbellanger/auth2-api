@@ -1,15 +1,15 @@
 //! User CLI commands
 
+use crate::adapters::database::GenericDb;
+use crate::adapters::database::mysql::Db;
 use crate::adapters::database::mysql::repositories::password_reset::PasswordResetMysqlRepository;
 use crate::adapters::database::mysql::repositories::refresh_token::RefreshTokenMysqlRepository;
 use crate::adapters::database::mysql::repositories::user::UserMysqlRepository;
-use crate::adapters::database::mysql::Db;
-use crate::adapters::database::GenericDb;
 use crate::adapters::email::EmailAdapter;
 use crate::config::Config;
 use crate::domain::entities::email::EmailConfig;
-use crate::domain::use_cases::user::create_user::CreateUserUseCaseRequest;
 use crate::domain::use_cases::user::UserUseCases;
+use crate::domain::use_cases::user::create_user::CreateUserUseCaseRequest;
 use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::password::Password;
 use crate::infrastructure::cli::error::CliError;

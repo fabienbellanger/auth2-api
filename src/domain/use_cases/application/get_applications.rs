@@ -1,7 +1,7 @@
 //! Get all applications with pagination use case
 
-use crate::domain::repositories::application::dto::{CountApplicationsDtoRequest, GetApplicationsDtoRequest};
 use crate::domain::repositories::application::ApplicationRepository;
+use crate::domain::repositories::application::dto::{CountApplicationsDtoRequest, GetApplicationsDtoRequest};
 use crate::domain::use_cases::application::{ApplicationUseCaseError, ApplicationUseCaseResponse};
 use crate::domain::value_objects::pagination::Pagination;
 use crate::domain::value_objects::query_sort::QuerySorts;

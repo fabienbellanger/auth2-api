@@ -2,6 +2,7 @@
 
 #![allow(dead_code)]
 
+use crate::config::ConfigError;
 use crate::infrastructure::api::response::ApiError;
 use thiserror::Error;
 
@@ -23,10 +24,21 @@ pub enum CliError {
     /// Database error
     #[error("Database error: {0}")]
     DatabaseError(String),
+
+    /// Runtime error
+    #[error("Runtime error: {0}")]
+    RuntimeError(String),
 }
 
 impl From<ApiError> for CliError {
     fn from(err: ApiError) -> Self {
         Self::ServerError(err.to_string())
+    }
+}
+
+/// Config error
+impl From<ConfigError> for CliError {
+    fn from(value: ConfigError) -> Self {
+        Self::ConfigError(value.to_string())
     }
 }

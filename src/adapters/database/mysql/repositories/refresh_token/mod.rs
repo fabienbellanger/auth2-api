@@ -1,12 +1,12 @@
 //! Refresh token MySQL repository
 
 use crate::adapters::database::mysql::Db;
+use crate::domain::repositories::refresh_token::RefreshTokenRepository;
 use crate::domain::repositories::refresh_token::dto::{
     CreateRefreshTokenDtoRequest, CreateRefreshTokenDtoResponse, DeleteExpiredRefreshTokensDtoRequest,
     DeleteExpiredRefreshTokensDtoResponse, DeleteRefreshTokenDtoRequest, DeleteRefreshTokenDtoResponse,
     GetRefreshTokenDtoRequest, GetRefreshTokenDtoResponse,
 };
-use crate::domain::repositories::refresh_token::RefreshTokenRepository;
 use crate::domain::use_cases::user::UserUseCaseError;
 use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::id::Id;

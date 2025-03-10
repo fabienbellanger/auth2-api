@@ -27,16 +27,18 @@ struct LoggerMessage {
 
 impl Display for LoggerMessage {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "status_code: {}, method: {}, uri: {}, host: {}, request_id: {}, user_agent: {}, version: {}, latency: {:?}, body_size: {}",
-               self.status_code,
-               self.method,
-               self.uri,
-               self.host,
-               self.request_id,
-               self.user_agent,
-               self.version,
-               self.latency,
-               self.body_size,
+        write!(
+            f,
+            "status_code: {}, method: {}, uri: {}, host: {}, request_id: {}, user_agent: {}, version: {}, latency: {:?}, body_size: {}",
+            self.status_code,
+            self.method,
+            self.uri,
+            self.host,
+            self.request_id,
+            self.user_agent,
+            self.version,
+            self.latency,
+            self.body_size,
         )
     }
 }
@@ -60,7 +62,6 @@ pub struct LoggerMiddleware<S> {
 impl<S> Service<Request<Body>> for LoggerMiddleware<S>
 where
     S: Service<Request<Body>, Response = Response> + Send + 'static,
-
     S::Future: Send + 'static,
 {
     type Response = S::Response;

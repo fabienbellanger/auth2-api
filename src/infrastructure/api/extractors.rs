@@ -5,10 +5,10 @@ use crate::domain::services::security::jwt::Jwt;
 use crate::domain::services::security::payload::{Payload, PayloadError, PayloadExtractor};
 use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::infrastructure::api::response::ApiError;
+use axum::extract::FromRequestParts;
 use axum::extract::path::ErrorKind;
 use axum::extract::rejection::PathRejection;
-use axum::extract::FromRequestParts;
-use axum::http::{header, header::HeaderValue, request::Parts, HeaderMap, StatusCode};
+use axum::http::{HeaderMap, StatusCode, header, header::HeaderValue, request::Parts};
 use serde::de::DeserializeOwned;
 
 /// Request ID extractor from HTTP headers

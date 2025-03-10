@@ -1,11 +1,11 @@
 //! Password reset MySQL repository
 
 use crate::adapters::database::mysql::Db;
+use crate::domain::repositories::password_reset::PasswordResetRepository;
 use crate::domain::repositories::password_reset::dto::{
     CreateUpdatePasswordResetDtoRequest, CreateUpdatePasswordResetDtoResponse, DeletePasswordResetDtoRequest,
     DeletePasswordResetDtoResponse, GetUserIdFromTokenDtoRequest, GetUserIdFromTokenDtoResponse,
 };
-use crate::domain::repositories::password_reset::PasswordResetRepository;
 use crate::domain::use_cases::user::UserUseCaseError;
 use crate::domain::value_objects::datetime::UtcDateTime;
 use crate::domain::value_objects::id::Id;

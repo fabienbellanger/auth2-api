@@ -2,7 +2,7 @@
 
 use crate::adapters::database::{DatabaseError, GenericDb};
 use crate::config::Config;
-use crate::domain::value_objects::pagination::{Pagination, PAGINATION_MAX_LIMIT};
+use crate::domain::value_objects::pagination::{PAGINATION_MAX_LIMIT, Pagination};
 use crate::domain::value_objects::query_sort::{QuerySort, QuerySorts};
 use async_trait::async_trait;
 use sqlx::mysql::MySqlPoolOptions;
@@ -95,7 +95,7 @@ impl MysqlQuerySorts {
     /// Generate SQL code for sorts (ORDER BY)
     pub fn to_sql(&self, valid_fields: &[&str]) -> String {
         self.0
-             .0
+            .0
             .iter()
             .filter(|QuerySort { field, direction: _ }| valid_fields.contains(&field.as_str()))
             .enumerate()

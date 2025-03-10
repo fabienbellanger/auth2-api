@@ -1,12 +1,12 @@
 //! Use cases
 
+use crate::adapters::database::mysql::Db;
 use crate::adapters::database::mysql::repositories::application::ApplicationMysqlRepository;
 use crate::adapters::database::mysql::repositories::external_link::ExternalLinkMysqlRepository;
 use crate::adapters::database::mysql::repositories::password_reset::PasswordResetMysqlRepository;
 use crate::adapters::database::mysql::repositories::refresh_token::RefreshTokenMysqlRepository;
 use crate::adapters::database::mysql::repositories::scope::ScopeMysqlRepository;
 use crate::adapters::database::mysql::repositories::user::UserMysqlRepository;
-use crate::adapters::database::mysql::Db;
 use crate::adapters::email::EmailAdapter;
 use crate::domain::use_cases::application::ApplicationUseCases;
 use crate::domain::use_cases::external_link::ExternalLinkUseCases;

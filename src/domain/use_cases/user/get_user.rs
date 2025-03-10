@@ -1,8 +1,8 @@
 //! Get user from its ID
 
 use crate::domain::entities::user::UserId;
-use crate::domain::repositories::user::dto::GetUserByIdDtoRequest;
 use crate::domain::repositories::user::UserRepository;
+use crate::domain::repositories::user::dto::GetUserByIdDtoRequest;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
 
 #[derive(Debug, Clone)]
@@ -42,7 +42,7 @@ impl<U: UserRepository> GetUserUseCase<U> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::tests::mock::user::{UserRepositoryMock, INVALID_ID, VALID_ID};
+    use crate::domain::tests::mock::user::{INVALID_ID, UserRepositoryMock, VALID_ID};
     use std::str::FromStr;
 
     #[tokio::test]

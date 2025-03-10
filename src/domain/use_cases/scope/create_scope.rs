@@ -1,8 +1,8 @@
 //! Create scope use case
 
 use crate::domain::entities::application::ApplicationId;
-use crate::domain::repositories::scope::dto::CreateScopeDtoRequest;
 use crate::domain::repositories::scope::ScopeRepository;
+use crate::domain::repositories::scope::dto::CreateScopeDtoRequest;
 use crate::domain::use_cases::scope::{ScopeUseCaseError, ScopeUseCaseResponse};
 use crate::domain::value_objects::scope_id::ScopeId;
 
@@ -36,7 +36,7 @@ impl<S: ScopeRepository> CreateScopeUseCase<S> {
 mod tests {
     use super::*;
     use crate::domain::tests::mock::application::VALID_APPLICATION_ID;
-    use crate::domain::tests::mock::scope::{ScopeRepositoryMock, INVALID_SCOPE_ID, VALID_SCOPE_ID};
+    use crate::domain::tests::mock::scope::{INVALID_SCOPE_ID, ScopeRepositoryMock, VALID_SCOPE_ID};
     use crate::domain::value_objects::id::Id;
     use std::str::FromStr;
 

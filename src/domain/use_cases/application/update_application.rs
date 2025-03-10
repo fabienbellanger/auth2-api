@@ -1,8 +1,8 @@
 //! Update application use case
 
 use crate::domain::entities::application::ApplicationId;
-use crate::domain::repositories::application::dto::UpdateApplicationDtoRequest;
 use crate::domain::repositories::application::ApplicationRepository;
+use crate::domain::repositories::application::dto::UpdateApplicationDtoRequest;
 use crate::domain::use_cases::application::ApplicationUseCaseError;
 
 #[derive(Debug, Clone)]

@@ -4,6 +4,7 @@ mod model;
 
 use crate::adapters::database::mysql::repositories::user::model::UserModel;
 use crate::adapters::database::mysql::{Db, MysqlPagination, MysqlQuerySorts};
+use crate::domain::repositories::user::UserRepository;
 use crate::domain::repositories::user::dto::{
     CountUsersDtoRequest, CountUsersDtoResponse, CreateUserDtoRequest, CreateUserDtoResponse, DeleteUserDtoRequest,
     DeleteUserDtoResponse, GetAccessTokenInformationDtoRequest, GetAccessTokenInformationDtoResponse,
@@ -11,7 +12,6 @@ use crate::domain::repositories::user::dto::{
     GetUsersDtoRequest, GetUsersDtoResponse, RestoreUserDtoRequest, RestoreUserDtoResponse, UpdatePasswordDtoRequest,
     UpdatePasswordDtoResponse,
 };
-use crate::domain::repositories::user::UserRepository;
 use crate::domain::use_cases::user::delete_user::DeleteUserUseCaseResponse;
 use crate::domain::use_cases::user::restore_user::RestoreUserUseCaseResponse;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};

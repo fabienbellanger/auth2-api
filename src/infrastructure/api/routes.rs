@@ -6,8 +6,8 @@ use crate::infrastructure::api::handlers;
 use crate::infrastructure::api::layers::auth::JwtLayer;
 use crate::infrastructure::api::layers::basic_auth::BasicAuthLayer;
 use crate::infrastructure::api::layers::state::SharedState;
-use axum::routing::{delete, get, patch, post};
 use axum::Router;
+use axum::routing::{delete, get, patch, post};
 
 /// Return web routes list
 pub fn web(settings: &Config) -> Router<SharedState> {

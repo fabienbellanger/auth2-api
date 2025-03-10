@@ -1,19 +1,19 @@
 //! Server
 
 use super::layers::{
-    state::{SharedState, State},
     MakeRequestUuid, REQUEST_ID_HEADER,
+    state::{SharedState, State},
 };
 use super::{layers, logger, routes};
-use crate::adapters::database::mysql::Db;
 use crate::adapters::database::GenericDb;
+use crate::adapters::database::mysql::Db;
 use crate::adapters::email::EmailAdapter;
 use crate::config::Config;
 use crate::domain::entities::email::EmailConfig;
 use crate::infrastructure::api::errors::timeout_error;
 use crate::infrastructure::api::response::ApiError;
 use crate::infrastructure::api::use_cases::AppUseCases;
-use axum::{error_handling::HandleErrorLayer, middleware, Extension, Router};
+use axum::{Extension, Router, error_handling::HandleErrorLayer, middleware};
 use std::time::Duration;
 use tera::Tera;
 use tokio::net::TcpListener;

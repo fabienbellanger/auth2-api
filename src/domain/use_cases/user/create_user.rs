@@ -1,7 +1,7 @@
 //! User creation use case
 
-use crate::domain::repositories::user::dto::CreateUserDtoRequest;
 use crate::domain::repositories::user::UserRepository;
+use crate::domain::repositories::user::dto::CreateUserDtoRequest;
 use crate::domain::use_cases::user::{UserUseCaseError, UserUseCaseResponse};
 use crate::domain::value_objects::email::Email;
 use crate::domain::value_objects::password::Password;
@@ -39,9 +39,9 @@ impl<U: UserRepository> CreateUserUseCase<U> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::tests::mock::user::{UserRepositoryMock, INVALID_EMAIL, VALID_EMAIL};
-    use fake::faker::internet::fr_fr::Password;
+    use crate::domain::tests::mock::user::{INVALID_EMAIL, UserRepositoryMock, VALID_EMAIL};
     use fake::Fake;
+    use fake::faker::internet::fr_fr::Password;
 
     #[tokio::test]
     async fn test_create_user_use_case() {
