@@ -123,7 +123,7 @@ pub async fn override_http_errors(
     }
 
     let (parts, body) = response.into_parts();
-    match axum::body::to_bytes(body, state.config.request_body_max_size).await {
+    match axum::body::to_bytes(body, state.config.response_body_max_size).await {
         Ok(body) => match String::from_utf8(body.to_vec()) {
             Ok(body) => match parts.status {
                 StatusCode::METHOD_NOT_ALLOWED => ApiError::MethodNotAllowed.into_response(),

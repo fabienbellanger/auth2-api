@@ -2,8 +2,7 @@ use auth2_api::config::Config;
 use auth2_api::infrastructure::cli;
 use auth2_api::infrastructure::cli::error::CliError;
 
-#[tokio::main]
-async fn main() -> Result<(), CliError> {
+fn main() -> Result<(), CliError> {
     let worker_threads = Config::from_env()?.worker_threads;
 
     let mut rt = tokio::runtime::Builder::new_multi_thread();

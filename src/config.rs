@@ -47,8 +47,10 @@ pub struct Config {
     pub server_port: String,
     /// Server requests timeout (in second)
     pub request_timeout: u64,
-    /// Server max body size (in KB)
+    /// Server request max body size (in KB)
     pub request_body_max_size: usize,
+    /// Server response max body size (in KB)
+    pub response_body_max_size: usize,
 
     /// JWT algorithm
     pub jwt_algorithm: String,
