@@ -51,6 +51,8 @@ pub struct Config {
     pub request_body_max_size: usize,
     /// Server response max body size (in KB)
     pub response_body_max_size: usize,
+    /// Enable compression
+    pub compression_enable: bool,
 
     /// JWT algorithm
     pub jwt_algorithm: String,

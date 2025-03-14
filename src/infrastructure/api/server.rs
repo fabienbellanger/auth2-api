@@ -2,6 +2,7 @@
 
 use super::layers::{
     MakeRequestUuid, REQUEST_ID_HEADER,
+    logger::LoggerLayer,
     state::{SharedState, State},
 };
 use super::{layers, logger, routes};
@@ -19,6 +20,9 @@ use tera::Tera;
 use tokio::net::TcpListener;
 use tokio::signal;
 use tower::ServiceBuilder;
+use tower_http::CompressionLevel;
+use tower_http::compression::CompressionLayer;
+use tower_http::limit::RequestBodyLimitLayer;
 use tower_http::request_id::{PropagateRequestIdLayer, SetRequestIdLayer};
 use tower_http::services::ServeDir;
 
@@ -58,14 +62,6 @@ async fn get_app(settings: &Config) -> Result<Router, ApiError> {
     // CORS
     let cors = layers::cors(settings);
 
-    // Layers
-    let layers = ServiceBuilder::new()
-        .layer(SetRequestIdLayer::new(REQUEST_ID_HEADER.clone(), MakeRequestUuid))
-        .layer(layers::logger::LoggerLayer)
-        .layer(HandleErrorLayer::new(timeout_error))
-        .timeout(Duration::from_secs(settings.request_timeout))
-        .layer(PropagateRequestIdLayer::new(REQUEST_ID_HEADER.clone()));
-
     // Global state
     let global_state = SharedState::new(State::init(settings)?);
 
@@ -89,14 +85,39 @@ async fn get_app(settings: &Config) -> Result<Router, ApiError> {
     // Email service
     let email_service = EmailAdapter::new(EmailConfig::from(settings.clone()));
 
-    app = app
-        .fallback_service(ServeDir::new("assets").append_index_html_on_directories(true)) // FIXME: static_file_error not work this Axum 0.6.9!
-        .layer(middleware::from_fn_with_state(
-            global_state.clone(),
-            layers::override_http_errors,
+    // Static files
+    app = app.fallback_service(ServeDir::new("assets").append_index_html_on_directories(true));
+
+    // HTTP errors override
+    app = app.layer(middleware::from_fn_with_state(
+        global_state.clone(),
+        layers::override_http_errors,
+    ));
+
+    // Layers
+    let layers = ServiceBuilder::new()
+        .layer(SetRequestIdLayer::new(REQUEST_ID_HEADER.clone(), MakeRequestUuid))
+        .layer(LoggerLayer)
+        .layer(HandleErrorLayer::new(timeout_error))
+        .layer(RequestBodyLimitLayer::new(
+            settings.request_body_max_size.saturating_mul(1_024), // KB to bytes
         ))
-        .layer(layers)
-        .layer(Extension(AppUseCases::new(db, email_service).await?));
+        .timeout(Duration::from_secs(settings.request_timeout))
+        .layer(PropagateRequestIdLayer::new(REQUEST_ID_HEADER.clone()));
+    app = app.layer(layers);
+
+    // Compression
+    if settings.compression_enable {
+        let compression_layer = CompressionLayer::new()
+            .quality(CompressionLevel::Default)
+            .zstd(true)
+            .br(true);
+
+        app = app.layer(compression_layer);
+    }
+
+    // Use cases
+    app = app.layer(Extension(AppUseCases::new(db, email_service).await?));
 
     // State
     let app = app.with_state(global_state);
