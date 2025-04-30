@@ -23,12 +23,12 @@ serde_urlencoded = "0.7.1"
 thiserror = "2.0.12"
 
 # Logs
-log = "0.4.26"
+log = "0.4.27"
 tracing = "0.1.41"
 
 # Metrics
-metrics = "0.24.1"
-metrics-exporter-prometheus = "0.16.2"
+metrics = "0.24.2"
+metrics-exporter-prometheus = "0.17.0"
 
 # Tower
 tower = { version = "0.5.2", features = ["timeout", "util"] }
@@ -40,25 +40,25 @@ tracing-subscriber = { version = "0.3.19", features = ["registry", "env-filter",
 hyper = "1.6.0"
 
 # Axum
-axum = "0.8.1"
+axum = "0.8.4"
 
 # sqlx
-sqlx = { version = "0.8.3", features = ["runtime-tokio-native-tls", "chrono", "mysql", "macros", "bigdecimal", "migrate"] }
+sqlx = { version = "0.8.5", features = ["runtime-tokio-native-tls", "chrono", "mysql", "macros", "bigdecimal", "migrate"] }
 
 # Email
 lettre = "0.11.15"
 mime = "0.3.17"
 
-async-trait = "0.1.87"
+async-trait = "0.1.88"
 dotenvy = "0.15.7"
-chrono = { version = "0.4.40", features = ["clock", "std", "serde"], default-features = false }
+chrono = { version = "0.4.41", features = ["clock", "std", "serde"], default-features = false }
 jsonwebtoken = "9.3.1"
-tokio = { version = "1.44.1", features = ["full"] }
-rand = "0.9.0"
+tokio = { version = "1.44.2", features = ["full"] }
+rand = "0.9.1"
 uuid = { version = "1.16.0", features = ["v4", "serde"] }
 validator = { version = "0.20.0", features = ["derive"] }
 bytes = "1.10.1"
-clap = { version = "4.5.32", features = ["cargo", "derive"] }
+clap = { version = "4.5.37", features = ["cargo", "derive"] }
 config = "0.15.11"
 futures = "0.3.31"
 tera = "1.20.0"
@@ -69,5 +69,5 @@ regex = "1.11.1"
 bytesize = "2.0.1"
 
 [dev-dependencies]
-fake = { version = "4.0.0", features = ["chrono"] }
+fake = { version = "4.3.0", features = ["chrono"] }
 pretty_assertions = "1.4.1"
