@@ -53,7 +53,7 @@ async-trait = "0.1.88"
 dotenvy = "0.15.7"
 chrono = { version = "0.4.41", features = ["clock", "std", "serde"], default-features = false }
 jsonwebtoken = "9.3.1"
-tokio = { version = "1.44.2", features = ["full"] }
+tokio = { version = "1.45.0", features = ["full"] }
 rand = "0.9.1"
 uuid = { version = "1.16.0", features = ["v4", "serde"] }
 validator = { version = "0.20.0", features = ["derive"] }
